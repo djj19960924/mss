@@ -33,15 +33,14 @@ class YTO extends React.Component {
       const dataObj = {
         selectedList: [],
         selectedIds: [],
+        data: [],
+        pageTotal: 0,
+        pageSizeOptions: [`100`,`200`,`500`,`1000`]
       };
       if (r.data.status === 10000) {
         dataObj['data'] = data.list;
         dataObj['pageTotal'] = data.total;
         dataObj['pageSizeOptions'] = [`100`,`200`,`500`,`${data.total > 1000 ? data.total : 1000}`];
-      } else {
-        dataObj['data'] = [];
-        dataObj['pageTotal'] = 0;
-        dataObj['pageSizeOptions'] = [`100`,`200`,`500`,`1000`];
       }
       this.setState(dataObj);
       showLoading(false);
