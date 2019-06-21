@@ -1,7 +1,6 @@
 import React from 'react';
 import {Radio, Button, Table, message,Pagination} from 'antd';
 import './index.less';
-import moment from 'moment';
 
 class SKTYto extends React.Component {
   constructor(props) {
@@ -85,9 +84,7 @@ class SKTYto extends React.Component {
     for(let i=0;i<this.state.selectedIds.length;i++){
       selectNo[i]=this.state.selectedIds[i].split(":")[1];
     }
-    // 待修正
-    return false;
-    fetch(window.apiUrl+"/Yto/uploadSelectToYto",{
+    fetch(window.apiUrl+"/portal/speedexpressYto/uploadSelectSktToYto",{
       method:"post",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify(selectNo)
