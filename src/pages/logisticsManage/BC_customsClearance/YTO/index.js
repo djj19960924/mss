@@ -137,10 +137,12 @@ class YTO extends React.Component {
           <RadioButton value={0}>待上传</RadioButton>
           <RadioButton value={1}>已上传</RadioButton>
         </RadioGroup>
-        <Button type="primary"
-                disabled={this.state.selectedIds.length === 0}
-                onClick={this.uploadOrder.bind(this)}
-        >发送所选订单</Button>
+        <div className="btnLine">
+          <Button type="primary"
+                  disabled={this.state.selectedIds.length === 0}
+                  onClick={this.uploadOrder.bind(this)}
+          >发送所选订单</Button>
+        </div>
         <div className="tableMain">
           <Table className="tableList"
                  columns={this.state.status === 0 ? columns : columns1}
