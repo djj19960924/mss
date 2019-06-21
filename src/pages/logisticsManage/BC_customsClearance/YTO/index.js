@@ -1,6 +1,7 @@
 import React from 'react';
 import './index.less';
 import {Radio, Button, Table, message,Pagination} from 'antd';
+import moment from 'moment';
 
 class YTO extends React.Component {
   constructor(props) {
@@ -18,63 +19,46 @@ class YTO extends React.Component {
       pageTotal:0
     }
   }
-  formatDate(inputTime) {
-    var date = new Date(inputTime);
-    var y = date.getFullYear();
-    var m = date.getMonth() + 1;
-    m = m < 10 ? ('0' + m) : m;
-    var d = date.getDate();
-    d = d < 10 ? ('0' + d) : d;
-    var h = date.getHours();
-    h = h < 10 ? ('0' + h) : h;
-    var minute = date.getMinutes();
-    var second = date.getSeconds();
-    minute = minute < 10 ? ('0' + minute) : minute;
-    second = second < 10 ? ('0' + second) : second;
-    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
-  }
   componentDidMount() {
     this.getOrderInfo(0);
   }
 
-  getOrderInfo(status=this.state.status,pageNum=this.state.pageNum,pageSize=this.state.pageSize) {
-    this.setState({tableLoading:true});
-    fetch(window.apiUrl + "/Yto/backendIsYto", {
-      method: "post",
-      headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      body: "isYto=" + status+"&pageNum="+pageNum+"&pageSize="+pageSize
-    }).then(r => r.json()).then((res) => {
-      if (!res.msg && !res.data) {
-        message.error(`后端数据错误`)
+  getOrderInfo() {
+    const {status, pageNum, pageSize} =this.state;
+    const data = {status, pageNum, pageSize};
+    const showLoading = Is => this.setState({tableLoading:Is});
+    showLoading(true);
+    this.ajax.post('/Yto/backendIsYto', data).then(r => {
+      const {data} = r.data;
+      const dataObj = {
+        selectedList: [],
+        selectedIds: [],
+      };
+      if (r.data.status === 10000) {
+        dataObj['data'] = data.list;
+        dataObj['pageTotal'] = data.total;
+        dataObj['pageSizeOptions'] = [`100`,`200`,`500`,`${data.total > 1000 ? data.total : 1000}`];
       } else {
-        if (res.status === 10000) {
-          for(let i=0 ; i<res.data.list.length;i++){
-            res.data.list[i].createTime=this.formatDate(res.data.list[i].createTime);
-          }
-          //message.success(`${res.msg}`)
-          this.setState({data: res.data.list, selectedList: [], selectedIds: [],pageTotal:res.data.total, pageSizeOptions: [`100`,`200`,`500`,`${res.data.total > 1000 ? res.data.total : 1000}`]})
-        } else {
-          if(res.status===10002){
-            message.warning(`${res.status}:${res.msg}`)
-            this.setState({data:[]});
-          }else{
-            message.error(`${res.status}:${res.msg}`)
-            this.setState({data:[]});
-          }
-        }
+        dataObj['data'] = [];
+        dataObj['pageTotal'] = 0;
+        dataObj['pageSizeOptions'] = [`100`,`200`,`500`,`1000`];
       }
-      this.setState({tableLoading:false});
-    }).catch(()=>{
-      message.error(`前端接口调取错误`);
-      this.setState({tableLoading:false});
-    })
+      this.setState(dataObj);
+      showLoading(false);
+      r.showError(true);
+    }).catch(r => {
+      console.error(r);
+      showLoading(false);
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   logisticsStatus(e) {
     // console.log(e.target.value);
     if (this.state.status !== e.target.value) {
-      this.setState({status: e.target.value,tableLoading:true});
-      this.getOrderInfo(e.target.value);
+      this.setState({status: e.target.value,tableLoading:true},() => {
+        this.getOrderInfo();
+      });
       if(e.target.value===1) this.setState({selectedIds:[]})
     }
   }
@@ -132,7 +116,11 @@ class YTO extends React.Component {
       {title: "收件人详细地址", dataIndex: "recipientsAddress", key: "recipientsAddress"},
       {title: "用户微信昵称", dataIndex: "wechatName", key: "wechatName",width:100},
       {title: "数量", dataIndex: "productNum", key: "productNum",width:50},
-      {title: "包裹创建时间", dataIndex: "createTime", key: "createTime",width:130}
+      {title: "包裹创建时间", dataIndex: "createTime", key: "createTime",width:130,
+        render: (text, record) => (
+          <div>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</div>
+        )
+      }
     ];
     const columns1 = [
       {title: "绑定的面单号", dataIndex: "mailNo", key: "mailNo",width:130}
@@ -149,38 +137,42 @@ class YTO extends React.Component {
           <RadioButton value={0}>待上传</RadioButton>
           <RadioButton value={1}>已上传</RadioButton>
         </RadioGroup>
-        <Button type="primary"
-                disabled={this.state.selectedIds.length === 0}
-                onClick={this.uploadOrder.bind(this)}
-        >发送所选订单</Button>
-        <Table className="tableList"
-               columns={this.state.status === 0 ? columns : columns1}
-               dataSource={this.state.data}
-               rowSelection={this.state.status === 0 ? {
-                 selectedRowKeys: this.state.selectedIds,
-                 // 选择框变化时触发c
-                 onChange: (selectedRowKeys, selectedRows) => {
-                   this.setState({selectedIds: selectedRowKeys});
-                   // console.log(selectedRowKeys)
-                 },
-               } : null}
-               bordered
-               loading={this.state.tableLoading}
-               pagination={false}
-               scroll={{ x:1600, y: 500 }}
-               rowKey={(record, index) => `id:${record.parcelNo}`}/>
-        <Pagination className="tablePagination"
-                    total={this.state.pageTotal}
-                    pageSize={this.state.pageSize}
-                    current={this.state.pageNum}
-                    showTotal={(total, range) =>
-                      `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 ` }共 ${total} 条记录`
-                    }
-                    onChange={this.changePage.bind(this)}
-                    showSizeChanger
-                    pageSizeOptions={this.state.pageSizeOptions}
-                    onShowSizeChange={this.changePage.bind(this)}
-        />
+        <div className="btnLine">
+          <Button type="primary"
+                  disabled={this.state.selectedIds.length === 0}
+                  onClick={this.uploadOrder.bind(this)}
+          >发送所选订单</Button>
+        </div>
+        <div className="tableMain">
+          <Table className="tableList"
+                 columns={this.state.status === 0 ? columns : columns1}
+                 dataSource={this.state.data}
+                 rowSelection={this.state.status === 0 ? {
+                   selectedRowKeys: this.state.selectedIds,
+                   // 选择框变化时触发c
+                   onChange: (selectedRowKeys, selectedRows) => {
+                     this.setState({selectedIds: selectedRowKeys});
+                     // console.log(selectedRowKeys)
+                   },
+                 } : null}
+                 bordered
+                 loading={this.state.tableLoading}
+                 pagination={false}
+                 scroll={{ x:1600, y: 500 }}
+                 rowKey={(record, index) => `id:${record.parcelNo}`}/>
+          <Pagination className="tablePagination"
+                      total={this.state.pageTotal}
+                      pageSize={this.state.pageSize}
+                      current={this.state.pageNum}
+                      showTotal={(total, range) =>
+                        `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 ` }共 ${total} 条记录`
+                      }
+                      onChange={this.changePage.bind(this)}
+                      showSizeChanger
+                      pageSizeOptions={this.state.pageSizeOptions}
+                      onShowSizeChange={this.changePage.bind(this)}
+          />
+        </div>
       </div>
     )
   }
