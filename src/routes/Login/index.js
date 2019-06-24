@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react/index'
 import { Form, Icon, Input, Button, Checkbox, message, } from 'antd';
+import CanvasNest from 'canvas-nest.js';
 import './index.less';
 
 const FormItem = Form.Item;
@@ -11,7 +12,34 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    window.Login = this;
   };
+  componentDidMount() {
+    this.initBG();
+  }
+
+  initBG() {
+    // 注入动画
+    const config = {
+      color: '0,0,0',
+      count: 99,
+      zIndex: 9,
+      opacity: 0.5
+    };
+
+    const cn = new CanvasNest(document.querySelector('.Login'), config);
+    // Using config rendering effect at 'element'.
+    this.setState({
+      backGround: cn
+    })
+  }
+
+  componentWillUnmount() {
+    this.state.backGround.destroy();
+    // 卸载异步操作设置状态
+    this.setState = () => null
+  }
+
   // 提交表单
   handleSubmit = (e) => {
     const { push } = this.props.history;
