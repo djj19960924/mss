@@ -85,15 +85,25 @@ class permissions extends React.Component {
       currentInfo: record ? record : {},
       showDetails: true
     }
-    this.setState(data, () => {
-      if(state !== 'detail') setFieldsValue({
-        name: record.name,
-        type: record.type,
-        parentId: record.parentId,
-        requiredPermission: record.requiredPermission,
-        url:record.url
-      })
-    });
+    if(state == "add"){
+      this.setState(data, () => {
+        setFieldsValue({
+          type: 1,
+          parentId: 0,
+        })
+      });
+    }else{
+      this.setState(data, () => {
+        if(state == 'edit') setFieldsValue({
+          name: record.name,
+          type: record.type,
+          parentId: record.parentId,
+          requiredPermission: record.requiredPermission,
+          url:record.url
+        })
+      });
+    }
+    
   }
 
   // 删除权限
