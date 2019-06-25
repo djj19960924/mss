@@ -166,7 +166,7 @@ class permissions extends React.Component {
     const Option = Select.Option;
     const FormItem = Form.Item;
     const { getFieldDecorator } = this.props.form;
-    const { tableDataList, tableIsLoading, pageNum, pageSizeOptions, detailState, showDetails, currentInfo, parentIdObject,parentIdList } = this.state;
+    const { tableDataList, tableIsLoading, pageNum, pageSizeOptions,pageSize, detailState, showDetails, currentInfo, parentIdObject,parentIdList } = this.state;
     const columns = [
       {title: '权限id', dataIndex: 'menuId', key: 'menuId', width: 80},
       {title: '权限名称', dataIndex: 'name', key: 'name', width: 140},
