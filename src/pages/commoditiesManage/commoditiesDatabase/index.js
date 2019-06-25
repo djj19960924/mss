@@ -341,7 +341,8 @@ class commoditiesDataBase extends React.Component {
 
   // 更改是否已备案条件触发
   changeRecord(e) {
-    this.props.history.push(`/commodities-manage/commodities-database?record=${e.target.value}`);
+    const {origin, pathname} = window.location;
+    window.history.replaceState('','',`${origin}${pathname}?record=${e.target.value}`);
     this.setState({
       record: e.target.value,
       pageNum: 1,
