@@ -34,35 +34,23 @@ class permissions extends React.Component {
   getPermissionList() {
     const Option = Select.Option;
     const { pageNum, pageSize, parentIdObject } = this.state;
-    // this.setState({tableIsLoading: true});
-    // let dataObj = {pageNum:pageNum,pageSize:pageSize};
     this.ajax.post('/permission/getPermissionList').then(r => {
       if (r.data.status === 10000) {
         parentIdObject['0'] = '根目录';
-        // console.log('11:',r.data.data)
         for (let Obj of r.data.data) parentIdObject[`${Obj.menuId}`] = Obj.name;
         var parentIdArr = [], parentIdList = []
         for(let i in parentIdObject){
-          // let obj = {}
-          // obj.parentId = i 
-          // obj.name = parentIdObject[i]
-          // parentIdArr.push(obj)
           parentIdList.push(<Option key={Number(i)} value={Number(i)}>{parentIdObject[i]}</Option>)
         }
         this.setState({
           tableDataList: r.data.data,
-          // pageTotal: r.data.data.total
           parentIdObject,
-          // parentIdArr,
           parentIdList
         });
       }
-      r.showError(message);
-      // this.setState({tableIsLoading: false});
-      
+      r.showError(message); 
     }).catch(r => {
       console.error(r);
-      // this.setState({tableIsLoading: false});
       this.ajax.isReturnLogin(r,this);
     })
   }
@@ -103,8 +91,7 @@ class permissions extends React.Component {
           url:record.url
         })
       });
-    }
-    
+    } 
   }
 
   // 删除权限
@@ -179,7 +166,7 @@ class permissions extends React.Component {
     const Option = Select.Option;
     const FormItem = Form.Item;
     const { getFieldDecorator } = this.props.form;
-    const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions, detailState, showDetails, currentInfo, parentIdObject,parentIdArr,parentIdList } = this.state;
+    const { tableDataList, tableIsLoading, pageNum, pageSizeOptions, detailState, showDetails, currentInfo, parentIdObject,parentIdList } = this.state;
     const columns = [
       {title: '权限id', dataIndex: 'menuId', key: 'menuId', width: 80},
       {title: '权限名称', dataIndex: 'name', key: 'name', width: 140},
@@ -205,16 +192,13 @@ class permissions extends React.Component {
         render: (text, record) =>
           <div>
             <Button type="primary"
-                    // disabled={true}
                     onClick={this.showDetails.bind(this,'detail',record)}
             >查看</Button>
             <Button type="primary"
-                    // disabled={true}
                     style={{marginLeft: 10}}
                     onClick={this.showDetails.bind(this,'edit',record)}
             >修改</Button>
             <Button type="danger"
-                    // disabled={true}
                     style={{marginLeft: 10}}
                     onClick={this.deleteUser.bind(this,record.menuId)}
             >删除</Button>
@@ -288,13 +272,10 @@ class permissions extends React.Component {
                 getFieldDecorator('parentId', {
                   rules: [{required: true, message: '请选择父级权限!'}],
                 })( <Select>
-                      
                       {parentIdList}
-                      
                     </Select>
                   ):<div>{parentIdObject[currentInfo.parentId]}</div>
               }
-            
             </FormItem>
       
             {
@@ -310,8 +291,7 @@ class permissions extends React.Component {
             }
           </Form>
         </Modal>
-
-
+        
         <div className="tableMain">
           {/*表单主体*/}
           <Table className="tableList"

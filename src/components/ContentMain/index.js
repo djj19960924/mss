@@ -14,8 +14,6 @@ import roles from '@pages/users/roles/';
 import accounts from '@pages/users/accounts/';
 // 权限列表
 import permissions from '@pages/users/permissions/';
-//权限修改
-import permissionsEdit from '@pages/users/permissions/permissionsEdit';
 
 //基础设置
 //汇率
@@ -97,7 +95,6 @@ const componentsList = {
   roles,
   accounts,
   permissions,
-  permissionsEdit,
   commoditiesPackaging,
   customerLogin,
   YTO,
