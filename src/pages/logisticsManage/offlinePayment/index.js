@@ -29,8 +29,9 @@ class OfflinePayment extends React.Component {
           <div className="titleLine" />
         </div>
         <Radio.Group className="menu-selection" value={orderType} buttonStyle="solid" onChange={(e) => {
+          const {origin, pathname} = window.location;
+          window.history.replaceState('','',`${origin}${pathname}?type=${e.target.value}`);
           this.setState({orderType: e.target.value});
-          this.props.history.push("/logistics-manage/offline-payment?type="+e.target.value);
         }}>
           <Radio.Button value={"0"}>待支付</Radio.Button>
           <Radio.Button value={"1"}>已支付</Radio.Button>
