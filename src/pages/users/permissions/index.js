@@ -24,7 +24,6 @@ class permissions extends React.Component {
       //所有父级菜单列表
       parentIdArr:[]
     };
-    window.test = this;
   }
 
   componentDidMount() {
@@ -33,35 +32,37 @@ class permissions extends React.Component {
 
   // 权限列表
   getPermissionList() {
+    const Option = Select.Option;
     const { pageNum, pageSize, parentIdObject } = this.state;
-    this.setState({tableIsLoading: true});
+    // this.setState({tableIsLoading: true});
     // let dataObj = {pageNum:pageNum,pageSize:pageSize};
     this.ajax.post('/permission/getPermissionList').then(r => {
       if (r.data.status === 10000) {
         parentIdObject['0'] = '根目录';
         // console.log('11:',r.data.data)
         for (let Obj of r.data.data) parentIdObject[`${Obj.menuId}`] = Obj.name;
-        var parentIdArr = []
+        var parentIdArr = [], parentIdList = []
         for(let i in parentIdObject){
-          let obj = {}
-          obj.parentId = i 
-          obj.name = parentIdObject[i]
-          parentIdArr.push(obj)
+          // let obj = {}
+          // obj.parentId = i 
+          // obj.name = parentIdObject[i]
+          // parentIdArr.push(obj)
+          parentIdList.push(<Option key={Number(i)} value={Number(i)}>{parentIdObject[i]}</Option>)
         }
         this.setState({
           tableDataList: r.data.data,
           // pageTotal: r.data.data.total
           parentIdObject,
-          parentIdArr
+          // parentIdArr,
+          parentIdList
         });
       }
-
       r.showError(message);
-      this.setState({tableIsLoading: false});
+      // this.setState({tableIsLoading: false});
       
     }).catch(r => {
       console.error(r);
-      this.setState({tableIsLoading: false});
+      // this.setState({tableIsLoading: false});
       this.ajax.isReturnLogin(r,this);
     })
   }
@@ -85,7 +86,7 @@ class permissions extends React.Component {
       currentInfo: record ? record : {},
       showDetails: true
     }
-    if(state == "add"){
+    if(state === "add"){
       this.setState(data, () => {
         setFieldsValue({
           type: 1,
@@ -94,7 +95,7 @@ class permissions extends React.Component {
       });
     }else{
       this.setState(data, () => {
-        if(state == 'edit') setFieldsValue({
+        if(state === 'edit') setFieldsValue({
           name: record.name,
           type: record.type,
           parentId: record.parentId,
@@ -175,10 +176,10 @@ class permissions extends React.Component {
     this.setState = () => null
   }
   render() {
-    const FormItem = Form.Item;
     const Option = Select.Option;
+    const FormItem = Form.Item;
     const { getFieldDecorator } = this.props.form;
-    const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions, detailState, showDetails, currentInfo, parentIdObject,parentIdArr } = this.state;
+    const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions, detailState, showDetails, currentInfo, parentIdObject,parentIdArr,parentIdList } = this.state;
     const columns = [
       {title: '权限id', dataIndex: 'menuId', key: 'menuId', width: 80},
       {title: '权限名称', dataIndex: 'name', key: 'name', width: 140},
@@ -229,7 +230,7 @@ class permissions extends React.Component {
         </div>
         <div className="btnLine">
           <Button type="primary"
-                  onClick={this.showDetails.bind(this,'add')}
+                  onClick={this.showDetails.bind(this,'add',undefined)}
           >新增权限</Button>
         </div>
         <Modal className="details"
@@ -242,7 +243,7 @@ class permissions extends React.Component {
                onOk={this.submitForm.bind(this)}
                okText={detailState === 'edit' ? '修改' : (detailState === 'add' ? '新增' : '')}
                footer={detailState === 'detail' ? null : undefined}
-               forceRender={true}
+              //  forceRender={true}
         >
           <Form className=""
                 labelCol={{span: 8}}
@@ -268,7 +269,7 @@ class permissions extends React.Component {
               }
             </FormItem>
             {
-              test.props.form.getFieldValue('type') == 1 ?'':
+              this.props.form.getFieldValue('type') == 1 ?'':
               <FormItem label="是否必须" colon >
                 {detailState !== 'detail' ? 
                     getFieldDecorator('requiredPermission', {
@@ -287,14 +288,17 @@ class permissions extends React.Component {
                 getFieldDecorator('parentId', {
                   rules: [{required: true, message: '请选择父级权限!'}],
                 })( <Select>
-                      {parentIdArr.map((item)=><Option value={Number(item.parentId)} key={Number(item.parentId)}>{item.name}</Option>)}
+                      
+                      {parentIdList}
+                      
                     </Select>
                   ):<div>{parentIdObject[currentInfo.parentId]}</div>
               }
+            
             </FormItem>
       
             {
-              test.props.form.getFieldValue('type') == 1 ? '':
+              this.props.form.getFieldValue('type') == 1 ? '':
               (<FormItem label="权限url" colon>
                 {detailState !== 'detail' ?
                   getFieldDecorator('url', {
