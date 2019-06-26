@@ -144,9 +144,9 @@ class YTO extends React.Component {
   }
   render() {
     const columns = [
-      {title: "箱号", dataIndex: "parcelNo", key: "parcelNo",width:130},
+      {title: "箱号", dataIndex: "parcelNo", key: "parcelNo",width:160},
       {title: "商品名称", dataIndex: "productName", key: "productName"},
-      {title: "收件人姓名", dataIndex: "recipientsName", key: "recipientsName",width:160},
+      {title: "收件人姓名", dataIndex: "recipientsName", key: "recipientsName",width:130},
       {title: "包裹创建时间", dataIndex: "createTime", key: "createTime",width:160,
         render: (text, record) => (
           <div>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</div>
