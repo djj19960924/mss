@@ -117,7 +117,7 @@ class SKTYto extends React.Component {
     const showLoading = Is => this.setState({buttonLoading: Is});
     showLoading(true);
     const dataList  = [];
-    for (let v of selectedRows) dataList.push(v.parcelNo);
+    for (let v of selectedRows) dataList.push(v.parcelCode);
     this.ajax.post('/portal/speedexpressYto/uploadSelectSktToYto', dataList).then(r => {
       const {status, data, msg} = r.data;
       if (status === 10000) {
