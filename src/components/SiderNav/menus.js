@@ -91,7 +91,6 @@ const menus = [
             id: 109,
             icon: 'sync',
             key: '/logistics-manage/SKT/YTO',
-            testType: 'localTest',
             components: [
               {name: 'SKTYto', path: '/logistics-manage/SKT/YTO'}
             ]
@@ -101,7 +100,6 @@ const menus = [
             id: 110,
             icon: 'file-excel',
             key: '/logistics-manage/SKT/upload-order',
-            testType: 'localTest',
             components: [
               {name: 'SKTUploadOrder', path: '/logistics-manage/SKT/upload-order'}
             ]
