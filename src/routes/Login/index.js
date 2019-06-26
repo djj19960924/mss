@@ -11,7 +11,9 @@ const FormItem = Form.Item;
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      loading: false
+    };
     window.Login = this;
   };
   componentDidMount() {
@@ -44,11 +46,13 @@ class Login extends React.Component {
   handleSubmit = (e) => {
     const { push } = this.props.history;
     const { saveUserData } = this.props.appStore;
+    const showLoading = Is => this.setState({loading: Is});
     // 当运行当前事件时, 去除其他相关操作绑定s
     e.preventDefault();
     // 这里进行表单验证
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        showLoading(true);
         // 判断是否需要前端方法保存当前登录账号, 如需要, 则将账号信息保存进cookie
         if (values.remember) window.setCookie('saveUserName', values.userName, 3600 * 24 * 7);
         else window.delCookie('saveUserName');
@@ -68,8 +72,11 @@ class Login extends React.Component {
             saveUserData({userName: values.userName});
             push(historyPath);
           }
+          showLoading(false);
           r.showError();
         }).catch(r => {
+          showLoading(false);
+          console.error(r);
           message.error('前端接口调取/数据处理出现错误, 请联系管理员');
         });
       }
@@ -78,6 +85,7 @@ class Login extends React.Component {
   render() {
     // 将表单数据保存至this.props.form, 由form组件托管当前数据
     const { getFieldDecorator } = this.props.form;
+    const {loading} = this.state;
     return(
       <div name="Login" className="Login" style={{textAlign:'center'}}>
         {/*表单容器*/}
@@ -109,9 +117,12 @@ class Login extends React.Component {
               <Link className="loginFormForgot"
                     to="/forgot-password"
               >忘记密码？请点击</Link>
-              <Button type="primary" htmlType="submit" className="loginFormButton" style={{width: '100%', marginTop: '10px'}}>
-                登录
-              </Button>
+              <Button type="primary"
+                      htmlType="submit"
+                      className="loginFormButton"
+                      style={{width: '100%', marginTop: '10px'}}
+                      loading={loading}
+              >登录</Button>
               {/*后台管理系统暂不支持开放注册*/}
               {/*Or <a href="">register now!</a>*/}
             </FormItem>
