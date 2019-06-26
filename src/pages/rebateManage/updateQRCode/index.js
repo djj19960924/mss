@@ -97,7 +97,7 @@ class updateQRCode extends React.Component {
 
         <div className="btnLine">
           <Button type="primary"
-                  onClick={this.uploadFunction.bind(this)}
+                  onClick={this.allow(73) ? this.uploadFunction.bind(this) : null}
                   loading={uploadLoading}
                   disabled={!this.allow(73)}
                   title={!this.allow(73) ? '没有该操作权限' : null}

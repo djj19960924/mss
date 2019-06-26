@@ -30,7 +30,9 @@ class Ajax {
     request.responseType = 'json';
     // 设置头
     if (!headers) headers = this.headers;
-    for (let n in headers) request.setRequestHeader(n, headers[n]);
+    for (let n in headers) {
+      request.setRequestHeader(n, headers[n]);
+    }
   }
 
   // promise方法
@@ -118,7 +120,7 @@ class resolveResponse {
     this.data = r;
   }
   // 处理错误
-  showError(warnShowNoStatus) {
+  showError() {
     const {data} = this;
     if (!data.msg && !data.data) {
       // 后端未处理报错, 返回为后端错误
@@ -132,7 +134,6 @@ class resolveResponse {
         message.error(`${data.msg} 状态码:${data.status}`)
       } else if (data.status < 10000) {
         // 后端约定: 小于 10000 做警告处理
-        // message.warn(`${data.msg}${warnShowNoStatus === true ? '' : ` 状态码:${data.status}`}`)
         message.warn(data.msg);
       }
     }

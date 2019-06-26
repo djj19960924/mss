@@ -351,7 +351,7 @@ class appointmentTeamManage extends React.Component {
                         dropdownClassName="datePickerPopup"
                         allowClear={false}
                         value={moment(record.deadline)}
-                        onChange={this.submitMassNo.bind(this,index,record.mallName)}
+                        onChange={this.allow(68) ? this.submitMassNo.bind(this,index,record.mallName) : null}
                         disabled={!this.allow(68)}
             />
           </div>

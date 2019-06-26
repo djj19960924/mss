@@ -167,7 +167,7 @@ class adoptExamineUnpaid extends React.Component{
       render: (text, record) => (  //塞入内容
         <div className={record.payment ? "ellipsis" : 'unShow'}>
           <Button type="primary"
-                  onClick={this.makeMoney.bind(this, record)}
+                  onClick={this.allow(80) ? this.makeMoney.bind(this, record) : null}
                   style={{'margin': 0}}
                   disabled={!this.allow(80)}
                   title={!this.allow(80) ? '没有该操作权限' : null}

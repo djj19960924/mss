@@ -606,13 +606,15 @@ class awaitingExamine extends React.Component {
                       htmlType="submit"
                       className="examineFormButton"
                       style={{marginTop: '15px', marginLeft: '10px'}}
-                      onClick={this.handleSubmit.bind(this)}
+                      onClick={this.allow(101) ? this.handleSubmit.bind(this) : null}
                       disabled={!this.allow(101)}
                       title={!this.allow(101) ? '没有该操作权限' : null}
               >通过</Button>
               <Button type="danger"
                       // 打开驳回原因窗口
-                      onClick={() => this.setState({rejectVisible: true,})}
+                      onClick={() => {
+                        if (this.allow(102)) this.setState({rejectVisible: true,})
+                      }}
                       style={{marginLeft: '20px'}}
                       disabled={!this.allow(102)}
                       title={!this.allow(102) ? '没有该操作权限' : null}

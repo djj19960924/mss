@@ -286,14 +286,14 @@ class setRebate extends React.Component{
           <div>
             <Button type="primary"
                     style={{'margin':0}}
-                    onClick={this.openEdit.bind(this,record)}
+                    onClick={this.allow(74) ? this.openEdit.bind(this,record) : null}
                     disabled={!this.allow(74)}
                     title={this.allow(74) ? null : '没有该操作权限'}
             >编辑</Button>
             <Button type="danger"
                     style={{'marginLeft':8}}
                     onClick={()=>{
-                      this.setState({
+                      if (this.allow(72)) this.setState({
                         deleteModalVisible: true,
                         currentRecord: record
                       }

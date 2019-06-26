@@ -111,7 +111,7 @@ class globalTranshipmentNotArrived extends React.Component {
         <div className="btnLine">
           <Button type="primary"
                   className="updateParcelMessage"
-                  onClick={this.updateParcelMessage.bind(this)}
+                  onClick={this.allow(98) ? this.updateParcelMessage.bind(this) : null}
                   disabled={!this.allow(98) || selectedIds.length === 0}
                   title={!this.allow(98) ? '没有该操作权限' : ''}
                   loading={updateBtnIsLoading}

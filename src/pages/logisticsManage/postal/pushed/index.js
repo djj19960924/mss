@@ -166,7 +166,7 @@ class orderPushed extends React.Component{
         </div>
         <div className="btnLine">
           <Button type="primary"
-                  onClick={()=>{input.click()}}
+                  onClick={()=>{if (this.allow(95)) input.click()}}
                   disabled={!this.allow(95)}
                   title={!this.allow(95) ? '没有该操作权限' : null}
           >导入excel</Button>
