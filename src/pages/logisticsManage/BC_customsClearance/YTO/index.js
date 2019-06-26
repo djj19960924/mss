@@ -58,12 +58,10 @@ class YTO extends React.Component {
   }
 
   logisticsStatus(e) {
-    // console.log(e.target.value);
     if (this.state.status !== e.target.value) {
-      this.setState({status: e.target.value,tableLoading:true},() => {
+      this.setState({status: e.target.value},() => {
         this.getOrderInfo();
       });
-      if(e.target.value===1) this.setState({selectedIds:[]})
     }
   }
 
@@ -204,7 +202,7 @@ class YTO extends React.Component {
                  loading={tableLoading}
                  pagination={false}
                  scroll={{ x: 800, y: 550 }}
-                 rowKey={(record, index) => `id:${record.parcelNo}`}/>
+                 rowKey={(record, index) => `id_${index}`}/>
           <Pagination className="tablePagination"
                       total={pageTotal}
                       pageSize={pageSize}
