@@ -91,47 +91,38 @@ class LogisticsToBePaid extends React.Component {
   }
 
   render() {
-    const columns = [{
-      title: "订单时间",
-      dataIndex: "createTime",
-      key: "createTime",
-      width: 200,
-      render: (text, record) => (
-        <div>{record.createTime ? moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") : ""}</div>
-      )
-    }, {
-      title: "业务类型",
-      dataIndex: "offLineType",
-      key: "offLineType",
-      width: 150,
-      render: (text, record) => (
-        <div>{record.offLineType === 0 ? "邮路/ETK" : (record.offLineType === 1 ? "BC" : "速跨通")}</div>
-      )
-    }, {
-      title: "订单号/箱号",
-      dataIndex: "code",
-      key: "code",
-    }, {
-      title: "用户昵称",
-      dataIndex: "nickName",
-      key: "nickName",
-      width: 200
-    }, {
-      title: "需支付金额",
-      dataIndex: "payMoney",
-      key: "payMoney",
-      width: 150
-    }, {
-      title: "操作",
-      dataIndex: "pageNum",
-      key: "pageNum",
-      width: 150,
-      render: (text, record) => (
-        <div><Button type={"primary"} onClick={() => {
-          this.setState({paymentMethodVisible: true, orderNum: record.code, offLineType: record.offLineType})
-        }}>已支付</Button></div>
-      )
-    }
+    const columns = [
+      {title: "订单时间", dataIndex: "createTime", key: "createTime", width: 160,
+        render: (text, record) => (
+          <div>{record.createTime
+            ? moment(record.createTime).format("YYYY-MM-DD HH:mm:ss")
+            : ""}</div>
+        )
+      },
+      {title: "业务类型", dataIndex: "offLineType", key: "offLineType", width: 120,
+        render: (text, record) => (
+          <div>{record.offLineType === 0
+            ? "邮路/ETK"
+            : (record.offLineType === 1 ? "BC" : "速跨通")}</div>
+        )
+      },
+      {title: "订单号/箱号", dataIndex: "code", key: "code", width: 260},
+      {title: "用户昵称", dataIndex: "nickName", key: "nickName"},
+      {title: "需支付金额", dataIndex: "payMoney", key: "payMoney", width: 100},
+      {title: "操作", dataIndex: "pageNum", key: "pageNum", width: 150, fixed: 'right',
+        render: (text, record) => (
+          <div>
+            <Button type={"primary"}
+                    onClick={() => {
+                      this.setState({
+                        paymentMethodVisible: true,
+                        orderNum: record.code,
+                        offLineType: record.offLineType
+                      })}}
+            >已支付</Button>
+          </div>
+        )
+      }
     ];
     const {dataSource, tableLoading, pageSize, pageSizeOptions, total, pageNum, paymentMethodVisible, btnLoading} = this.state;
     return (
@@ -144,7 +135,7 @@ class LogisticsToBePaid extends React.Component {
                  loading={tableLoading}
                  pagination={false}
                  rowKey={(record, index) => `${record.code}`}
-                 scroll={{x: 1080, y: 600}}
+                 scroll={{x: 900, y: 600}}
           />
           <Pagination current={pageNum}
                       pageSize={pageSize}
@@ -169,7 +160,7 @@ class LogisticsToBePaid extends React.Component {
                onOk={this.choosePayment.bind(this)}>
           <Radio.Group onChange={(e) => {
             this.setState({payType: e.target.value});
-            console.log(e.target.value);
+            // console.log(e.target.value);
           }}>
             <Radio value={0}>支付宝</Radio>
             <Radio value={1}>银行卡</Radio>
