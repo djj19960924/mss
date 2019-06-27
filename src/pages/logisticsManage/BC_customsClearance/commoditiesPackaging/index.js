@@ -32,8 +32,9 @@ class commoditiesPackaging extends React.Component{
       elementQRCode: null,
       // 有未支付订单
       needToPay: false,
+      // 线下支付按钮loading
+      offLinePayLoading: false
     };
-    // window.commoditiesPackaging = this;
   }
 
   componentDidMount() {
@@ -562,6 +563,43 @@ class commoditiesPackaging extends React.Component{
     }
   }
 
+  // 线下支付
+  offLinePay() {
+    const {offLinePayLoading, unionId} = this.state;
+    const offLinePayParcelOrder = () => {
+      const showLoading = Is => this.setState({offLinePayLoading: Is});
+      showLoading(true);
+      // BC线下支付
+      const data = {unionId};
+      this.ajax.post('/parcelManagement/offLinePayParcelOrder', data).then(r => {
+        const {status, msg} = r.data;
+        if (status === 10000) {
+          message.success(msg);
+          this.setState({showPayQRCode: false}, () => {
+            this.getParcelProductListByUnionId();
+          });
+        }
+        showLoading(false);
+        r.showError();
+      }).catch(r => {
+        showLoading(false);
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    };
+    // 打开新确认弹窗
+    Modal.confirm({
+      title: '线下支付',
+      okButtonProps: {
+        loading: offLinePayLoading
+      },
+      onOk: offLinePayParcelOrder,
+      content: <div>
+        确认是否线下支付?
+      </div>
+    })
+  }
+
   // 生成二维码
   createQRCode(Obj) {
     Obj.innerHTML = '';
@@ -584,7 +622,7 @@ class commoditiesPackaging extends React.Component{
     this.setState = () => null
   }
   render() {
-    const { isFocusOnWindow, loadingShow, nickname, boxesList, selectBox, isOnFocusInput, boxesIsLoading, orderMoney, productNum, showPayQRCode, needToPay, } = this.state;
+    const { isFocusOnWindow, loadingShow, nickname, boxesList, selectBox, isOnFocusInput, boxesIsLoading, orderMoney, productNum, showPayQRCode, needToPay} = this.state;
     return (
       <div className="commoditiesPackaging ">
         {/*这里存放公共信息, 用于表示登录用户, 以及退出登录*/}
@@ -611,7 +649,12 @@ class commoditiesPackaging extends React.Component{
             { needToPay &&
               <div>
                 <div id="showQRCode"/>
-                <p>仍有订单未支付, 请先支付</p>
+                <div>仍有订单未支付, 请先支付</div>
+                <div>或选择
+                  <Button type="primary"
+                          onClick={this.offLinePay.bind(this)}
+                  >线下支付</Button>
+                </div>
               </div>
             }
             {/*第一层遍历, 取出所有箱子信息, 将箱号与箱内数据取出并使用*/}
@@ -739,10 +782,11 @@ class commoditiesPackaging extends React.Component{
         </div>
 
         <Modal title="扫码支付"
+               wrapClassName="QECodePayModal"
                visible={showPayQRCode}
                onOk={()=>this.setState({showPayQRCode: false})}
                onCancel={()=>this.setState({showPayQRCode: false})}
-               forceRender={true}
+               forceRender
                bodyStyle={{textAlign: `center`,}}
         >
           <div className="QRCodeLine">
@@ -750,8 +794,14 @@ class commoditiesPackaging extends React.Component{
                  style={{width:200,height:200,display:`inline-block`}}
             />
           </div>
-          <div className="infoLine">
-            <p style={{fontSize: `18px`}}>订单已生成, 请扫码支付</p>
+          <div style={{fontSize: `18px`}}
+               className="infoLine">
+            <div>订单已生成, 请扫码支付</div>
+            <div>或选择
+              <Button type="primary"
+                      onClick={this.offLinePay.bind(this)}
+              >线下支付</Button>
+            </div>
           </div>
         </Modal>
 
