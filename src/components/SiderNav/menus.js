@@ -362,7 +362,6 @@ const menus = [
     id: 99,
     icon: 'setting',
     key: '/foundation-setup',
-    testType: 'localTest',
     subs: [
       {
         title: '汇率',
