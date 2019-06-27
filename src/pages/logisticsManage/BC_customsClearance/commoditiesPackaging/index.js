@@ -83,7 +83,7 @@ class commoditiesPackaging extends React.Component{
             this.setState({boxesList:r.data,selectBox:selectBox === '' ? r.data[0].parcelNo : selectBox})
           } else if (r.status === 10001) {
             // message.warn(r.msg);
-            this.setState({boxesList: [],selectBox: ''});
+            this.setState({boxesList: [],selectBox: '',needToPay: false});
           } else if (r.status === 9999) {
             message.warn(r.msg);
             this.setState({boxesList: [],selectBox: '',needToPay: true},()=>{
@@ -330,6 +330,7 @@ class commoditiesPackaging extends React.Component{
               // message.success(`识别为条形码: ${inputValue}`);
               this.entryProductInfo(inputValue);
             }
+            console.log(inputValue);
             clearData();
           }
         }
@@ -646,7 +647,7 @@ class commoditiesPackaging extends React.Component{
 
           {/*这里用作箱子信息存放*/}
           <div className="boxes" style={{opacity:(boxesIsLoading ? .3 : 1)}}>
-            { needToPay &&
+            {needToPay &&
               <div>
                 <div id="showQRCode"/>
                 <div>仍有订单未支付, 请先支付</div>
