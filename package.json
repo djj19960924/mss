@@ -130,6 +130,12 @@
           "legacy": true
         }
       ],
+      ["import",
+        {
+          "libraryName": "antd",
+          "style": true
+        }
+      ],
       [
         "@babel/plugin-proposal-class-properties",
         {
@@ -140,5 +146,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.12.0"
   }
 }

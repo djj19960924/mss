@@ -78,6 +78,7 @@ class LogisticsToBePaid extends React.Component {
           payType: null
         });
         if (res.data.status === 10000) {
+          message.success(res.data.msg);
           this.getToBePaid();
         }
         res.showError();
