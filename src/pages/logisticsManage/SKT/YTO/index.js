@@ -90,7 +90,7 @@ class SKTYto extends React.Component {
         <div style={hidden}><div style={style}>商品名称: </div>{
           (Object.prototype.toString.call(record.sktProductVoList) === '[object Array]')
           && record.sktProductVoList.map((item, index) => (
-            <span> {index === 0 ? '' : '  '}({index + 1}) {item.productName} </span>
+            <span key={index}> {index === 0 ? '' : '  '}({index + 1}) {item.productName} </span>
           ))
         }</div>
         <div style={hidden}><div style={style}>收件人姓名: </div>{record.recipientsName}</div>
@@ -99,7 +99,7 @@ class SKTYto extends React.Component {
         <div style={hidden}><div style={style}>收件人城市: </div>{record.recipientsCity}</div>
         <div style={hidden}><div style={style}>收件人区: </div>{record.recipientsDistrict}</div>
         <div style={hidden}><div style={style}>收件人详细地址: </div>{record.recipientsAddress}</div>
-        <div style={hidden}><div style={style}>用户微信昵称: </div>{record.wechatName}</div>
+        <div style={hidden}><div style={style}>用户微信昵称: </div>{record.nickname}</div>
         <div style={hidden}><div style={style}>数量: </div>{record.productNum}</div>
         <div style={hidden}><div style={style}>包裹创建时间: </div>{
           record.createTime
