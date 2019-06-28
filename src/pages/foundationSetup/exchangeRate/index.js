@@ -82,8 +82,8 @@ class ExchangeRate extends React.Component {
                       rateId: record.id
                     })
                   }}
-                  disabled={record.id === 1 || !this.allow(104)}
-                  title={record.id === 1 ? '人民币汇率恒定为1' : (!this.allow(104) ? '无该操作权限' : null)}
+                  disabled={record.currencyId === 0 || !this.allow(104)}
+                  title={record.currencyId === 0 ? '人民币汇率恒定为1' : (!this.allow(104) ? '无该操作权限' : null)}
           >编辑</Button>
         </div>
     }];
