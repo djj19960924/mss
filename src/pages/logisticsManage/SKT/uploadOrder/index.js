@@ -45,7 +45,7 @@ class SKTUploadOrder extends React.Component {
     if (fetchNum < tableDataList.length) {
       const data = {
         productCode: tableDataList[fetchNum].productCode,
-        parcelNo: tableDataList[fetchNum].parcelNo
+        parcelCode: tableDataList[fetchNum].parcelCode
       };
       this.ajax.post('/backend/bcManagement/setSktProductIsBc', data).then(r => {
         const {status} = r.data;
@@ -252,7 +252,7 @@ class SKTUploadOrder extends React.Component {
         {/*导出用表单*/}
         <Table id="tableList"
                columns={[
-                 {title: '客户内部单号', dataIndex: 'parcelNo', key: 'parcelNo', width: 140},
+                 {title: '客户内部单号', dataIndex: 'parcelCode', key: 'parcelCode', width: 140},
                  {title: '圆通快递单号', dataIndex: 'mailNo', key: 'mailNo', width: 140},
                  {title: '身份证号码', dataIndex: 'receiveCard', key: 'receiveCard', width: 140},
                  {title: '收件人', dataIndex: 'recipientsName', key: 'recipientsName', width: 140},
