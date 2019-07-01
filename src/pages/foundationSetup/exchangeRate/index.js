@@ -70,20 +70,22 @@ class ExchangeRate extends React.Component {
       {title: "使用币种",dataIndex: "currency",key: "currency",width: 120},
       {title: "兑换币种",dataIndex: "rateCurrency",key: "rateCurrency",width: 120},
       {title: "汇率",dataIndex: "rate",key: "rate",width: 100},
-      {title: "编辑",dataIndex: "id",key: "id",width: 100,
+      {title: "编辑",dataIndex: "currencyId",key: "currencyId",width: 100,
         render: (text, record) => <div>
           <Button type="primary"
                   onClick={() => {
-                    this.setState({
+                    if (text !== 3) this.setState({
                       editRateVisible: true,
                       currency: record.currency,
-                      rateCurrency: record.rateCurrency,
+                      rateCurrency: text,
                       rate: record.rate,
                       rateId: record.id
                     })
                   }}
-                  disabled={record.currencyId === 0 || !this.allow(104)}
-                  title={record.currencyId === 0 ? '人民币汇率恒定为1' : (!this.allow(104) ? '无该操作权限' : null)}
+                  // 当 currencyId 为 3 时, 表示人民币汇率
+                  // 不可修改同汇率比例, 恒定为1
+                  disabled={text === 3 || !this.allow(104)}
+                  title={text === 3 ? '人民币汇率恒定为1' : (!this.allow(104) ? '无该操作权限' : null)}
           >编辑</Button>
         </div>
     }];
