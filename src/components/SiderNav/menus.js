@@ -1,3 +1,5 @@
+import rebateCountryInfo from "../ContentMain";
+
 const menus = [
   {
     title: '首页',
@@ -298,6 +300,15 @@ const menus = [
         key: '/rebate-manage/update-QR-code',
         components: [
           {name: 'updateQRCode', path: '/rebate-manage/update-QR-code'}
+        ]
+      },
+      {
+        title: '设置说明文案',
+        id: 126,
+        icon: 'edit',
+        key: '/rebate-manage/rebate-country-info',
+        components: [
+          {name: 'rebateCountryInfo', path: '/rebate-manage/rebate-country-info'}
         ]
       },
     ]
