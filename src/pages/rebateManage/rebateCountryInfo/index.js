@@ -10,16 +10,45 @@ class rebateCountryInfo extends React.Component {
     this.state = {
       nationName: '韩国',
       copyInfo: '',
-      buttonIsLoading: false
+      allLoading: false,
     }
+    window.test = this;
   }
 
   allow = this.props.appStore.getAllow.bind(this);
+  componentDidMount() {
+    this.selectCopyWriterByNationName();
+  }
 
+  // 根据国家名称查询文案
+  selectCopyWriterByNationName() {
+    const {nationName} = this.state;
+    const showLoading = Is => this.setState({allLoading: Is});
+    showLoading(true);
+    const data = {nationName};
+    this.ajax.post('/mallCopywriter/selectCopyWriterByNationName', data).then(r => {
+      const {status, data} = r.data;
+      if (status === 10000) {
+        this.setState({copyInfo: data.copyInfo})
+      }
+      showLoading(false);
+      r.showError();
+    }).catch(r => {
+      showLoading(false);
+      console.error(r);
+      this.ajax.isReturnLogin(r, this);
+    });
+  }
+
+  changeNationName(nationName) {
+    this.setState({nationName}, () => {
+      this.selectCopyWriterByNationName();
+    })
+  }
   // 上传编辑文案
   insertOrUpdateMallCopywriter() {
     const {nationName, copyInfo} = this.state;
-    const showLoading = Is => this.setState({buttonIsLoading: Is});
+    const showLoading = Is => this.setState({allLoading: Is});
     showLoading(true);
     const data = {nationName, copyInfo};
     this.ajax.post('/mallCopywriter/insertOrUpdateMallCopywriter', data).then(r => {
@@ -42,7 +71,7 @@ class rebateCountryInfo extends React.Component {
 
   render() {
     const {Option} = Select;
-    const {nationName, copyInfo, buttonIsLoading} = this.state;
+    const {nationName, copyInfo, allLoading} = this.state;
     const {TextArea} = Input;
     return (
       <div className="rebateCountryInfo">
@@ -55,7 +84,8 @@ class rebateCountryInfo extends React.Component {
           <Select className="selectCountry"
                   placeholder="请选择国家"
                   value={nationName}
-                  onChange={nationName => this.setState({nationName})}
+                  loading={allLoading}
+                  onChange={this.changeNationName.bind(this)}
           >
             <Option value="韩国">韩国</Option>
             <Option value="日本">日本</Option>
@@ -67,10 +97,11 @@ class rebateCountryInfo extends React.Component {
                     value={copyInfo}
                     onChange={e => this.setState({copyInfo: e.target.value})}
                     autosize={{minRows: 5}}
+                    disabled={allLoading}
           />
           <Button className="submit"
                   type="primary"
-                  loading={buttonIsLoading}
+                  loading={allLoading}
                   onClick={this.submit.bind(this)}>提交更改</Button>
         </div>
       </div>
