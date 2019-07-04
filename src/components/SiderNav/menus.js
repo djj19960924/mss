@@ -22,7 +22,7 @@ const menus = [
         id: 15,
         icon: 'lock',
         key: '/users/permissions',
-        // testType: 'serverTest',
+        testType: 'serverTest',
         components: [
           {name: 'permissions', path: '/users/permissions'}
         ]
