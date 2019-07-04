@@ -126,8 +126,8 @@ class SKTYto extends React.Component {
           Modal.error({
             title: '箱子上传失败列表',
             content: <div>
-              {data.FailList.map(item => (
-                <div>{item}</div>
+              {data.FailList.map((item,index) => (
+                <div key={index}>{item}</div>
               ))}
             </div>,
           });
