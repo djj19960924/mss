@@ -1,19 +1,17 @@
-//
-// ┏━━━━━━━━━━ 方法信息 ━━━━━━━━━━┓
-// ┃由于权限接口所需 这里必须使用原生ajax方法        ┃
-// ┃出于使用需求 这里将改造原生ajax方法             ┃
-// ┃以下代码将被注入至 React.Component.prototype   ┃
-// ┗━━━━━━━━━━━━━━━━━━━━━━━━━┛
-//
-//
-// 使用示例:
-// this.ajax.post('', data).then(r => {
-//   r.showError();
-// }).catch(r => {
-//   console.error(r);
-//   this.ajax.isReturnLogin(r, this);
-// });
-//
+/*
+  ┏━━━━━━━━━━ 方法信息 ━━━━━━━━━━┓
+  ┃由于权限接口所需 这里必须使用原生ajax方法        ┃
+  ┃出于使用需求 这里将改造原生ajax方法             ┃
+  ┃以下代码将被注入至 React.Component.prototype   ┃
+  ┗━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ 使用示例:
+  this.ajax.post('', data).then(r => {
+    r.showError();
+  }).catch(r => {
+    console.error(r);
+    this.ajax.isReturnLogin(r, this);
+  });
+*/
 import { message } from 'antd';
 
 class Ajax {
