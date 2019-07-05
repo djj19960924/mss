@@ -16,53 +16,38 @@ class customerLogin extends React.Component{
   }
 
   componentDidMount() {
-    let onKeyDownTime = null, onKeyDownKey = null, lastInputTime = null, inputValue = ``;
-    window.onkeydown = (e) => {
+    let lastInputTime = null, inputValue = ``;
+    let doTimeOut = null;
+    const showLoading = Is => this.setState({loadingShow: Is});
+    const rule = new RegExp('^unionId:');
+    window.onkeydown = e => {
       if (allowedKeys.includes(e.key) || e.key === `Enter`) {
         // console.log(`按键值:"${e.key}", 按键时间:${new Date().getTime()}`);
-        onKeyDownTime = new Date().getTime();
-        onKeyDownKey = e.key;
-      }
-    };
-    window.onkeyup = (e) => {
-      // 清除方法
-      let clearData = () => {
-        inputValue = ``;
-        lastInputTime = null;
-        this.setState({loadingShow:false});
-      };
-      // 判断
-      if (allowedKeys.includes(e.key)) {
-        // console.warn(`按键值:"${e.key}", 起键时间:${new Date().getTime()}`);
-        if ((new Date().getTime() - onKeyDownTime) <= 10) {
-          // 按键: onkeydown, 起键: onkeyup
-          // 这里做双重保障: 1.判断按键与起键时间差, 只有扫码才能在3ms内进行按键操作
-          // 2.判断按键与起键的值, 在人手动使用键盘乱按的时候, 是有可能造成输入延迟, 导致某次起键动作被延迟
-          // 从而导致按键与起键时间高度重合, 所有根据按键与起键的值(e.key)再做进一步的校验
-          if (lastInputTime === null || (new Date().getTime() - lastInputTime) <= 50)
-          if (onKeyDownKey === e.key) {
-            this.setState({loadingShow:true});
-            inputValue += e.key;
-            lastInputTime = new Date().getTime();
-          } else {
-            // 输入间隔过大时, 删除判断时间以作保险
-            lastInputTime = null;
-            inputValue = null;
-          }
-        }
-      } else if (e.key === `Enter`) {
-        // 由于扫码器最终一定会添加一个Enter以及一个下箭头按键作为结尾
-        // 所以这里不处理下箭头, 直接以Enter作为输入结束符号,
-        // 所有复位的功能都做在Enter中, 为保险起见, 也可作为公共结束事件,绑定在fetch内部的各个结果中
-        let rule = new RegExp('^unionId:');
-        if ((new Date().getTime() - onKeyDownTime) <= 10) {
+        // onKeyDownTime = new Date().getTime();
+        // 这里添加 timeout 说明:
+        // 每次按键结束以后都会设置一个清除 inputValue 的 setTimeout
+        // 目的为了防止 非短时间输入(扫码器扫码)进入识别状态
+        // 当输入速度小于 50 毫秒时, 会清除上一个 setTimeout
+        // 直到最终输入值为 Enter 时, 开始结算内容, 判断字符串并进行对应的操作
+        clearTimeout(doTimeOut);
+        if (e.key !== `Enter`) inputValue += e.key;
+        lastInputTime = new Date().getTime();
+        doTimeOut = setTimeout(() => {
           // console.log(inputValue);
-          // console.log(inputValue.split('&'));
-          if (rule.test(inputValue) && onKeyDownKey === e.key && (new Date().getTime() - lastInputTime) <= 50) {
-            // 对 value 赋值, 并将各项数据复位
-            let unionId = inputValue.split('&')[0].split(`unionId:`)[1];
-            let nickname = decodeURIComponent(inputValue.split('&')[1].split(`nickname:`)[1]);
-            clearData();
+          showLoading(false);
+          // 当文字少于 5 时不予提示, 防止用户按到键盘产生误报
+          if (inputValue.length > 5 && e.key !== `Enter`) {
+            message.error('扫码识别失败, 请重新扫描');
+          }
+          inputValue = ``;
+          lastInputTime = null;
+        }, 50);
+        if (e.key === `Enter`) {
+          console.log(inputValue);
+          // 成功通过开头为 "unionId:" 的校验
+          if (rule.test(inputValue)) {
+            const unionId = inputValue.split('&')[0].split(`unionId:`)[1];
+            const nickname = decodeURIComponent(inputValue.split('&')[1].split(`nickname:`)[1]);
             if (unionId.length >= 28 && unionId.length <= 32) {
               // 如果长度也符合, 那么则可以模糊判定所获取到的信息为 unionId
               // 当符合条件的时候, 则可以进行接口操作, 根据 unionId 获取该用户下所有转运箱号资料
@@ -73,9 +58,16 @@ class customerLogin extends React.Component{
             }
           } else {
             message.error(`二维码格式错误, 请确保用户登录二维码正确, 并重试`);
-            clearData()
           }
         }
+      }
+    };
+    window.onkeyup = e => {
+      // 这里判断如果起键与上一次按键时间相隔小于 50 毫秒, 则开启 loading, 认为已成功扫码
+      if (new Date().getTime() - lastInputTime < 50) {
+        // console.warn(`按键值:"${e.key}", 起键时间:${new Date().getTime()}`);
+        // console.log(inputValue);
+        showLoading(true);
       }
     };
     window.onblur = () => {
@@ -134,7 +126,7 @@ class customerLogin extends React.Component{
         {loadingShow &&
           // 遮罩层, 用于显示加载画面
           <div className="loadingShow">
-            <p className="loadingTxt"><Icon type="loading" /> 获取用户信息中, 请稍后...</p>
+            <p className="loadingTxt"><Icon type="loading" /> 加载中, 请稍后...</p>
           </div>
         }
       </div>
