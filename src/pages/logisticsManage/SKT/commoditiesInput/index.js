@@ -89,9 +89,13 @@ class SKTCommoditiesInput extends React.Component {
             // 商品条码判断, 调取接口添加商品进当前箱子
             // message.success(`识别为条形码: ${inputValue}`);
             if (isSelectBox) {
-              this.setState({productCode: inputValue},() => {
-                this.entryProduct();
-              });
+              if (inputValue) {
+                this.setState({productCode: inputValue},() => {
+                  this.entryProduct();
+                });
+              } else {
+                message.error('条码扫描失败, 请重试')
+              }
             } else {
               message.error('请先录入箱号');
             }

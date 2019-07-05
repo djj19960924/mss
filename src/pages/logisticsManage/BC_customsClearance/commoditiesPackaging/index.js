@@ -315,7 +315,11 @@ class commoditiesPackaging extends React.Component{
           } else {
             // 商品条码判断, 调取接口添加商品进当前箱子
             // message.success(`识别为条形码: ${inputValue}`);
-            this.entryProductInfo(inputValue);
+            if (inputValue) {
+              this.entryProductInfo(inputValue);
+            } else {
+              message.error('条码扫描失败, 请重试')
+            }
           }
         }
       }
