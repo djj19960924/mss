@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, DatePicker, Form, Icon, Input, message, Select, Radio, notification, Badge, Modal} from 'antd';
+import {Button, DatePicker, Form, Icon, Input, InputNumber, message, Select, Radio, notification, Badge, Modal} from 'antd';
 import moment from 'moment';
 import ImageViewer from '@components/imageViewer/main';
 import {inject, observer} from 'mobx-react/index';
@@ -585,8 +585,7 @@ class awaitingExamine extends React.Component {
                   ],
                   initialValue: defaultExchangeRate
                 })(
-                  <Input style={{width: 100, marginLeft: 10}}
-                         type="number"
+                  <InputNumber style={{width: 100, marginLeft: 10}}
                          id="exchangeRate"
                          placeholder="请输入汇率"
                     // 修正汇率触发
