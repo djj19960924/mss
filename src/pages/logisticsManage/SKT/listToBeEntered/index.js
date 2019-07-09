@@ -24,7 +24,6 @@ class SKTListToBeEntered extends React.Component {
   }
   componentDidMount() {
     this.getAllSpeedexpressShop();
-    this.queryIsEntrySpeedexpress();
   }
   // 获取速跨通商店列表
   getAllSpeedexpressShop() {
@@ -36,7 +35,9 @@ class SKTListToBeEntered extends React.Component {
           shopList.push(<Option key={v.id} value={v.id}>{v.shopName}</Option>);
           shopObj[v.id] = v.shopName;
         }
-        this.setState({shopObj});
+        this.setState({shopObj},() => {
+          this.queryIsEntrySpeedexpress();
+        });
       }
       r.showError();
     }).catch(r => {
