@@ -35,7 +35,6 @@ class LogisticsToBePaid extends React.Component {
 
   componentDidMount() {
     this.getToBePaid();
-    console.log(this)
   }
 
   getToBePaid(pageNum = this.state.pageNum, pageSize = this.state.pageSize) {
