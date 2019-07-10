@@ -1,8 +1,11 @@
 import React from "react";
-import "./index.less";
 import {Table, message, Pagination,} from "antd";
 import moment from "moment";
+import { withRouter } from 'react-router-dom';
 
+import './index.less';
+
+@withRouter
 class LogisticsPaymented extends React.Component {
   constructor(props) {
     super(props);
@@ -19,7 +22,7 @@ class LogisticsPaymented extends React.Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getPaymented();
   }
 
