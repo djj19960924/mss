@@ -24,7 +24,9 @@ class logs extends React.Component{
               <div className="dividingLine shot"/>
               {item.main.map((mainItem, mainIndex) => (
                 <p key={mainIndex}
-                   style={item.color[`${mainIndex}`] ?
+                   // 1. 判断是否包含 color 对象
+                   // 2. 判断是否包含该属性
+                   style={!!item.color && item.color[`${mainIndex}`] ?
                      {color: item.color[`${mainIndex}`]} : null}
                 >{mainItem}</p>
               ))}
