@@ -11,6 +11,16 @@ const menus = [
     ]
   },
   {
+    title: '日志',
+    id: 24,
+    icon: 'ordered-list',
+    key: '/logs',
+    testType: 'localTest',
+    components: [
+      {name: 'logs', path: '/logs'}
+    ]
+  },
+  {
     title: '用户管理',
     id: 1,
     icon: 'usergroup-add',

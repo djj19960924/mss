@@ -10,6 +10,9 @@ import page404 from '@pages/system/page404/'
 // 开发人员专用调试
 import importExcel from '@pages/developerPages/importExcel/';
 
+// 日志页面
+import logs from '@pages/system/logs/';
+
 // 权限管理
   // 角色管理
   import roles from '@pages/users/roles/';
@@ -141,7 +144,8 @@ const componentsList = {
   SKTCommoditiesInput,
   SKTUploadOrder,
   SKTYto,
-  rebateCountryInfo
+  rebateCountryInfo,
+  logs
 };
 
 @withRouter
