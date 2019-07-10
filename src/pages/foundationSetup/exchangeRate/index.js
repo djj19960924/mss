@@ -25,7 +25,7 @@ class ExchangeRate extends React.Component {
     };
   }
   allow = this.props.appStore.getAllow.bind(this);
-  componentWillMount() {
+  componentDidMount() {
     this.getRateList();
   }
   // 获取汇率列表
