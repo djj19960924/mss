@@ -67,21 +67,21 @@ class Ajax {
   }
 
   // post方法
-  post(path, data, headers, originType) {
+  post(path, data, headers, originType, origin) {
     let request = new XMLHttpRequest();
     // 开启 request 对象, 指定 post 方法, 输入 url
-    request.open('POST', `${this.origin}${path}`, true);
+    request.open('POST', `${origin ? origin : this.origin}${path}`, true);
     // 注入公共配置
     this.injectMethod(request, headers);
     return this.promise(request, data, originType);
   }
 
   // get方法
-  get(path, string, headers) {
+  get(path, string, headers, origin) {
     let request = new XMLHttpRequest();
     const queryString = string ? `?${string}` : '';
     // 开启 request 对象, 指定 get 方法, 输入 url
-    request.open('GET', `${this.origin}${path}${queryString}`, true);
+    request.open('GET', `${origin ? origin : this.origin}${path}${queryString}`, true);
     // 注入公共配置
     this.injectMethod(request, headers, 'get');
     return this.promise(request);
