@@ -48,45 +48,53 @@ class appointmentTeamManage extends React.Component {
   // 搜索预约信息
   getAppointmentByStatus() {
     const { appointmentStatus, pageNum, pageSize } = this.state;
-    this.setState({tableIsLoading: true});
+    const showLoading = Is => this.setState({tableIsLoading: Is});
+    showLoading(true);
     if (appointmentStatus === 4) {
       this.ajax.post('/AppointmentMangement/getMassNoByMallName').then(r => {
-        if (r.data.status === 10000) {
-          const data = r.data.data;
-          let dataObj = {};
-          for (let n in data) dataObj[`input_${n}`] = data[n].massNo;
-          this.setState({
-            dataList: data,
-            inputValue: dataObj,
-          })
+        const {status, data} = r.data;
+        const dataObj = {
+          dataList: [],
+          inputValue: {}
+        };
+        if (status === 10000) {
+          dataObj.dataList = data;
+          const obj = {};
+          for (let n in data) obj[`input_${n}`] = data[n].massNo;
+          dataObj.inputValue = obj;
         }
-        this.setState({tableIsLoading: false});
+        this.setState(dataObj);
+        showLoading(false);
         r.showError();
       }).catch(r => {
-        this.setState({tableIsLoading: false});
+        showLoading(false);
         this.ajax.isReturnLogin(r,this);
       });
     } else {
-      const data = { status: appointmentStatus, pageNum: pageNum, pageSize: pageSize };
+      const data = {status: appointmentStatus, pageNum, pageSize};
       this.ajax.post('/AppointmentMangement/getAppointmentByStatus',data).then(r => {
-        if (r.data.status === 10000) {
-          const data = r.data.data;
-          let dataObj = {};
+        const {status, data} = r.data;
+        const dataObj = {
+          inputValue: {},
+          dataList: [],
+          pageSizeOptions: [`50`,`100`,`200`, `300`],
+          pageTotal: 0,
+          selectedList: [],
+          selectedIds: []
+        };
+        if (status === 10000) {
+          let obj = {};
           if (!!data.list) if (!!data.list[0].massNo)
-            for (let n in data.list) dataObj[`input_${n}`] = data.list[n].massNo;
-          this.setState({
-            inputValue: dataObj,
-            dataList: data.list,
-            pageSizeOptions: [`50`,`100`,`200`, `${data.total > 300 ? data.total : 300}`],
-            pageTotal: data.total,
-            selectedList: [],
-            selectedIds: []
-          })
+            for (let n in data.list) obj[`input_${n}`] = data.list[n].massNo;
+          dataObj.inputValue = obj;
+          dataObj.dataList = data.list;
+          dataObj.pageSizeOptions = [`50`,`100`,`200`, `${data.total > 300 ? data.total : 300}`];
         }
-        this.setState({tableIsLoading: false});
+        this.setState(dataObj);
+        showLoading(false);
         r.showError();
       }).catch(r => {
-        this.setState({tableIsLoading: false});
+        showLoading(false);
         this.ajax.isReturnLogin(r,this);
       });
     }
@@ -161,7 +169,7 @@ class appointmentTeamManage extends React.Component {
   }
   // 换页
   changePage(pageNum,pageSize) {
-    this.setState({pageNum:pageNum,pageSize:pageSize},()=>{
+    this.setState({pageNum,pageSize},()=>{
       this.getAppointmentByStatus();
     })
   }
