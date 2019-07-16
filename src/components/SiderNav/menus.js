@@ -32,6 +32,9 @@ const menus = [
         id: 15,
         icon: 'lock',
         key: '/users/permissions',
+        // 这里请注意, 由于权限管理页面涉及系统开发内容
+        // 故该页面永久设置 testType: 'serverTest', 不得更改
+        // 否则造成线上错误将难以修正
         testType: 'serverTest',
         components: [
           {name: 'permissions', path: '/users/permissions'}

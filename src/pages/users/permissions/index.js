@@ -22,8 +22,7 @@ class permissions extends React.Component {
       currentInfo: {},
       parentIdObject: {},
       //所有父级菜单列表
-      parentIdArr:[],
-      orginUrl: 'backend.maishoumiji.com'
+      parentIdArr:[]
     };
   }
 
@@ -107,21 +106,6 @@ class permissions extends React.Component {
         this.ajax.post('/permission/deletePermission',{menuId: menuId}).then(r => {
           if (r.data.status === 10000) {
             message.success(r.data.msg);
-            // ----------- 分割线 -----------
-            // 测试联动修改正式环境数据
-            this.ajax.post('/permission/deletePermission', {menuId: menuId}, undefined, undefined, this.state.orginUrl).then(r => {
-              if (r.data.status === 10000) {
-                message.success(`正式环境操作成功!`);
-                message.success(r.data.msg);
-              } else {
-                message.error(`正式环境操作失败! 请注意正式环境需同步相关数据!`)
-              }
-              r.showError();
-            }).catch(r => {
-              console.error(r);
-              this.ajax.isReturnLogin(r, this);
-            });
-            // ----------- 分割线 -----------
             this.getPermissionList();
           }
           r.showError();
@@ -137,21 +121,6 @@ class permissions extends React.Component {
     this.ajax.post(`/permission/${type}`,dataObj).then(r => {
       if(r.data.status === 10000) {
         message.success(r.data.msg);
-        // ----------- 分割线 -----------
-        // 测试联动修改正式环境数据
-        this.ajax.post(`/permission/${type}`, dataObj, undefined, undefined, this.state.orginUrl).then(r => {
-          if (r.data.status === 10000) {
-            message.success(`正式环境操作成功!`);
-            message.success(r.data.msg);
-          } else {
-            message.error(`正式环境操作失败! 请注意正式环境需同步相关数据!`)
-          }
-          r.showError();
-        }).catch(r => {
-          console.error(r);
-          this.ajax.isReturnLogin(r, this);
-        });
-        // ----------- 分割线 -----------
         this.setState({showDetails: false});
         this.getPermissionList();
       }
