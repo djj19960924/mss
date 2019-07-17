@@ -21,12 +21,16 @@ class MoneyCalculation extends React.Component {
     // 这里通过该生命周期拦截父组件渲染动作, 以获取实时数据
     const { ticketDate, brandListOrigin, hasChange, } = this.props;
     const { mainDataList, } = this.state;
+    //
+    // 这里注意! 由于逻辑改变, 导致变更日期是列表一定会改变, 并且列表不固定
+    // 所以这里将注释掉, 并且不影响现有功能
+    //
     // 当日期改变后触发
-    if (prevProps.ticketDate !== ticketDate) {
-      for (let n in mainDataList) {
-        this.getRebateRate(mainDataList[n].brand,n)
-      }
-    }
+    // if (prevProps.ticketDate !== ticketDate) {
+    //   for (let n in mainDataList) {
+    //     this.getRebateRate(mainDataList[n].brand,n)
+    //   }
+    // }
     // 当 mainDataList 改变时触发
     if (prevState.mainDataList !== mainDataList) {
       // 这里需要侦测是否改变了品牌, 由此来更新该品牌该日期返点率
@@ -39,13 +43,18 @@ class MoneyCalculation extends React.Component {
       }
     }
     // 当品牌列表改变后触发
+    // 强制清空已选择的品牌(!暂时强制清空, 不良操作造成数据混乱)
     if (prevProps.brandListOrigin !== brandListOrigin) {
       let dataList = [];
+      let n = 0;
       for (let i of brandListOrigin) {
         // 这里的value会作为选择框的搜索字段, 所以需求同时可以根据Id或者Name查询, 则在value值中同时插入Id和Name
         // 但是注意最终传值时不要取value
-        dataList.push(<Option key={i.brandId} name={i.brandName} style={{testAlign: `center`}} title={i.brandName}
-                              value={i.brandId + i.brandName}>{i.brandName}</Option>)
+        // console.log(n);
+        dataList.push(<Option name={i.brandName} key={n}
+                              style={{textAlign: `center`}} title={i.brandName}
+                              value={i.brandId + i.brandName}>{i.brandName}</Option>);
+        n++;
       }
       this.getRebateRate(brandListOrigin[0].brandName,`default`);
       this.setState({

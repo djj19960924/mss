@@ -171,19 +171,20 @@ class awaitingExamine extends React.Component {
       ticketIsLoading: true
     },() => {
       this.getBrandListBymallName();
+      this.getTicketList();
     })
   }
 
   // 查询商场品牌列表
   getBrandListBymallName() {
-    const {currentShop} = this.state;
-    this.ajax.post('/brand/getBrandListBymallName', {mallName: currentShop}).then(r => {
+    const {currentShop, ticketDate} = this.state;
+    const data = {mallName: currentShop, createTime: ticketDate};
+    this.ajax.post('/brand/getBrandListBymallName', data).then(r => {
       if (r.data.status === 10000) {
         const {data} = r.data;
         this.setState({
           brandListOrigin: data,
         });
-        this.getTicketList();
       }
       r.showError();
     }).catch(r => {
@@ -233,6 +234,8 @@ class awaitingExamine extends React.Component {
   changeTicketDate(date) {
     this.setState({
       ticketDate: moment(date).format('YYYY-MM-DD')
+    }, () => {
+      this.getBrandListBymallName();
     });
   }
 
