@@ -34,8 +34,8 @@ class BCUploadOrder extends React.Component {
   // 导出推单模板excel
   exportExcel () {
     this.setState({isUpload: true});
-    let elt = document.getElementById('tableList');
-    let wb = XLSX.utils.table_to_book(elt, {raw: true, sheet: "Sheet JS"});
+    const elt = document.getElementById('tableList');
+    const wb = XLSX.utils.table_to_book(elt, {raw: true, sheet: "Sheet JS"});
     XLSX.writeFile(wb, `BC推单表 ${moment(new Date()).format('YYYYMMDD-HHmmss')}.xlsx`);
     this.setState({newModal: false});
     this.setParcelProductIsBC();
@@ -257,6 +257,44 @@ class BCUploadOrder extends React.Component {
         </Modal>
         {/*导出用表单*/}
         <Table id="tableList"
+               columns={[
+                 {title: '客户内部单号', dataIndex: 'parcelNo', key: 'parcelNo', width: 140},
+                 {title: '圆通快递单号', dataIndex: 'mailNo', key: 'mailNo', width: 140},
+                 {title: '身份证号码', dataIndex: 'receiveCard', key: 'receiveCard', width: 140},
+                 {title: '收件人', dataIndex: 'recipientsName', key: 'recipientsName', width: 140},
+                 {title: '收件电话', dataIndex: 'recipientsPhone', key: 'recipientsPhone', width: 140},
+                 {title: '省份', dataIndex: 'recipientsProvince', key: 'recipientsProvince', width: 140},
+                 {title: '城市', dataIndex: 'recipientsCity', key: 'recipientsCity', width: 140},
+                 {title: '县区', dataIndex: 'recipientsDistrict', key: 'recipientsDistrict', width: 140},
+                 {title: '收件地址', dataIndex: 'recipientsAddress', key: 'recipientsAddress', width: 140},
+                 {title: '下单时间', dataIndex: 'createTime', key: 'createTime', width: 140,
+                   render: (text, record) => (
+                     <div>{text ? moment(text).format(`YYYY-MM-DD HH:mm:ss`) : null}</div>
+                   ),
+                 },
+                 {title: '商品货号', dataIndex: 'productCode', key: 'productCode', width: 140,
+                   render: (text, record) => (
+                     <div>{`JD${text}`}</div>
+                   ),
+                 },
+                 {title: '商品名称', dataIndex: 'productName', key: 'productName', width: 140},
+                 {title: '数量', dataIndex: 'productNum', key: 'productNum', width: 140},
+                 {title: '成本价', dataIndex: 'costPrice', key: 'costPrice', width: 140},
+                 {title: '库存地', dataIndex: 'purchaseArea', key: 'purchaseArea', width: 140},
+                 {title: '商品规格', dataIndex: 'specificationType', key: 'specificationType', width: 140},
+                 {title: '品牌', dataIndex: 'brand', key: 'brand', width: 140},
+                 {title: '净重', dataIndex: 'netWeight', key: 'netWeight', width: 140},
+                 // {title: '毛重', dataIndex: 'grossWeight', key: 'grossWeight', width: 140},
+                 {title: '毛重', dataIndex: 'parcelWeight', key: 'parcelWeight', width: 140},
+                 {title: '原产国', dataIndex: 'purchaseArea', key: 'purchaseArea2', width: 140},
+               ]}
+               dataSource={tableDataList}
+               style={{display: 'none'}}
+               pagination={false}
+               rowKey={(record, index) => `id_${index}`}
+        />
+        {/*导出用表单 NEW*/}
+        <Table id="tableList_new"
                columns={[
                  {title: '客户内部单号', dataIndex: 'parcelNo', key: 'parcelNo', width: 140},
                  {title: '圆通快递单号', dataIndex: 'mailNo', key: 'mailNo', width: 140},

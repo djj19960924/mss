@@ -1,8 +1,10 @@
 import React from 'react';
 import { message, Icon, Button, Row, Col, InputNumber, Modal, } from 'antd';
 import allowedKeys from "@js/allowedKeys";
+import {inject, observer} from 'mobx-react/index';
 
 import './index.less';
+@inject('appStore') @observer
 class commoditiesPackaging extends React.Component{
   constructor(props) {
     super(props);
@@ -33,9 +35,12 @@ class commoditiesPackaging extends React.Component{
       // 有未支付订单
       needToPay: false,
       // 线下支付按钮loading
-      offLinePayLoading: false
+      offLinePayLoading: false,
+      proprietaryLoading: false
     };
+    window.test = this;
   }
+  allow = this.props.appStore.getAllow.bind(this);
 
   componentDidMount() {
     let unionId = null,nickname =null;
@@ -69,37 +74,33 @@ class commoditiesPackaging extends React.Component{
     this.loadKeyListener();
     const { selectBox, unionId, boxesIsLoading, } = this.state;
     if (!boxesIsLoading) {
-      this.setState({boxesIsLoading: true});
-      fetch(`${window.fandianUrl}/parcelManagement/getParcelProductListByUnionId`,{
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({unionId:unionId})
-      }).then(r => r.json()).then(r => {
-        // console.log(r);
-        if (!r.data && !r.msg) {
-          message.error(`后端返回数据错误`)
+      const showLoading = Is => this.setState({boxesIsLoading: Is});
+      showLoading(true);
+      const data = {unionId};
+      this.ajax.post('/parcelManagement/getParcelProductListByUnionId', data).then(r => {
+        const {status, data} = r.data;
+        if (status === 10000) {
+          // 成功查到已录入, 并且未生成订单的箱号
+          this.setState({boxesList: data, selectBox: selectBox === '' ? data[0].parcelNo : selectBox})
+        } else if (status === 9998) {
+          // 查询到用户没有未支付订单, 并且没有录入箱号
+          this.setState({boxesList: [],selectBox: '', needToPay: false});
+        } else if (status === 9999) {
+          // 查询到用户存在未支付订单, 跳转进入支付页面
+          this.setState({boxesList: [], selectBox: '', needToPay: true}, () => {
+            this.createQRCode(document.querySelector(`#showQRCode`));
+            this.unloadKeyListener();
+          });
         } else {
-          if (r.status === 10000) {
-            this.setState({boxesList:r.data,selectBox:selectBox === '' ? r.data[0].parcelNo : selectBox})
-          } else if (r.status === 10001) {
-            // message.warn(r.msg);
-            this.setState({boxesList: [],selectBox: '',needToPay: false});
-          } else if (r.status === 9999) {
-            message.warn(r.msg);
-            this.setState({boxesList: [],selectBox: '',needToPay: true},()=>{
-              this.createQRCode(document.querySelector(`#showQRCode`));
-              this.unloadKeyListener();
-            });
-          } else {
-            message.error(`${r.msg}, 错误码: ${r.status}`);
-            this.setState({boxesList: [],selectBox: ''})
-          }
+          // 报错, 清除显示区域
+          this.setState({boxesList: [],selectBox: ''})
         }
-        this.setState({boxesIsLoading: false});
-        this.calcAll();
-      }).catch(() => {
-        message.error(`前端接口调取失败`);
-        this.setState({boxesIsLoading: false});
+        r.showError();
+        showLoading(false);
+      }).catch(r => {
+        console.error(r);
+        showLoading(false);
+        this.ajax.isReturnLogin(r, this);
       });
     } else {
       message.error(`操作过快, 请稍后再试`)
@@ -118,42 +119,31 @@ class commoditiesPackaging extends React.Component{
   generateParcel(parcelNo) {
     const { unionId, nickname, boxesIsLoading, } = this.state;
     if (!boxesIsLoading) {
-      this.setState({boxesIsLoading: true});
-      fetch(`${window.fandianUrl}/parcelManagement/generateParcel`,{
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          parcelNo: parcelNo,
-          unionId: unionId,
-          wechatName: nickname,
-        })
-      }).then(r => r.json()).then(r => {
-        // console.log(r);
-        if (!r.data && !r.msg) {
-          message.error(`后端返回数据错误`)
-        } else {
-          if (r.status === 10000) {
-            this.setState({boxesList:r.data,selectBox:r.data[`${r.data.length-1}`].parcelNo},()=>{
-              window.location.hash = `box_${r.data.length-1}`
-            });
-          } else if (r.status > 10000) {
-            message.error(`${r.msg}, 错误码: ${r.status}`)
-          } else if (r.status < 10000) {
-            message.warn(`${r.msg}, 状态码: ${r.status}`)
-          }
+      const showLoading = Is => this.setState({boxesIsLoading: Is});
+      showLoading(true);
+      const data = {parcelNo, unionId, wechatName: nickname};
+      this.ajax.post('/parcelManagement/generateParcel', data).then(r => {
+        const {status, data, msg} = r.data;
+        if (status === 10000) {
+          this.setState({boxesList: data, selectBox: data[`${data.length - 1}`].parcelNo}, () => {
+            window.location.hash = `box_${data.length - 1}`
+          });
+          message.success(msg)
         }
-        this.setState({boxesIsLoading: false});
         this.calcAll();
-      }).catch(() => {
-        message.error(`前端商品录入接口调取失败`);
-        this.setState({boxesIsLoading: false});
-      })
+        r.showError();
+        showLoading(false);
+      }).catch(r => {
+        console.error(r);
+        showLoading(false);
+        this.ajax.isReturnLogin(r, this);
+      });
     } else {
       message.error(`操作过快, 请稍后再试`)
     }
   }
 
-  // 增加箱内指定商品数量
+  // 增加/减少 箱内指定商品数量
   changeProductNumber(type,productCode,parcelNo) {
     // console.log(parcelNo);
     const { boxesList, boxesIsLoading, } = this.state;
@@ -161,41 +151,37 @@ class commoditiesPackaging extends React.Component{
       let interfaceUrl = `/productManagement/`;
       if (type === 'plus') interfaceUrl += `increaseProductNumber`;
       else if (type === 'minus') interfaceUrl += `decreaseProductNumber`;
-      this.setState({boxesIsLoading: true});
-      fetch(`${window.fandianUrl}${interfaceUrl}`,{
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          parcelNo: parcelNo,
-          productCode: productCode,
-        })
-      }).then(r => r.json()).then(r => {
-        // console.log(r);
-        if (!r.data && !r.msg) {
-          message.error(`后端返回数据错误`)
-        } else {
-          if (r.status === 10000) {
-            for (let n in boxesList) if (boxesList[n].parcelNo === parcelNo) {
-              let dataList = boxesList;
-              dataList[n].parcelProductVoList = r.data;
-              this.setState({boxesList: dataList})
-            }
-            message.success(`${type === 'plus' ? '增加' : '减少'}商品数量成功`)
-          } else if (r.status < 10000) {
-            message.warn(`${r.msg} 状态码:${r.status}`)
-          } else if (r.status === 10002) {
+      const showLoading = Is => this.setState({boxesIsLoading: Is});
+      showLoading(true);
+      const data = {parcelNo, productCode};
+      this.ajax.post(`${interfaceUrl}`, data).then(r => {
+        const {status, data, msg} = r.data;
+        if (status === 10000) {
+          for (let n in boxesList) if (boxesList[n].parcelNo === parcelNo) {
+            let dataList = boxesList;
+            dataList[n].parcelProductVoList = data;
+            this.setState({boxesList: dataList})
+          }
+          message.success(`${type === 'plus' ? '增加' : '减少'}商品数量成功`)
+        } else if (status < 10000) {
+          message.warn(`${msg} 状态码:${status}`)
+        } else if (status > 10000) {
+          if (status === 10002) {
             // 单独提示 货值超过2000
-            this.showWarningModal(r.msg);
-          } else if (r.status > 10000) {
-            message.error(`${r.msg} 状态码:${r.status}`)
+            this.showWarningModal(msg);
+          } else {
+            message.error(`${msg} 状态码:${status}`)
           }
         }
-        this.setState({boxesIsLoading: false});
         this.calcAll();
-      }).catch(() => {
-        message.error(`前端商品录入接口调取失败`);
-        this.setState({boxesIsLoading: false});
-      })
+        // 这里托管系统报错
+        // r.showError();
+        showLoading(false);
+      }).catch(r => {
+        console.error(r);
+        showLoading(false);
+        this.ajax.isReturnLogin(r, this);
+      });
     } else {
       message.error(`操作过快, 请稍后再试`)
     }
@@ -206,47 +192,44 @@ class commoditiesPackaging extends React.Component{
     const { selectBox, unionId, nickname, boxesList, boxesIsLoading, } = this.state;
     if (!boxesIsLoading) {
       if (selectBox) {
-        this.setState({boxesIsLoading: true});
-        fetch(`${window.fandianUrl}/productManagement/entryProductInfo`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            parcelNo: selectBox,
-            productCode: productCode,
-            unionId: unionId,
-            wechatName: nickname,
-          })
-        }).then(r => r.json()).then(r => {
-          // console.log(r);
-          if (!r.data && !r.msg) {
-            message.error(`后端返回数据错误`)
-          } else {
-            if (r.status === 10000) {
-              for (let n in boxesList) if (boxesList[n].parcelNo === selectBox) {
-                let dataList = boxesList;
-                dataList[n].parcelProductVoList = r.data;
-                this.setState({boxesList: dataList});
-                message.success(`商品已成功录入 ${parseInt(n) + 1}号箱`, 5)
-              }
-            } else if (r.status < 10000) {
-              if (r.status === 9999) {
-                message.warn(`扫码失败或商品未备案, 请尝试重新扫描该条码`)
-              } else {
-                message.warn(`${r.msg}`)
-              }
-            } else if (r.status === 10002) {
-              // 单独提示 货值超过2000
-              this.showWarningModal(r.msg);
-            } else if (r.status > 10000) {
-              message.error(`${r.msg}`)
+        const showLoading = Is => this.setState({boxesIsLoading: Is});
+        showLoading(true);
+        const data = {
+          parcelNo: selectBox,
+          productCode,
+          unionId,
+          wechatName: nickname,
+        };
+        this.ajax.post('/productManagement/entryProductInfo', data).then(r => {
+          const {status, data, msg} = r.data;
+          if (status === 10000) {
+            for (let n in boxesList) if (boxesList[n].parcelNo === selectBox) {
+              const dataList = boxesList;
+              dataList[n].parcelProductVoList = data;
+              this.setState({boxesList: dataList});
+              message.success(`商品已成功录入 ${parseInt(n) + 1}号箱`, 5)
+            }
+          } else if (status < 10000) {
+            if (status === 9999) {
+              message.warn(`扫码失败或商品未备案, 请尝试重新扫描该条码`)
+            } else {
+              message.warn(`${msg}`)
+            }
+          } else if (status > 10000) {
+            if (status === 10002) {
+              this.showWarningModal(msg);
+            } else {
+              message.error(`${msg} 状态码:${status}`);
             }
           }
-          this.setState({boxesIsLoading: false});
-          this.calcAll();
-        }).catch(() => {
-          message.error(`前端商品录入接口调取失败`);
-          this.setState({boxesIsLoading: false});
-        })
+          // 这里托管系统报错
+          // r.showError();
+          showLoading(false);
+        }).catch(r => {
+          console.error(r);
+          showLoading(false);
+          this.ajax.isReturnLogin(r, this);
+        });
       } else {
         message.warn('请先扫描箱号面单, 录入箱子')
       }
@@ -370,34 +353,25 @@ class commoditiesPackaging extends React.Component{
         this.setState({boxesList:dataList});
       };
       if (!!boxesList[Num].parcelWeight) {
-        this.setState({boxesIsLoading: true});
-        fetch(`${window.fandianUrl}/parcelManagement/saveParcelFreight`,{
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            parcelWeight: boxesList[Num].parcelWeight,
-            parcelNo: parcelNo,
-          })
-        }).then(r => r.json()).then(r => {
-          if (!r.data && !r.msg) {
-            message.error(`后端返回数据错误`);
-            resetWeight();
+        const showLoading = Is => this.setState({boxesIsLoading: Is});
+        showLoading(true);
+        const data = {parcelWeight: boxesList[Num].parcelWeight, parcelNo};
+        this.ajax.post('/parcelManagement/saveParcelFreight', data).then(r => {
+          const {status, data} = r.data;
+          if (status === 10000) {
+            // 这里提示进行变更
+            message.success(`${Num+1}号箱 重量更新成功`);
           } else {
-            if (r.status === 10000) {
-              // 这里提示进行变更
-              message.success(`${Num+1}号箱 重量更新成功`);
-            } else {
-              message.error(`${r.msg} 错误码:${r.status}`);
-              resetWeight();
-            }
+            resetWeight();
           }
-          this.setState({boxesIsLoading: false});
+          r.showError();
           this.calcAll();
-        }).catch(() => {
-          message.error(`前端更改箱重接口调取失败`);
-          resetWeight();
-          this.setState({boxesIsLoading: false});
-        })
+          showLoading(false);
+        }).catch(r => {
+          console.error(r);
+          showLoading(false);
+          this.ajax.isReturnLogin(r, this);
+        });
       } else {
         message.error(`重量不能为空`);
         resetWeight();
@@ -480,81 +454,64 @@ class commoditiesPackaging extends React.Component{
   }
 
   // 删除箱子接口
-  deleteParcelByParcelNo(parcelNo,Num) {
-    const { boxesList,} = this.state;
-    fetch(`${window.fandianUrl}/parcelManagement/deleteParcelByParcelNo`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        parcelNo: parcelNo,
-      })
-    }).then(r => r.json()).then(r => {
-      if (!r.data && !r.msg) {
-        message.error(`后端返回数据错误`);
-      } else {
-        if (r.status === 10000) {
-          let dataList = boxesList;
-          dataList.splice(Num,1);
-          this.setState({
-            boxesList: dataList,
-            // 恢复箱子选择
-            selectBox: dataList.length === 0 ? '' : dataList[dataList.length-1].parcelNo
-          });
-          message.success(`${r.msg}`);
-        } else if (r.status > 10000) {
-          message.error(`${r.msg} 错误码:${r.status}`);
-        } else if (r.status < 10000) {
-          message.warn(`${r.msg}`);
-        }
+  deleteParcelByParcelNo(parcelNo, Num) {
+    const {boxesList} = this.state;
+    const showLoading = Is => this.setState({boxesIsLoading: Is});
+    showLoading(true);
+    const data = {parcelNo};
+    this.ajax.post('/parcelManagement/deleteParcelByParcelNo', data).then(r => {
+      const {status, data} = r.data;
+      if (status === 10000) {
+        const dataList = boxesList;
+        dataList.splice(Num, 1);
+        this.setState({
+          boxesList: dataList,
+          // 恢复箱子选择
+          selectBox: dataList.length === 0 ? '' : dataList[dataList.length - 1].parcelNo
+        });
       }
-      this.setState({boxesIsLoading: false});
+      r.showError();
+      showLoading(false);
       this.calcAll();
-    }).catch(() => {
-      message.error(`前端商品录入接口调取失败`);
-      this.setState({boxesIsLoading: false});
-    })
+    }).catch(r => {
+      console.error(r);
+      showLoading(false);
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   // 保存订单
   generateParcelOrder() {
     const { boxesList, boxesIsLoading, unionId, nickname, orderMoney, productNum, } = this.state;
     if (!boxesIsLoading) {
-      let parcelNoList = [];
+      const parcelNoList = [];
       for (let i of boxesList) {
         parcelNoList.push(i.parcelNo)
       }
-      fetch(`${window.fandianUrl}/OrderManagement/generateParcelOrder`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          parcelNoList: parcelNoList,
-          unionId: unionId,
-          wechatName: nickname,
-          orderMoney: orderMoney.toFixed(2),
-          parcelNum: boxesList.length,
-          productNum: productNum,
-          logisticsChoice: 2,
-        })
-      }).then(r => r.json()).then(r => {
-        if (!r.data && !r.msg) {
-          message.error(`后端返回数据错误`);
-        } else {
-          if (r.status === 10000) {
-            // 这里提示进行变更
-            message.success(`${r.msg}`);
-            this.getParcelProductListByUnionId();
-            this.setState({showPayQRCode: true},()=>{
-              this.createQRCode(document.querySelector(`#payQRCodeShow`));
-            });
-          } else {
-            message.error(`${r.msg} 错误码:${r.status}`);
-          }
+      const showLoading = Is => this.setState({boxesIsLoading: Is});
+      showLoading(true);
+      const data = {
+        parcelNoList, unionId, productNum,
+        wechatName: nickname,
+        orderMoney: orderMoney.toFixed(2),
+        parcelNum: boxesList.length,
+        logisticsChoice: 2
+      };
+      this.ajax.post('/OrderManagement/generateParcelOrder', data).then(r => {
+        const {status, data} = r.data;
+        if (status === 10000) {
+          this.getParcelProductListByUnionId();
+          this.setState({showPayQRCode: true},()=>{
+            this.createQRCode(document.querySelector(`#payQRCodeShow`));
+          });
         }
-        this.setState({boxesIsLoading: false});
-      }).catch(() => {
-        message.error(`前端商品录入接口调取失败`);
-        this.setState({boxesIsLoading: false});
-      })
+        r.showError();
+        showLoading(false);
+      }).catch(r => {
+        console.error(r);
+        showLoading(false);
+        this.ajax.isReturnLogin(r, this);
+      });
     } else {
       message.error(`操作过快, 请稍后再试`)
     }
@@ -593,6 +550,43 @@ class commoditiesPackaging extends React.Component{
       onOk: offLinePayParcelOrder,
       content: <div>
         确认是否线下支付?
+      </div>
+    })
+  }
+
+  // BC自营包裹
+  payByProprietary() {
+    const {proprietaryLoading, unionId} = this.state;
+    const proprietaryPass = () => {
+      const showLoading = Is => this.setState({proprietaryLoading: Is});
+      showLoading(true);
+      // BC线下支付
+      const data = {unionId};
+      this.ajax.post('/OrderManagement/payByProprietary', data).then(r => {
+        const {status, msg} = r.data;
+        if (status === 10000) {
+          message.success(msg);
+          this.setState({showPayQRCode: false}, () => {
+            this.getParcelProductListByUnionId();
+          });
+        }
+        showLoading(false);
+        r.showError();
+      }).catch(r => {
+        showLoading(false);
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    };
+    // 打开新确认弹窗
+    Modal.confirm({
+      title: '通过自营包裹',
+      okButtonProps: {
+        loading: proprietaryLoading
+      },
+      onOk: proprietaryPass,
+      content: <div>
+        确认是否通过自营包裹?
       </div>
     })
   }
@@ -647,11 +641,18 @@ class commoditiesPackaging extends React.Component{
               <div>
                 <div id="showQRCode"/>
                 <div>仍有订单未支付, 请先支付</div>
-                <div>或选择
+                <div style={{marginTop: 5}}>或选择
                   <Button type="primary"
+                          style={{marginLeft: 10}}
                           onClick={this.offLinePay.bind(this)}
                   >线下支付</Button>
                 </div>
+                {this.allow(127) && <div style={{marginTop: 5}}>如是自营包裹, 请选择
+                  <Button type="danger"
+                          style={{marginLeft: 10}}
+                          onClick={this.payByProprietary.bind(this)}
+                  >自营包裹放行</Button>
+                </div>}
               </div>
             }
             {/*第一层遍历, 取出所有箱子信息, 将箱号与箱内数据取出并使用*/}
@@ -794,11 +795,18 @@ class commoditiesPackaging extends React.Component{
           <div style={{fontSize: `18px`}}
                className="infoLine">
             <div>订单已生成, 请扫码支付</div>
-            <div>或选择
+            <div style={{marginTop: 5}}>或选择
               <Button type="primary"
+                      style={{marginLeft: 10}}
                       onClick={this.offLinePay.bind(this)}
               >线下支付</Button>
             </div>
+            {this.allow(127) && <div style={{marginTop: 5}}>如是自营包裹, 请选择
+              <Button type="danger"
+                      style={{marginLeft: 10}}
+                      onClick={this.payByProprietary.bind(this)}
+              >自营包裹放行</Button>
+            </div>}
           </div>
         </Modal>
 
