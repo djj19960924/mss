@@ -128,7 +128,7 @@ class commoditiesPackaging extends React.Component{
           this.setState({boxesList: data, selectBox: data[`${data.length - 1}`].parcelNo}, () => {
             window.location.hash = `box_${data.length - 1}`
           });
-          message.success(msg)
+          // message.success(msg)
         }
         this.calcAll();
         r.showError();
@@ -274,6 +274,7 @@ class commoditiesPackaging extends React.Component{
           lastInputTime = null;
         }, 50);
         if (e.key === `Enter`) {
+          document.activeElement.blur();
           console.log(inputValue);
           // 初步通过箱号校验
           if (ruleBox.test(inputValue)) {
@@ -783,7 +784,9 @@ class commoditiesPackaging extends React.Component{
                wrapClassName="QECodePayModal"
                visible={showPayQRCode}
                onOk={()=>this.setState({showPayQRCode: false})}
-               onCancel={()=>this.setState({showPayQRCode: false})}
+               onCancel={()=>this.setState({showPayQRCode: false},() => {
+                 this.getParcelProductListByUnionId();
+               })}
                forceRender
                bodyStyle={{textAlign: `center`,}}
         >
