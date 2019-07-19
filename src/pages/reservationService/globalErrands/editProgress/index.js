@@ -48,12 +48,12 @@ class EditProgress extends React.Component {
 
   //获取订单信息
   getOrderProgressDetail() {
-    fetch(window.apiUrl + "/legworkBackend/editLegworkSchedule", {
+    fetch(window.apiUrl + "/legworkBackend/getProductDetailAndSchedule", {
       method: "post",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({id: window.getQueryString("id")})
     }).then(r => r.json()).then(res => {
-      if (res.status === 10000) {
+      if (res.status === 10000 || res.status===9999) {
         let data = res.data;
         this.setState({
           bookingTime: data.createTime,
@@ -65,10 +65,17 @@ class EditProgress extends React.Component {
         if (data.legworkImgList) {
           this.setState({commodityImgList: data.legworkImgList})
         }
+        if(res.status===9999){
+          message.warn(res.msg);
+        }
+      }else if(res.status){
+        message.error(res.msg);
+      }else{
+        message.error('全球跑腿进度后端数据返回错误');
       }
     }).catch(r => {
       console.error(r);
-      console.log('前端接口调取错误')
+      console.log('全球跑腿进度接口前端你调取错误')
     })
   }
 
@@ -94,7 +101,7 @@ class EditProgress extends React.Component {
         }
       }).catch(r => {
         console.error(r);
-        console.log('前端接口调取错误')
+        console.log('添加进度接口调取错误')
       })
     } else {
       this.submitProgressInfo();
