@@ -161,7 +161,7 @@ class MoneyCalculation extends React.Component {
                         // 清除报错
                         let d = document.querySelector(`.brandLine.line_${i}`).querySelector('.selectBrand,.ant-select-focused').querySelector('.ant-select-selection');
                         d.style.border = '';
-                        this.setState({mainDataList: dataList},(mainDataList = this.state.mainDataList) => {
+                        this.setState({mainDataList: dataList},(mainDataList = mainDataList) => {
                           changeReciptMoney(mainDataList);
                         });
                       }}
@@ -175,7 +175,7 @@ class MoneyCalculation extends React.Component {
                            precision={1}
                            onChange={ (e) => {
                              mainDataList[i].brandRebate = e;
-                             this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                             this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                                changeReciptMoney(mainDataList);
                              })
                            }}
@@ -192,7 +192,7 @@ class MoneyCalculation extends React.Component {
                            value={mainDataList[i].totalMoney}
                            onChange={ (e) => {
                              mainDataList[i].totalMoney = e;
-                             this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                             this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                                changeReciptMoney(mainDataList);
                              })
                            }}
@@ -202,7 +202,7 @@ class MoneyCalculation extends React.Component {
                       disabled={mainDataList.length === 1}
                       onClick={ () => {
                         mainDataList.splice(i,1);
-                        this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                        this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                           changeReciptMoney(mainDataList);
                         })
                       }}
@@ -214,7 +214,7 @@ class MoneyCalculation extends React.Component {
           <Button type="primary"
                   onClick={ () => {
                     mainDataList.push({brand: defaultBrand, brandRebate: defaultBrandRebate,});
-                    this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                    this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                       changeReciptMoney(mainDataList,true);
                     })
                   }}
