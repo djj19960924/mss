@@ -98,6 +98,8 @@ import logs from '@pages/system/logs/';
   import appointmentTeamManage from '@pages/rebateManage/appointmentTeamManage/';
   // 返点说明文案设置
   import rebateCountryInfo from '@pages/rebateManage/rebateCountryInfo/'
+  //返点用户表
+  import user from '@pages/rebateManage/user/'
 
 // 商品管理
   // 商品数据库
@@ -145,6 +147,7 @@ const componentsList = {
   SKTUploadOrder,
   SKTYto,
   rebateCountryInfo,
+  user,
   logs
 };
 

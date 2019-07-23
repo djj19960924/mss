@@ -324,6 +324,15 @@ const menus = [
           {name: 'rebateCountryInfo', path: '/rebate-manage/rebate-country-info'}
         ]
       },
+      {
+        title: '用户表',
+        id: 133,
+        icon: 'user',
+        key: '/rebate-manage/user',
+        components: [
+          {name: 'user', path: '/rebate-manage/user'}
+        ]
+      }
     ]
   },
   {
