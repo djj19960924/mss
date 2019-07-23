@@ -31,12 +31,6 @@ class awaitingExamine extends React.Component {
       showImageViewer: false,
       // 选择的国家
       country: '',
-      // 国家剩余小票
-      countryLeftTicket: {},
-      // 选择的商场
-      shop: undefined,
-      // 商场列表
-      shopList: [],
       // 当前所选商场
       currentShop: undefined,
       // 是否有剩余的小票
@@ -81,7 +75,7 @@ class awaitingExamine extends React.Component {
       // 为空金额
       emptyList: [],
       // 选择商店相关
-      selectIsDisabled: true,
+      // selectIsDisabled: true,
       selectIsLoading: false,
       // 小票加载
       ticketIsLoading: false,
@@ -90,7 +84,9 @@ class awaitingExamine extends React.Component {
   allow = this.props.appStore.getAllow.bind(this);
 
   componentDidMount() {
-    this.getCountryLeftTicket()
+    // this.getCountryLeftTicket()
+    this.getMallListByNationName();
+    this.getTicketList();
   }
 
   //渲染完成以后修正图片预览样式
@@ -110,44 +106,14 @@ class awaitingExamine extends React.Component {
     };
   }
 
-  // 获取国家当前剩余小票
-  getCountryLeftTicket() {
-    const {countryLeftTicket} = this.state;
-    this.ajax.post('/recipt/countReciptByNationName').then(r => {
-      if (r.data.status === 10000) {
-        const {data} = r.data;
-        for (let i in data) countryLeftTicket[data[i].nationName] = data[i].reciptTotal;
-        this.setState({});
-      }
-      r.showError();
-    }).catch(r => {
-      console.error(r);
-      this.ajax.isReturnLogin(r, this);
-    });
-  }
-
-  // 监听选择国家事件
-  selectCountry(e, option) {
-    this.setState({
-      country: e.target.value,
-      pageTotal: 0,
-      mallName: '',
-      ticketList: [],
-      hasTicket: false,
-      currentShop: undefined,
-      currentTicketId: 0,
-      ticketTotal: 0,
-      defaultExchangeRate: 1,
-      selectIsDisabled: true,
-      selectIsLoading: true,
-    });
-    this.ajax.post('/mall/getMallListByNationName',{
-      nationName: e.target.value
-    }).then(r => {
+  getMallListByNationName() {
+    this.ajax.post('/mall/getMallListByNationName', {}).then(r => {
       const {status} = r.data;
       if (status === 10000) {
         const {data} = r.data, dataList = [];
-        for (let i of data) dataList.push(<Option key={i.mallId} value={i.mallName}>{i.mallName}</Option>);
+        for (let i of data) {
+          dataList.push(<Option key={i.mallName} country={i.nationName} value={`${i.mallId}${i.mallName}`}>{i.mallId} - {i.mallName}</Option>);
+        }
         this.setState({shopList: dataList});
       } else if (status < 10000) {
         this.setState({shopList: []});
@@ -165,13 +131,14 @@ class awaitingExamine extends React.Component {
 
   // 监听选择商店事件
   selectShop(val, option) {
+    // console.log(val,option);
     // val即商场名, option.key即商场ID
     this.setState({
-      currentShop: val,
-      ticketIsLoading: true
+      currentShop: option.key,
+      country: option.props.country
     },() => {
       this.getBrandListBymallName();
-      this.getTicketList();
+      // this.getTicketList();
     })
   }
 
@@ -195,6 +162,7 @@ class awaitingExamine extends React.Component {
 
   // 根据商场名称获取小票接口
   getTicketList() {
+    this.setState({ticketIsLoading: true});
     const {currentShop} = this.state;
     const data = {
       pageNum: 1,
@@ -357,9 +325,9 @@ class awaitingExamine extends React.Component {
     // 由于不可能每次操作都调取接口, 所以在实际调取审核/驳回接口成功的同时
     // 可以对本地数据进行同步改变, 使得角标以及商场剩余小票数量一直处于与服务器内部数据
     // 数值同步的状态, 虽然没有实时交互, 但也从本地计算的方式达到了类似的效果
-    countryLeftTicket[country] = countryLeftTicket[country] - 1;
-    let d = document.querySelector(`.brandLine.line_0`).querySelector('.noHandlerWrap');
-    d.style.border = '';
+    // countryLeftTicket[country] = countryLeftTicket[country] - 1;
+    // let d = document.querySelector(`.brandLine.line_0`).querySelector('.noHandlerWrap');
+    // d.style.border = '';
     this.setState({
       ticketTotal: (ticketTotal - 1),
       hasChange: (hasChange + 1),
@@ -368,12 +336,15 @@ class awaitingExamine extends React.Component {
       totalMoney: null,
       emptyList: [],
       repeatList: [],
+      country: '',
+      currentShop: undefined,
+      brandListOrigin: []
     });
     // 重置表单
     this.props.form.resetFields();
     if (currentTicketId === (ticketList.length - 1)) {
       this.getTicketList(this);
-      this.getCountryLeftTicket();
+      // this.getCountryLeftTicket();
     } else if (currentTicketId <= (ticketList.length - 1)) {
       this.setState({
         currentTicketId: currentTicketId + 1,
@@ -433,8 +404,9 @@ class awaitingExamine extends React.Component {
   componentWillUnmount() {
     this.setState = () => null
   }
+
   render() {
-    const {showImageViewer, shopList, currentShop, hasTicket, brandListOrigin, ticketList, currentTicketId, reciptMoney, defaultExchangeRate, previewImageWH, ticketTotal, country, ticketDate, hasChange, repeatList, emptyList, rejectVisible, reasonId, rejectSpecificReason, countryLeftTicket, selectIsDisabled, selectIsLoading, ticketIsLoading} = this.state;
+    const {showImageViewer, shopList, currentShop, hasTicket, brandListOrigin, ticketList, currentTicketId, reciptMoney, defaultExchangeRate, previewImageWH, ticketTotal, country, ticketDate, hasChange, repeatList, emptyList, rejectVisible, reasonId, rejectSpecificReason, selectIsLoading, ticketIsLoading} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
       <div className="awaitingExamine">
@@ -442,45 +414,11 @@ class awaitingExamine extends React.Component {
           <div className="titleMain">小票审核</div>
           <div className="titleLine" />
         </div>
-        {/*国家选择*/}
-        <div className="shopSelect">
-          <span style={{marginRight: 5}}>所属国家: </span>
-          <RadioGroup defaultValue={0}
-                      buttonStyle="solid"
-                      className="radioBtn"
-                      onChange={this.selectCountry.bind(this)}
-          >
-            {/*当使用map遍历生成的 react dom 对象时, 才可将对象内部参数为动态值*/}
-            {countryList.map((item, i) => (
-              <Badge key={i}
-                     count={countryLeftTicket[item.nationName]}
-                     overflowCount={99}
-              ><RadioButton value={item.nationName}>{item.nationName}</RadioButton>
-              </Badge>
-            ))}
-          </RadioGroup>
-        </div>
-        {/*商场选择*/}
-        <div className="shopSelect">
-          <span style={{marginRight: 5}}>所属商场: </span>
-          <Select className="selectShops"
-                  placeholder={selectIsLoading ? "加载中请稍后..." : "请选择商场"}
-                  value={currentShop}
-                  onChange={this.selectShop.bind(this)}
-                  disabled={selectIsDisabled}
-                  loading={selectIsLoading}
-          >
-            {shopList}
-          </Select>
-          <span style={{marginLeft: 20}}>当前商场剩余小票：{!!ticketTotal ? ticketTotal : '暂无小票'}</span>
-        </div>
-        {/*状态提示*/}
-        <div className="noTicket" style={{display: (hasTicket ? 'none' : 'block')}}>
+        <div className="leftTicketNum">当前剩余小票: {ticketTotal}</div>
+        {!hasTicket && <div className="noTicket">
           {ticketIsLoading && <div><Icon type="loading" />小票加载中...</div>}
-          {!ticketIsLoading && currentShop && <div><Icon type="smile" className="iconSmile"/><span>当前商场没有小票</span></div>}
-          {!ticketIsLoading && !country && <div><Icon type="shop" className="iconShop"/><span>请选择国家</span></div>}
-          {!ticketIsLoading && country && !currentShop && <div><Icon type="shop" className="iconShop"/><span>请选择商场</span></div>}
-        </div>
+          {!ticketIsLoading && currentShop && <div><Icon type="smile" className="iconSmile"/><span>当前没有未审核的小票</span></div>}
+        </div>}
 
         <div className="container" style={hasTicket ? {} : {display:'none'}}>
           {/*图片相关功能*/}
@@ -509,11 +447,26 @@ class awaitingExamine extends React.Component {
                         colon
                         labelCol={{span: 2}}
               >
-                <Input style={{width: 150, marginLeft: 10, marginRight: 20, color: '#555'}}
-                       disabled
-                       value={currentShop}
-                />
+                {getFieldDecorator('selectShops', {
+                  rules: [
+                    {required: true, message: '请选择商场!'}
+                  ],
+                })(
+                  <Select className="selectShops"
+                          style={{width: 200, marginLeft: 10}}
+                          placeholder={selectIsLoading ? "加载中请稍后..." : "请选择商场"}
+                          // value={currentShop}
+                          onChange={this.selectShop.bind(this)}
+                          showSearch
+                          loading={selectIsLoading}
+                          dropdownMatchSelectWidth={false}
+                  >
+                    {shopList}
+                  </Select>
+                )}
+                <span style={{color: 'rgba(255,0,0,.5)',marginLeft: 10}}>可输入商场名或商场id进行查询</span>
               </FormItem>
+
               <FormItem label="请输入凭证号"
                         colon
                         labelCol={{span: 6}}

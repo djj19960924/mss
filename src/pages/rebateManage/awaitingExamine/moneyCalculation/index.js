@@ -45,33 +45,39 @@ class MoneyCalculation extends React.Component {
     // 当品牌列表改变后触发
     // 强制清空已选择的品牌(!暂时强制清空, 不良操作造成数据混乱)
     if (prevProps.brandListOrigin !== brandListOrigin) {
-      let dataList = [];
-      let n = 0;
-      for (let i of brandListOrigin) {
-        // 这里的value会作为选择框的搜索字段, 所以需求同时可以根据Id或者Name查询, 则在value值中同时插入Id和Name
-        // 但是注意最终传值时不要取value
-        // console.log(n);
-        dataList.push(<Option name={i.brandName} key={n}
-                              style={{textAlign: `center`}} title={i.brandName}
-                              value={i.brandId + i.brandName}>{i.brandName}</Option>);
-        n++;
+      // console.log(prevProps.brandListOrigin);
+      // console.log(brandListOrigin);
+      if (brandListOrigin.length > 0) {
+        let dataList = [];
+        let n = 0;
+        for (let i of brandListOrigin) {
+          // 这里的value会作为选择框的搜索字段, 所以需求同时可以根据Id或者Name查询, 则在value值中同时插入Id和Name
+          // 但是注意最终传值时不要取value
+          // console.log(n);
+          dataList.push(<Option name={i.brandName} key={n}
+                                style={{textAlign: `center`}} title={i.brandName}
+                                value={i.brandId + i.brandName}>{i.brandName}</Option>);
+          n++;
+        }
+        this.getRebateRate(brandListOrigin[0].brandName, `default`);
+        this.setState({
+          brandList: dataList,
+          // 这里默认选取第一个品牌
+          defaultBrand: brandListOrigin[0].brandName,
+          mainDataList: [{brand: brandListOrigin[0].brandName}]
+        });
+        this.props.changeReciptMoney([{brand: brandListOrigin[0].brandName}])
+      } else {
+        this.setState({mainDataList: []})
       }
-      this.getRebateRate(brandListOrigin[0].brandName,`default`);
-      this.setState({
-        brandList: dataList,
-        // 这里默认选取第一个品牌
-        defaultBrand: brandListOrigin[0].brandName,
-        mainDataList: [{brand: brandListOrigin[0].brandName}]
-      });
-      this.props.changeReciptMoney([{brand: brandListOrigin[0].brandName}])
     }
     // 当小票提交或驳回成功以后触发
-    if (prevProps.hasChange !== hasChange) {
-      this.props.changeReciptMoney([{brand: brandListOrigin[0].brandName}]);
-      this.setState({
-        mainDataList: [{brand: brandListOrigin[0].brandName}],
-      },() => {this.getRebateRate(mainDataList[0].brand,0)})
-    }
+    // if (prevProps.hasChange !== hasChange) {
+    //   this.props.changeReciptMoney([{brand: brandListOrigin[0].brandName}]);
+    //   this.setState({
+    //     mainDataList: [{brand: brandListOrigin[0].brandName}],
+    //   },() => {this.getRebateRate(mainDataList[0].brand,0)})
+    // }
   }
 
   // 币种判断
@@ -129,6 +135,9 @@ class MoneyCalculation extends React.Component {
           </ul>
         </div>
         <div className="main">
+          {mainDataList.length === 0 &&
+            <div className="noMall">请先选择商场</div>
+          }
           {mainDataList.map( (item,i) => (
             <div className={`brandLine line_${i}`} key={`id_${i}`}>
               <Select style={{width: 160, testAlign: `center`}}
@@ -152,7 +161,7 @@ class MoneyCalculation extends React.Component {
                         // 清除报错
                         let d = document.querySelector(`.brandLine.line_${i}`).querySelector('.selectBrand,.ant-select-focused').querySelector('.ant-select-selection');
                         d.style.border = '';
-                        this.setState({mainDataList: dataList},(mainDataList = this.state.mainDataList) => {
+                        this.setState({mainDataList: dataList},(mainDataList = mainDataList) => {
                           changeReciptMoney(mainDataList);
                         });
                       }}
@@ -166,7 +175,7 @@ class MoneyCalculation extends React.Component {
                            precision={1}
                            onChange={ (e) => {
                              mainDataList[i].brandRebate = e;
-                             this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                             this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                                changeReciptMoney(mainDataList);
                              })
                            }}
@@ -183,7 +192,7 @@ class MoneyCalculation extends React.Component {
                            value={mainDataList[i].totalMoney}
                            onChange={ (e) => {
                              mainDataList[i].totalMoney = e;
-                             this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                             this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                                changeReciptMoney(mainDataList);
                              })
                            }}
@@ -193,7 +202,7 @@ class MoneyCalculation extends React.Component {
                       disabled={mainDataList.length === 1}
                       onClick={ () => {
                         mainDataList.splice(i,1);
-                        this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                        this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                           changeReciptMoney(mainDataList);
                         })
                       }}
@@ -205,7 +214,7 @@ class MoneyCalculation extends React.Component {
           <Button type="primary"
                   onClick={ () => {
                     mainDataList.push({brand: defaultBrand, brandRebate: defaultBrandRebate,});
-                    this.setState({mainDataList: mainDataList},(mainDataList = this.state.mainDataList) => {
+                    this.setState({mainDataList: mainDataList},(mainDataList = mainDataList) => {
                       changeReciptMoney(mainDataList,true);
                     })
                   }}
