@@ -112,7 +112,7 @@ class awaitingExamine extends React.Component {
       if (status === 10000) {
         const {data} = r.data, dataList = [];
         for (let i of data) {
-          dataList.push(<Option key={i.mallName} country={i.nationName} value={`${i.mallId}${i.mallName}`}>{i.mallId} - {i.mallName}</Option>);
+          dataList.push(<Option key={i.mallName} country={i.nationName} value={`${i.mallId}${i.nationName}${i.mallName}`}>{i.nationName} - {i.mallId} - {i.mallName}</Option>);
         }
         this.setState({shopList: dataList});
       } else if (status < 10000) {
