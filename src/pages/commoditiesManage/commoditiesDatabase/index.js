@@ -181,37 +181,40 @@ class commoditiesDataBase extends React.Component {
           errorList = [];
         for (let i in excelDataListOrigin) {
           // i + 2 = 表单内行数号
-          let code = excelDataListOrigin[i].商品货号,
-            price = excelDataListOrigin[i].成本价,
-            name = excelDataListOrigin[i].商品名称,
-            brand = excelDataListOrigin[i].品牌,
-            specificationType = excelDataListOrigin[i].商品规格,
-            netWeight = excelDataListOrigin[i].净重,
-            grossWeight = excelDataListOrigin[i].毛重,
-            purchaseArea = Country[excelDataListOrigin[i].原产国];
+          let codeChange = excelDataListOrigin[i].商品货号.split(`JD`)[1];
+          const code = codeChange ? excelDataListOrigin[i].商品货号 : `JD${excelDataListOrigin[i].商品货号}`,
+            // code = excelDataListOrigin[i].商品货号,
+            price = excelDataListOrigin[i].成本价;
+            // name = excelDataListOrigin[i].商品名称,
+            // brand = excelDataListOrigin[i].品牌,
+            // specificationType = excelDataListOrigin[i].商品规格,
+            // netWeight = excelDataListOrigin[i].净重,
+            // grossWeight = excelDataListOrigin[i].毛重,
+            // purchaseArea = Country[excelDataListOrigin[i].原产国];
           if (!code || !price) {
             errorList.push({
               Num: parseInt(i),
-              errValue: `${!code ? `商品货号 ` : ``}${!name ? '商品名称 ' : ''}${!brand ? '品牌 ' : ''}${!netWeight ? '净重 ' : ''}${!grossWeight ? '毛重 ' : ''}${!purchaseArea ? '原产国 ' : ''}${!price ? `成本价` : ``}${!specificationType ? '商品规格' : ''}`,
+              // errValue: `${!code ? `商品货号 ` : ``}${!name ? '商品名称 ' : ''}${!brand ? '品牌 ' : ''}${!netWeight ? '净重 ' : ''}${!grossWeight ? '毛重 ' : ''}${!purchaseArea ? '原产国 ' : ''}${!price ? `成本价` : ``}${!specificationType ? '商品规格' : ''}`,
+              errValue: `${!code ? `商品货号 ` : ``}${!price ? `成本价` : ``}`,
             })
           } else {
             excelDataList.push({
               skuCode: code,
               recordPrice: price,
               Num: parseInt(i),
-              name: name,
-              brand: brand,
-              netWeight: netWeight,
-              grossWeight: grossWeight,
-              purchaseArea: purchaseArea,
-              specificationType: specificationType
+              // name: name,
+              // brand: brand,
+              // netWeight: netWeight,
+              // grossWeight: grossWeight,
+              // purchaseArea: purchaseArea,
+              // specificationType: specificationType
             });
           }
         }
-        // console.log(`这里显示表单内源数据: `);
-        // console.log(excelDataListOrigin);
-        // console.log(`这里显示处理后数据: `);
-        // console.log(excelDataList);
+        console.log(`这里显示表单内源数据: `);
+        console.log(excelDataListOrigin);
+        console.log(`这里显示处理后数据: `);
+        console.log(excelDataList);
         this.setState({
           importModalVisible: true,
           excelDataListOrigin: excelDataListOrigin,
@@ -368,8 +371,9 @@ class commoditiesDataBase extends React.Component {
         purchaseArea: excelDataList[Num].purchaseArea,
         specificationType: excelDataList[Num].specificationType
       };
-      this.ajax.post('/sku/updateSkuByUploadExcel',dataObj).then(r => {
-        if (r.data.status === 10000) {
+      this.ajax.post('/sku/updateSkuByUploadExcel', dataObj).then(r => {
+        const {status, msg} = r.data;
+        if (status === 10000) {
           successList.push(excelDataList[Num]);
           this.setState({Num: (Num + 1), successList: successList,}, () => {
             this.updateSkuByUploadExcel();
@@ -377,8 +381,8 @@ class commoditiesDataBase extends React.Component {
         } else {
           // 非同源策略
           let dataObj = Object.assign({}, excelDataList[Num]);
-          dataObj.msg = r.msg;
-          dataObj.status = r.status;
+          dataObj.msg = msg;
+          dataObj.status = status;
           failList.push(dataObj);
           failListNum.push(dataObj.Num + 2);
           this.setState({Num: (Num + 1), failList: failList, failListNum: failListNum,}, () => {
@@ -567,6 +571,7 @@ class commoditiesDataBase extends React.Component {
                }
         >
           <p>所选文件名: {!!input.value ? input.files[0].name : null}</p>
+          <p style={{color: `red`, fontSize: '24px'}}>注意, 当前版本只导入备案价格!</p>
           {isSubmit ? <p><Icon type="loading"/> <span style={{color: `red`}}>正在上传数据中... 请勿关闭页面!!!</span></p> : null}
           <p>{`当前上传条数 ${successList.length}/${excelDataList.length}, 成功${successList.length}条, 失败${failList.length}条`}</p>
           <p style={{color: `red`}}>请注意备份本页报错数据, 并根据报错提示检查备案表内数据</p>
