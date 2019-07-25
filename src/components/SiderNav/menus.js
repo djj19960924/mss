@@ -361,13 +361,31 @@ const menus = [
         ]
       },
       {
-        title: '全球跑腿预订',
-        id: 55,
-        icon: 'solution',
+        title: '全球跑腿',
+        id: 131, 
+        icon: 'global', 
         key: '/reservation-service/global-errands',
-        components: [
-          {name: 'GlobalErrands', path: '/reservation-service/global-errands'},
-          {name: 'EditProgress', path: '/reservation-service/global-errands/edit-progress'}
+        subs: [
+          {
+            title: '全球跑腿预订',
+            id: 55,
+            icon: 'thunderbolt',
+            key: '/reservation-service/global-errands/order',
+            components: [
+              {name: 'GlobalErrandsOrder', path: '/reservation-service/global-errands/order'},
+              {name: 'EditProgress', path: '/reservation-service/global-errands/order/edit-progress'}
+            ]
+          },
+          {
+            title: '全球跑腿评价',
+            id: 132,
+            icon: 'message',
+            testType: 'localTest',
+            key: '/reservation-service/global-errands/assess',
+            components: [
+              {name: 'GlobalErrandsAssess', path: '/reservation-service/global-errands/assess'},
+            ]
+          }
         ]
       }
     ]

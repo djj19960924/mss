@@ -74,10 +74,12 @@ import logs from '@pages/system/logs/';
   import appointmentInfo from '@pages/reservationService/appointmentInfo/';
 
 //全球跑腿
-  //展示信息
-  import GlobalErrands from '@pages/reservationService/globalErrands/';
-  //编辑进度
-  import EditProgress from '@pages/reservationService/globalErrands/editProgress/';
+    //全球跑腿预订
+    import GlobalErrandsOrder from '@pages/reservationService/globalErrands/order/';
+    //编辑进度
+    import EditProgress from '@pages/reservationService/globalErrands/order/editProgress/'; 
+    //全球跑腿评价
+    import GlobalErrandsAssess from '@pages/reservationService/globalErrands/assess/';
 
 // 返点
   // 已支付
@@ -127,8 +129,9 @@ const componentsList = {
   globalTranshipmentNotArrived,
   airportTransfer,
   appointmentInfo,
-  GlobalErrands,
+  GlobalErrandsOrder,
   EditProgress,
+  GlobalErrandsAssess,
   adoptExaminePaid,
   adoptExamineUnpaid,
   rejectExamine,
