@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Table, Pagination,Form, } from 'antd';
+import { Button, Table, Pagination,Form,Modal} from 'antd';
 import { inject, observer } from 'mobx-react/index';
 import './index.less';
 import moment from 'moment'
@@ -57,36 +57,64 @@ class user extends React.Component {
         this.getUserList();
       })
     }
+    
+    //查看返点用户详情
+    showDetail(record){
+        const style = {float:'left',width:'120px',marginBottom:'10px'}, hidden = {overflow:'hidden'};
+        Modal.info({
+            title: '返点用户信息',
+            okText: '确定',
+            okType: 'default',
+            maskClosable: true,
+            content: <div style={hidden}>
+                <div style={hidden}><div style={style}>护照号: </div><div style={style}>{record.passportNum?`${record.passportNum}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>申请小票张数: </div><div style={style}>{record.reciptTotal?`${record.reciptTotal}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>首次申请时间: </div><div style={style}>{moment(Number(record.passportNum)).format('YYYY-MM-DD HH:mm:ss')?`${moment(Number(record.passportNum)).format('YYYY-MM-DD HH:mm:ss')}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>最新提现方式: </div><div style={style}>{record.payment?`${record.payment}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>返现金额: </div><div style={style}>{record.returningMoney?`${record.returningMoney}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>余额: </div><div style={style}>{record.balance?`${record.balance}`:'无'}</div></div>
+            </div>
+        })
+    }
 
     render() {
         const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions} = this.state;
         
         const columns = [
-            {title:'用户ID',dataIndex:'unionId',key:'unionId',width:299},
-            {title:'用户昵称',dataIndex:'nickname',key:'nickname',width:137},
-            {title:'姓名',dataIndex:'passportName',key:'passportName',width:125},
-            {title:'手机号',dataIndex:'phoneNum',key:'phoneNum',width:130},
-            {title:'护照号',pass:'passportNum',key:'passportNum',width:130},
-            {title:'申请小票张数',dataIndex:'reciptTotal',key:'reciptTotal',width:100},
-            {title:'首次申请时间',dataIndex:'firstApplyTime',key:'firstApplyTime',width:133,
+            {title:'用户ID',dataIndex:'unionId',key:'unionId',width:310,
                 render(val){
-                    return <span>{ val ? moment(Number(val)).format('YYYY-MM-DD HH:mm:ss') : ''}</span>
-                }
-                
+                    return (<div>{val?val:'无'}</div>)
+                } 
             },
-            {title:'最新提现方式',dataIndex:'payment',key:'payment',width:110},
-            {title:'返现金额',dataIndex:'returningMoney',key:'returningMoney',width:80},
-            {title:'余额',dataIndex:'balance',key:'balance',width:80},
-            {title: '操作', dataIndex: '操作', key: '操作', width: 250, fixed: 'right',
+            {title:'用户昵称',dataIndex:'nickname',key:'nickname',width:210,
+                render(val){
+                    return (<div>{val?val:'无'}</div>)
+                } 
+            },
+            {title:'姓名',dataIndex:'passportName',key:'passportName',width:140,
+                render(val){
+                    return (<div>{val?val:'无'}</div>)
+                } 
+            },
+            {title:'手机号',dataIndex:'phoneNum',key:'phoneNum',width:140,
+                render(val){
+                    return (<div>{val?val:'无'}</div>)
+                } 
+            },
+            
+            {title: '操作', dataIndex: '操作', key: '操作', width: 300, fixed: 'right',
                 render: (text, record) =>
                     <div>
                         <Button type="primary"
-                        >设置</Button>
+                            onClick={this.showDetail.bind(this,record)}
+                        >查看</Button>
+                        <Button type="primary"
+                        style={{marginLeft: 5}} >设置</Button>
                         {<Button type="primary"
-                                style={{marginLeft: 10}}    
+                                style={{marginLeft: 5}}    
                         >返现</Button>}
                         {<Button type="primary"
-                                style={{marginLeft: 10}}     
+                                style={{marginLeft: 5}}     
                         >追加</Button>}
                     </div>
             }
@@ -100,7 +128,7 @@ class user extends React.Component {
                 </div>
 
                 <div className="tableMain"
-                    style={{maxWidth: 1500}}
+                    style={{maxWidth: 1100}}
                 >
                     {/*表单主体*/}
 
@@ -111,7 +139,7 @@ class user extends React.Component {
                            pagination={false}
                            loading={tableIsLoading}
                            bordered
-                           scroll={{ y: 550, x: 1585 }}
+                           scroll={{ y: 550, x: 1100 }}
                            rowKey={(record, index) => `id_${index}`}
                     />
                     {/*分页*/}

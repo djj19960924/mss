@@ -82,33 +82,33 @@ class user extends React.Component {
         const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions} = this.state;
         
         const columns = [
-            {title:'评价时间',dataIndex:'evaluationTime',key:'evaluationTime',width:150,
+            {title:'评价时间',dataIndex:'evaluationTime',key:'evaluationTime',width:160,
                 render(val){
                     return <div>{ val ? moment(Number(val)).format('YYYY-MM-DD HH:mm:ss') : '无'}</div>
                 }
                 
             },
-            {title:'微信号',dataIndex:'wechatNo',key:'wechatNo',width:120,
+            {title:'微信号',dataIndex:'wechatNo',key:'wechatNo',width:150,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 } 
             },
-            {title:'微信昵称',dataIndex:'nickname',key:'nickname',width:140,
+            {title:'微信昵称',dataIndex:'nickname',key:'nickname',width:200,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 } 
             },
-            {title:'客服',dataIndex:'buyer',key:'buyer',width:120,
+            {title:'客服',dataIndex:'buyer',key:'buyer',width:130,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 }        
             },
-            {title:'买手',dataIndex:'phoneNum',key:'phoneNum',width:120,
+            {title:'买手',dataIndex:'phoneNum',key:'phoneNum',width:130,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 } 
             },
-            {title:'满意度',dataIndex:'evaluation',key:'evaluation',width:120,
+            {title:'满意度',dataIndex:'evaluation',key:'evaluation',width:130,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 } 
@@ -133,7 +133,7 @@ class user extends React.Component {
                 </div>
 
                 <div className="tableMain"
-                    style={{maxWidth: 820}}
+                    style={{maxWidth: 1000}}
                 >
                     {/*表单主体*/}
 
@@ -144,7 +144,7 @@ class user extends React.Component {
                            pagination={false}
                            loading={tableIsLoading}
                            bordered
-                           scroll={{ y: 550, x: 870 }}
+                           scroll={{ y: 550, x: 1000 }}
                            rowKey={(record, index) => `id_${index}`}
                     />
                     {/*分页*/}
