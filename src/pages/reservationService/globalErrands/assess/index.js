@@ -32,7 +32,6 @@ class user extends React.Component {
         this.setState({tableIsLoading: true});
         let dataObj = {pageNum: pageNum, pageSize: pageSize};
         this.ajax.post('/legworkBackend/getEvaluationList',dataObj).then(r => {
-            console.log('r:',r)
             if(r.data.status === 10000){
                 this.setState({
                     tableDataList: r.data.data.list,
@@ -60,15 +59,22 @@ class user extends React.Component {
 
     //查看详情
     showDetail(record){
-        const style = {float:'left',width:'120px',marginBottom:'10px'}, hidden = {overflow:'hidden'};
+        const style = {float:'left',width:'100px',marginBottom:'10px',fontSize:'16px'}, hidden = {overflow:'hidden'};
+        const styleContent = {float:'left',width:'200px',marginBottom:'10px',fontSize:'16px',marginLeft:'10px'}
         Modal.info({
             title: '用户评价信息',
             okText: '确定',
             okType: 'default',
             maskClosable: true,
             content: <div style={hidden}>
-                <div style={hidden}><div style={style}>备注: </div><div style={style}>{record.opinion?`${record.opinion}`:'无'}</div></div>
-                <div style={hidden}><div style={style}>订单内容: </div><div style={style}>{record.orderContent?`${record.orderContent}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>首次申请时间: </div><div style={styleContent}>{moment(Number(record.evaluationTime)).format('YYYY-MM-DD HH:mm:ss')?`${moment(Number(record.evaluationTime)).format('YYYY-MM-DD HH:mm:ss')}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>微信号: </div><div style={styleContent}>{record.wechatNo?`${record.wechatNo}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>微信昵称: </div><div style={styleContent}>{record.nickname?`${record.nickname}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>客服: </div><div style={styleContent}>{record.buyer?`${record.buyer}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>买手: </div><div style={styleContent}>{record.servicer?`${record.servicer}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>满意度: </div><div style={styleContent}>{record.evaluation?`${record.evaluation}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>备注: </div><div style={styleContent}>{record.opinion?`${record.opinion}`:'无'}</div></div>
+                <div style={hidden}><div style={style}>订单内容: </div><div style={styleContent}>{record.orderContent?`${record.orderContent}`:'无'}</div></div>
             </div>
         })
     }
@@ -88,7 +94,7 @@ class user extends React.Component {
                 }
                 
             },
-            {title:'微信号',dataIndex:'wechatNo',key:'wechatNo',width:150,
+            {title:'微信号',dataIndex:'wechatNo',key:'wechatNo',width:130,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 } 
@@ -98,17 +104,17 @@ class user extends React.Component {
                     return (<div>{val?val:'无'}</div>)
                 } 
             },
-            {title:'客服',dataIndex:'buyer',key:'buyer',width:130,
+            {title:'客服',dataIndex:'servicer',key:'servicer',width:160,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 }        
             },
-            {title:'买手',dataIndex:'phoneNum',key:'phoneNum',width:130,
+            {title:'买手',dataIndex:'buyer',key:'buyer',width:140,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 } 
             },
-            {title:'满意度',dataIndex:'evaluation',key:'evaluation',width:130,
+            {title:'满意度',dataIndex:'evaluation',key:'evaluation',width:80,
                 render(val){
                     return (<div>{val?val:'无'}</div>)
                 } 
@@ -144,7 +150,7 @@ class user extends React.Component {
                            pagination={false}
                            loading={tableIsLoading}
                            bordered
-                           scroll={{ y: 550, x: 1000 }}
+                           scroll={{ y: 600, x: 950 }}
                            rowKey={(record, index) => `id_${index}`}
                     />
                     {/*分页*/}
