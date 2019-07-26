@@ -211,7 +211,6 @@ class YTO extends React.Component {
                                      onClick={this.addressModal.bind(this, record)}
                                      disabled={!this.allow(134)}
                                      title={!this.allow(134) ? '没有该操作权限' : null}
-
             >修改</Button>}
           </div>
         ),
