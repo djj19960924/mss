@@ -1,5 +1,6 @@
 import React from 'react';
-import {Radio, Button, Table, message, Pagination, Modal} from 'antd';
+import {Radio, Button, Table, message, Pagination, Modal, Input, Cascader} from 'antd';
+import areaData from '@js/areaData/';
 import moment from 'moment';
 import { inject, observer } from 'mobx-react';
 import './index.less';
@@ -20,7 +21,11 @@ class YTO extends React.Component {
       buttonLoading: false,
       pageNum: 1,
       pageSize: 100,
-      pageTotal:0
+      pageTotal:0,
+      updateAddressLoading: false,
+      currentInfo: {},
+      updateAddressModalShow: false,
+      addressArray: []
     }
   }
   allow = this.props.appStore.getAllow.bind(this);
@@ -77,17 +82,18 @@ class YTO extends React.Component {
   }
   // 查看详情
   showDetail(record) {
-    const style = {float:'left',width:'120px'}, hidden = {overflow:'hidden'};
+    const style = {float:'left',width:'150px', color: '#222'}, hidden = {overflow:'hidden'};
     Modal.info({
       title: '查看订单信息',
       okText: '确定',
       okType: 'default',
       maskClosable: true,
-      // width: 600,
+      width: 500,
       content: <div style={hidden}>
         <div style={hidden}><div style={style}>箱号: </div>{record.parcelNo}</div>
         <div style={hidden}><div style={style}>商品名称: </div>{record.productName}</div>
         <div style={hidden}><div style={style}>收件人姓名: </div>{record.recipientsName}</div>
+        <div style={hidden}><div style={style}>收件人身份证号: </div>{record.receiveCard}</div>
         <div style={hidden}><div style={style}>收件人手机: </div>{record.recipientsPhone}</div>
         <div style={hidden}><div style={style}>收件人省份: </div>{record.recipientsProvince}</div>
         <div style={hidden}><div style={style}>收件人城市: </div>{record.recipientsCity}</div>
@@ -102,6 +108,46 @@ class YTO extends React.Component {
         }</div>
       </div>
     })
+  }
+
+  // 修改地址弹窗接口
+  addressModal(record) {
+    const currentInfo = Object.assign({}, record);
+    let {recipientsProvince, recipientsCity, recipientsDistrict} = currentInfo;
+    let addressArray = [recipientsProvince, recipientsCity, recipientsDistrict];
+    this.setState({currentInfo, addressArray, updateAddressModalShow: true});
+  }
+
+  // 对客户信息进行修改
+  updateAddressByParcelNo() {
+    const {currentInfo} = this.state;
+    const data = {
+      parcelNo: currentInfo.parcelNo,
+      recipientsProvince: currentInfo.recipientsProvince,
+      recipientsCity: currentInfo.recipientsCity,
+      recipientsDistrict: currentInfo.recipientsDistrict,
+      recipientsAddress: currentInfo.recipientsAddress,
+      recipientsName: currentInfo.recipientsName,
+      recipientsPhone: currentInfo.recipientsPhone,
+      receiveCard: currentInfo.receiveCard
+    };
+    // 去换行
+    data.recipientsAddress = data.recipientsAddress.replace(/[\r\n]/g," ");
+    const showLoading = Is => this.setState({updateAddressLoading: Is});
+    showLoading(true);
+    this.ajax.post('/backend/addressManagement/updateAddressByParcelNo', data).then(r => {
+      const {status, msg} = r.data;
+      if (status === 10000) {
+        message.success(msg);
+        this.setState({currentInfo: {}, updateAddressModalShow: false})
+      }
+      showLoading(false);
+      this.getOrderInfo();
+      r.showError();
+    }).catch(r => {
+      console.error(r);
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   // 上传
@@ -143,6 +189,8 @@ class YTO extends React.Component {
     this.setState = () => null
   }
   render() {
+    const RadioButton = Radio.Button, RadioGroup = Radio.Group;
+    const {status, tableLoading, selectedIds, data, pageTotal, pageSize, pageNum, pageSizeOptions, selectedRows, buttonLoading, updateAddressLoading, updateAddressModalShow, currentInfo, addressArray} = this.state;
     const columns = [
       {title: "箱号", dataIndex: "parcelNo", key: "parcelNo",width:160},
       {title: "商品名称", dataIndex: "productName", key: "productName"},
@@ -152,11 +200,17 @@ class YTO extends React.Component {
           <div>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</div>
         )
       },
-      {title: '操作', dataIndex: '操作', key: '操作', width: 100, fixed: 'right',
+      {title: '操作', dataIndex: '操作', key: '操作', width: (status === 0 ? 160 : 100), fixed: 'right',
         render: (text, record) => (
-          <Button type="primary"
-                  onClick={this.showDetail.bind(this, record)}
-          >查看</Button>
+          <div>
+            <Button type="primary"
+                    onClick={this.showDetail.bind(this, record)}
+            >查看</Button>
+            {status === 0 && <Button type="primary"
+                                     style={{marginLeft: 10}}
+                                     onClick={this.addressModal.bind(this, record)}
+            >修改</Button>}
+          </div>
         ),
       }
     ];
@@ -164,8 +218,7 @@ class YTO extends React.Component {
       {title: "绑定的面单号", dataIndex: "mailNo", key: "mailNo",width:130}
     ];
     columns1.push(...columns);
-    const RadioButton = Radio.Button, RadioGroup = Radio.Group;
-    const {status, tableLoading, selectedIds, data, pageTotal, pageSize, pageNum, pageSizeOptions, selectedRows, buttonLoading} = this.state;
+    const style = {float:'left',width:'160px', color: '#333'}, hidden = {overflow:'hidden'};
     return (
       <div className="yuanTong">
         <RadioGroup buttonStyle="solid"
@@ -216,6 +269,79 @@ class YTO extends React.Component {
                       onShowSizeChange={this.changePage.bind(this)}
           />
         </div>
+
+        <Modal visible={updateAddressModalShow}
+               title="修改信息"
+               onCancel={() => {
+                 if (updateAddressLoading) {
+                   message.warn('上传中, 请勿关闭窗口')
+                 } else {
+                   this.setState({
+                     currentInfo: {},
+                     updateAddressModalShow: false
+                   })
+                 }
+               }}
+               onOk={this.updateAddressByParcelNo.bind(this)}
+               confirmLoading={updateAddressLoading}
+        >
+          <div style={hidden}><div style={style}>箱号: </div>{currentInfo.parcelNo}</div>
+          <div style={hidden}><div style={style}>商品名称: </div>{currentInfo.productName}</div>
+          <div style={hidden}><div style={style}>用户微信昵称: </div>{currentInfo.wechatName}</div>
+          <div style={hidden}><div style={style}>数量: </div>{currentInfo.productNum}</div>
+          <div style={hidden}><div style={style}>包裹创建时间: </div>{
+            currentInfo.createTime
+              ? moment(currentInfo.createTime).format(`YYYY-MM-DD HH:mm:ss`)
+              : null
+          }</div>
+          <div style={Object.assign({lineHeight: '36px'},hidden)}><div style={style}>收件人姓名: </div>
+            <Input value={currentInfo.recipientsName}
+                   style={{width: 200}}
+                   onChange={e => {
+                     currentInfo.recipientsName = e.target.value;
+                     this.setState({})
+                   }}
+            />
+          </div>
+          <div style={Object.assign({lineHeight: '36px'},hidden)}><div style={style}>收件人身份证号: </div>
+            <Input value={currentInfo.receiveCard}
+                   style={{width: 200}}
+                   onChange={e => {
+                     currentInfo.receiveCard = e.target.value;
+                     this.setState({})
+                   }}
+            />
+          </div>
+          <div style={Object.assign({lineHeight: '36px'},hidden)}><div style={style}>收件人手机: </div>
+            <Input value={currentInfo.recipientsPhone}
+                   style={{width: 200}}
+                   onChange={e => {
+                     currentInfo.recipientsPhone = e.target.value;
+                     this.setState({})
+                   }}
+            />
+          </div>
+          <div>
+            <span style={{lineHeight: '36px', width: 80, display: 'inline-block'}}>省市区: </span>
+            <Cascader style={{width: 360}}
+                      value={addressArray}
+                      onChange={v => {
+                        currentInfo.recipientsProvince = v[0];
+                        currentInfo.recipientsCity = v[1];
+                        currentInfo.recipientsDistrict = v[2];
+                        this.setState({addressArray: v})
+                      }}
+                      options={areaData}
+            />
+          </div>
+          <Input.TextArea style={{marginTop: 10}}
+                          value={currentInfo.recipientsAddress}
+                          onChange={e => {
+                            currentInfo.recipientsAddress = e.target.value;
+                            this.setState({})
+                          }}
+          />
+        </Modal>
       </div>
     )
   }
