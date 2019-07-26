@@ -22,9 +22,8 @@ class YTO extends React.Component {
       pageNum: 1,
       pageSize: 100,
       pageTotal:0,
-      updateAddressLoading: false,
+      allLoading: false,
       currentInfo: {},
-      updateAddressModalShow: false,
       addressArray: []
     }
   }
@@ -133,7 +132,7 @@ class YTO extends React.Component {
     };
     // 去换行
     data.recipientsAddress = data.recipientsAddress.replace(/[\r\n]/g," ");
-    const showLoading = Is => this.setState({updateAddressLoading: Is});
+    const showLoading = Is => this.setState({allLoading: Is});
     showLoading(true);
     this.ajax.post('/backend/addressManagement/updateAddressByParcelNo', data).then(r => {
       const {status, msg} = r.data;
@@ -154,7 +153,7 @@ class YTO extends React.Component {
   uploadOrder (){
     this.setState({tableIsLoading:true});
     const {selectedRows} = this.state;
-    const showLoading = Is => this.setState({buttonLoading: Is});
+    const showLoading = Is => this.setState({allLoading: Is});
     showLoading(true);
     const dataList  = [];
     for (let v of selectedRows) dataList.push(v.parcelNo);
@@ -190,7 +189,7 @@ class YTO extends React.Component {
   }
   render() {
     const RadioButton = Radio.Button, RadioGroup = Radio.Group;
-    const {status, tableLoading, selectedIds, data, pageTotal, pageSize, pageNum, pageSizeOptions, selectedRows, buttonLoading, updateAddressLoading, updateAddressModalShow, currentInfo, addressArray} = this.state;
+    const {status, tableLoading, selectedIds, data, pageTotal, pageSize, pageNum, pageSizeOptions, selectedRows, allLoading, updateAddressModalShow, currentInfo, addressArray} = this.state;
     const columns = [
       {title: "箱号", dataIndex: "parcelNo", key: "parcelNo",width:160},
       {title: "商品名称", dataIndex: "productName", key: "productName"},
@@ -200,7 +199,7 @@ class YTO extends React.Component {
           <div>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</div>
         )
       },
-      {title: '操作', dataIndex: '操作', key: '操作', width: (status === 0 ? 160 : 100), fixed: 'right',
+      {title: '操作', dataIndex: '操作', key: '操作', width: (status === 0 ? 200 : 100), fixed: 'right',
         render: (text, record) => (
           <div>
             <Button type="primary"
@@ -209,6 +208,7 @@ class YTO extends React.Component {
             {status === 0 && <Button type="primary"
                                      style={{marginLeft: 10}}
                                      onClick={this.addressModal.bind(this, record)}
+                                     loading={allLoading}
                                      disabled={!this.allow(134)}
                                      title={!this.allow(134) ? '没有该操作权限' : null}
             >修改</Button>}
@@ -236,7 +236,7 @@ class YTO extends React.Component {
                   disabled={!this.allow(84) || selectedIds.length === 0}
                   title={!this.allow(84) ? '没有该操作权限' : null}
                   onClick={this.allow(84) && this.uploadOrder.bind(this)}
-                  loading={buttonLoading}
+                  loading={allLoading}
           >发送所选订单</Button>
         </div>}
         <div className="tableMain"
@@ -275,7 +275,7 @@ class YTO extends React.Component {
         <Modal visible={updateAddressModalShow}
                title="修改信息"
                onCancel={() => {
-                 if (updateAddressLoading) {
+                 if (allLoading) {
                    message.warn('上传中, 请勿关闭窗口')
                  } else {
                    this.setState({
@@ -285,7 +285,7 @@ class YTO extends React.Component {
                  }
                }}
                onOk={this.updateAddressByParcelNo.bind(this)}
-               confirmLoading={updateAddressLoading}
+               confirmLoading={allLoading}
         >
           <div style={hidden}><div style={style}>箱号: </div>{currentInfo.parcelNo}</div>
           <div style={hidden}><div style={style}>商品名称: </div>{currentInfo.productName}</div>
