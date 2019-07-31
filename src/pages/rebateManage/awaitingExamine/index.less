@@ -60,7 +60,28 @@
       width: 400px;
       text-align: center;
       padding: 20px;
+      position: relative;
 
+      .loadingShow {
+        z-index: 998;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0,0,0,.5);
+        overflow: hidden;
+
+        .loadingTxt {
+          color: #fff;
+          text-align: center;
+          font-size: 36px;
+          position: relative;
+          top: 50%;
+          line-height: 42px;
+          margin: -21px 0 0 0;
+        }
+      }
     }
 
     .containerForm {

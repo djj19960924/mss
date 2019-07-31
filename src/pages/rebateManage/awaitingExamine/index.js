@@ -79,30 +79,29 @@ class awaitingExamine extends React.Component {
       selectIsLoading: false,
       // 小票加载
       ticketIsLoading: false,
+      // 图片加载
+      imgLoading: true
     };
   }
   allow = this.props.appStore.getAllow.bind(this);
 
   componentDidMount() {
-    // this.getCountryLeftTicket()
+    this.imgHandle();
     this.getMallListByNationName();
     this.getTicketList();
   }
 
-  //渲染完成以后修正图片预览样式
-  componentDidUpdate() {
-    // 这里使用onload属性, 等待图片资源加载完成以后执行
-    document.getElementsByClassName('previewImage')[0].onload = () => {
+  // 处理图片加载完成事件
+  imgHandle() {
+    document.querySelector('.previewImage').onload = () => {
       let pI = document.getElementsByClassName('previewImage')[0];
+      const data = {previewImageWH: null, imgLoading: false};
       if ((pI.width / pI.height) < (400 / 550)) {
-        this.setState({
-          previewImageWH: 'height'
-        })
+        data.previewImageWH = 'height';
       } else if ((pI.width / pI.height) >= (400 / 550)) {
-        this.setState({
-          previewImageWH: 'width'
-        })
+        data.previewImageWH = 'width';
       }
+      this.setState(data);
     };
   }
 
@@ -325,7 +324,7 @@ class awaitingExamine extends React.Component {
 
   // 提交结束以后切换小票逻辑
   hasSubmit() {
-    const {countryLeftTicket, country, ticketTotal, hasChange, ticketList, currentTicketId, defaultExchangeRate} = this.state;
+    const {ticketTotal, hasChange, ticketList, currentTicketId, defaultExchangeRate} = this.state;
     // 由于不可能每次操作都调取接口, 所以在实际调取审核/驳回接口成功的同时
     // 可以对本地数据进行同步改变, 使得角标以及商场剩余小票数量一直处于与服务器内部数据
     // 数值同步的状态, 虽然没有实时交互, 但也从本地计算的方式达到了类似的效果
@@ -342,7 +341,8 @@ class awaitingExamine extends React.Component {
       repeatList: [],
       country: '',
       currentShop: undefined,
-      brandListOrigin: []
+      brandListOrigin: [],
+      imgLoading: true
     });
     // 重置表单
     this.props.form.resetFields();
@@ -410,7 +410,7 @@ class awaitingExamine extends React.Component {
   }
 
   render() {
-    const {showImageViewer, shopList, currentShop, hasTicket, brandListOrigin, ticketList, currentTicketId, reciptMoney, defaultExchangeRate, previewImageWH, ticketTotal, country, ticketDate, hasChange, repeatList, emptyList, rejectVisible, reasonId, rejectSpecificReason, selectIsLoading, ticketIsLoading} = this.state;
+    const {showImageViewer, shopList, currentShop, hasTicket, brandListOrigin, ticketList, currentTicketId, reciptMoney, defaultExchangeRate, previewImageWH, ticketTotal, country, ticketDate, hasChange, repeatList, emptyList, rejectVisible, reasonId, rejectSpecificReason, selectIsLoading, ticketIsLoading, imgLoading} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
       <div className="awaitingExamine">
@@ -421,17 +421,22 @@ class awaitingExamine extends React.Component {
         <div className="leftTicketNum">当前剩余小票: {ticketTotal}</div>
         {!hasTicket && <div className="noTicket">
           {ticketIsLoading && <div><Icon type="loading" />小票加载中...</div>}
-          {!ticketIsLoading && currentShop && <div><Icon type="smile" className="iconSmile"/><span>当前没有未审核的小票</span></div>}
+          {!ticketIsLoading && <div><Icon type="smile" className="iconSmile"/><span>当前没有未审核的小票</span></div>}
         </div>}
 
         <div className="container" style={hasTicket ? {} : {display:'none'}}>
           {/*图片相关功能*/}
           <div className="containerBody containerImage">
+            {imgLoading &&
+              <div className="loadingShow">
+                <p className="loadingTxt"><Icon type="loading" /> 图片加载中, 请稍后...</p>
+              </div>
+            }
             {/*单图片功能*/}
             <img className="previewImage"
                  src={!!ticketList.length ? ticketList[currentTicketId].pictureUrl : ''}
                  alt=""
-              // 打开图片弹窗
+                 // 打开图片弹窗
                  onClick={() => {
                    this.setState({showImageViewer: true})
                  }}
