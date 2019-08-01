@@ -120,9 +120,6 @@ class setRebate extends React.Component{
   changePage(pageNum,pageSize) {
     this.selectAllRebateByMallName(pageNum,pageSize)
   }
-  changePageSize(pageNum,pageSize) {
-    this.selectAllRebateByMallName(pageNum,pageSize)
-  }
   // 打开编辑弹窗
   openEdit(q) {
     this.setState({
@@ -237,7 +234,7 @@ class setRebate extends React.Component{
         this.ajax.post('/rebate/insertOrUpdateRebate', dataList).then(r => {
           if (r.data.status === 10000) {
             message.success(r.data.msg);
-            this.getMallListByNationName();
+            this.selectAllRebateByMallName();
             // 关闭弹窗
             this.closeModal();
           }
@@ -369,7 +366,7 @@ class setRebate extends React.Component{
                       onChange={this.changePage.bind(this)}
                       showSizeChanger
                       pageSizeOptions={pageSizeOptions}
-                      onShowSizeChange={this.changePageSize.bind(this)}
+                      onShowSizeChange={this.changePage.bind(this)}
           />
         </div>
 
