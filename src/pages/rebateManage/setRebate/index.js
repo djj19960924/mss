@@ -298,11 +298,8 @@ class setRebate extends React.Component{
                         currentRecord: record
                       }
                     )}}
-                    // 暂时禁止新增删除
-                    disabled={true}
-                    title="功能升级调整中"
-                    // disabled={!this.allow(72)}
-                    // title={this.allow(72) ? null : '没有该操作权限'}
+                    disabled={!this.allow(72)}
+                    title={this.allow(72) ? null : '没有该操作权限'}
             >删除</Button>
           </div>
         ),
@@ -338,9 +335,6 @@ class setRebate extends React.Component{
           {this.allow(74) &&
             <Button className="createNew" type="primary"
                     onClick={this.openCreate.bind(this)}
-                    // 暂时禁止新增删除
-                    disabled={true}
-                    title="功能升级调整中"
             >新增品牌</Button>
           }
         </div>
