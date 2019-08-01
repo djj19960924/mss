@@ -237,6 +237,7 @@ class setRebate extends React.Component{
         this.ajax.post('/rebate/insertOrUpdateRebate', dataList).then(r => {
           if (r.data.status === 10000) {
             message.success(r.data.msg);
+            this.getMallListByNationName();
             // 关闭弹窗
             this.closeModal();
           }
