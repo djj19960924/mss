@@ -443,6 +443,16 @@ const menus = [
         components: [
           {name: 'importExcel', path: '/developer-pages/import-excel'}
         ]
+      },
+      {
+        title: '测试专用',
+        id: 44,
+        icon: 'info-circle',
+        key: '/developer-pages/test',
+        testType: 'localTest',
+        components: [
+          {name: 'test', path: '/developer-pages/test'}
+        ]
       }
     ]
   }

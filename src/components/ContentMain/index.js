@@ -9,6 +9,7 @@ import page404 from '@pages/system/page404/'
 
 // 开发人员专用调试
 import importExcel from '@pages/developerPages/importExcel/';
+import test from '@pages/developerPages/test';
 
 // 日志页面
 import logs from '@pages/system/logs/';
@@ -151,7 +152,8 @@ const componentsList = {
   SKTYto,
   rebateCountryInfo,
   user,
-  logs
+  logs,
+  test
 };
 
 @withRouter
