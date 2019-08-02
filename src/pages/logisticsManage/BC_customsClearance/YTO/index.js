@@ -222,15 +222,17 @@ class YTO extends React.Component {
     columns1.push(...columns);
     const style = {float:'left',width:'160px', color: '#333'}, hidden = {overflow:'hidden'};
     return (
-      <div className="yuanTong">
-        <RadioGroup buttonStyle="solid"
-                    className="radioBtn"
-                    value={status}
-                    onChange={this.logisticsStatus.bind(this)}
-        >
-          <RadioButton value={0}>待上传</RadioButton>
-          <RadioButton value={1}>已上传</RadioButton>
-        </RadioGroup>
+      <div className="yuanTong contentMain">
+        <div className="btnLine">
+          <RadioGroup buttonStyle="solid"
+                      className="radioBtn"
+                      value={status}
+                      onChange={this.logisticsStatus.bind(this)}
+          >
+            <RadioButton value={0}>待上传</RadioButton>
+            <RadioButton value={1}>已上传</RadioButton>
+          </RadioGroup>
+        </div>
         {status === 0 && <div className="btnLine">
           <Button type="primary"
                   disabled={!this.allow(84) || selectedIds.length === 0}

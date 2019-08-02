@@ -159,7 +159,7 @@ class orderPushed extends React.Component{
       {title: `收件地址`, dataIndex: `recipientsAddress`, key: 'recipientsAddress'},
     ];
     return (
-      <div className="orderPushed">
+      <div className="orderPushed contentMain">
         <div className="title">
           <div className="titleMain">邮政 - 已推送订单</div>
           <div className="titleLine" />

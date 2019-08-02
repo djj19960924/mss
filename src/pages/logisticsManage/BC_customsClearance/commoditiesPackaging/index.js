@@ -616,7 +616,7 @@ class commoditiesPackaging extends React.Component{
   render() {
     const { isFocusOnWindow, loadingShow, nickname, boxesList, selectBox, isOnFocusInput, boxesIsLoading, orderMoney, productNum, showPayQRCode, needToPay} = this.state;
     return (
-      <div className="commoditiesPackaging ">
+      <div className="commoditiesPackaging contentMain">
         {/*这里存放公共信息, 用于表示登录用户, 以及退出登录*/}
         <div className="titleLine">
           <h1 className="title">商品录入,箱子打包</h1>

@@ -129,7 +129,7 @@ class orderMatched extends React.Component{
     ];
     const {tableList, pageSize, pageSizeOptions, tableIsLoading} = this.state;
     return (
-      <div className="orderMatched">
+      <div className="orderMatched contentMain">
         <div className="title">
           <div className="titleMain">ETK - 已匹配订单</div>
           <div className="titleLine" />

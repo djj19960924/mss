@@ -164,7 +164,7 @@ class orderUnmatched extends React.Component{
     const {selectedRowKeys, tableList, tableIsLoading, pageSize, pageSizeOptions, buttonIsLoading} = this.state;
 
     return (
-      <div className="orderUnmatched">
+      <div className="orderUnmatched contentMain">
         <div className="title">
           <div className="titleMain">ETK - 未匹配订单</div>
           <div className="titleLine" />

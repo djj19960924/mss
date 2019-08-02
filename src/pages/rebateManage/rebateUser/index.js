@@ -5,7 +5,7 @@ import './index.less';
 import moment from 'moment'
 
 @inject('appStore') @observer @Form.create()
-class user extends React.Component {
+class rebateUser extends React.Component {
     constructor(props){
         super(props);
         this.state = {
@@ -83,49 +83,32 @@ class user extends React.Component {
 
     render() {
         const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions} = this.state;
-        
+        const hasInfo = val => <div>{val ? val : '无'}</div>;
         const columns = [
-            {title:'用户ID',dataIndex:'unionId',key:'unionId',width:310,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            {title:'用户昵称',dataIndex:'nickname',key:'nickname',width:200,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            {title:'姓名',dataIndex:'passportName',key:'passportName',width:130,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            {title:'手机号',dataIndex:'phoneNum',key:'phoneNum',width:130,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            
+            {title: '用户ID', dataIndex: 'unionId', key: 'unionId', width: 310, render: hasInfo},
+            {title: '用户昵称', dataIndex: 'nickname', key: 'nickname', width: 200, render: hasInfo},
+            {title: '姓名', dataIndex: 'passportName', key: 'passportName', width: 130, render: hasInfo},
+            {title: '手机号', dataIndex: 'phoneNum', key: 'phoneNum', width: 130, render: hasInfo},
             {title: '操作', dataIndex: '操作', key: '操作', width: 330, fixed: 'right',
                 render: (text, record) =>
-                    <div>
-                        <Button type="primary"
-                            onClick={this.showDetail.bind(this,record)}
-                        >查看</Button>
-                        <Button type="primary"
-                        style={{marginLeft: 10}} >设置</Button>
-                        {<Button type="primary"
-                                style={{marginLeft: 10}}    
-                        >返现</Button>}
-                        {<Button type="primary"
-                                style={{marginLeft: 10}}     
-                        >追加</Button>}
-                    </div>
+                  <div>
+                      <Button type="primary"
+                              onClick={this.showDetail.bind(this, record)}
+                      >查看</Button>
+                      <Button type="primary"
+                              style={{marginLeft: 10}}>设置</Button>
+                      {<Button type="primary"
+                               style={{marginLeft: 10}}
+                      >返现</Button>}
+                      {<Button type="primary"
+                               style={{marginLeft: 10}}
+                      >追加</Button>}
+                  </div>
             }
-        ]
+        ];
         
         return (
-            <div className="accounts">
+            <div className="rebateUser">
                 <div className="title">
                     <div className="titleMain">用户表管理</div>
                     <div className="titleLine" />
@@ -165,4 +148,4 @@ class user extends React.Component {
     }
 }
 
-export default user;
+export default rebateUser;

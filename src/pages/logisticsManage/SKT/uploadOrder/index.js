@@ -172,11 +172,10 @@ class SKTUploadOrder extends React.Component {
     const RadioButton = Radio.Button, RadioGroup = Radio.Group;
     const { tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, isTableLoading, showModal, isUpload, success, fail, newModal, BCStatus, } = this.state;
     return (
-      <div className="SKTUploadOrder">
-        <div className="tadioLine">
+      <div className="SKTUploadOrder contentMain">
+        <div className="btnLine">
           {/*查询条件单选行*/}
           <RadioGroup buttonStyle="solid"
-                      className="radioBtn"
                       value={BCStatus}
                       onChange={(e)=>{
                         this.setState({BCStatus:e.target.value},()=>{

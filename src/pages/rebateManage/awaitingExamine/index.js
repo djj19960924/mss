@@ -413,7 +413,7 @@ class awaitingExamine extends React.Component {
     const {showImageViewer, shopList, currentShop, hasTicket, brandListOrigin, ticketList, currentTicketId, reciptMoney, defaultExchangeRate, previewImageWH, ticketTotal, country, ticketDate, hasChange, repeatList, emptyList, rejectVisible, reasonId, rejectSpecificReason, selectIsLoading, ticketIsLoading, imgLoading} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
-      <div className="awaitingExamine">
+      <div className="awaitingExamine contentMain">
         <div className="title">
           <div className="titleMain">小票审核</div>
           <div className="titleLine" />

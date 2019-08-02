@@ -106,7 +106,7 @@ class SKTListToBeEntered extends React.Component {
     ];
     const {tableList, pageNum, pageSize, pageTotal, pageSizeOptions, tableIsLoading, shopList, currentShopId, shopObj} = this.state;
     return (
-      <div className="SKTListToBeEntered">
+      <div className="SKTListToBeEntered contentMain">
         <div className="title">
           <div className="titleMain">待录入列表</div>
           <div className="titleLine" />

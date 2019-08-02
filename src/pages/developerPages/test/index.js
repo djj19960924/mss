@@ -8,7 +8,7 @@ class Test extends React.Component{
   }
   render() {
     return (
-      <div className="test">
+      <div className="test contentMain">
         测试用页面
       </div>
     )

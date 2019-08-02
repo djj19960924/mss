@@ -68,7 +68,7 @@ class updateQRCode extends React.Component {
     const { imgUrl, previewVisible, previewImage, fileList, uploadLoading, } = this.state;
     const uploadButton = <div><Icon type="plus" /><div className="ant-upload-text">添加图片</div></div>;
     return (
-      <div className="updateQRCode">
+      <div className="updateQRCode contentMain">
         <div className="title">
           <div className="titleMain">上传日上二维码图片</div>
           <div className="titleLine" />

@@ -151,7 +151,7 @@ class airportTransfer extends React.Component {
       }
     ];
     return (
-      <div className="airportTransfer">
+      <div className="airportTransfer contentMain">
         <div className="title">
           <div className="titleMain">预约接送机</div>
           <div className="titleLine"/>

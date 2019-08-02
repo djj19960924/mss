@@ -415,8 +415,11 @@ class commoditiesImgList extends React.Component {
       </div>
     );
     return (
-      <div className="commoditiesImgList">
-        <p className="titleName">图片修改</p>
+      <div className="commoditiesImgList contentMain">
+        <div className="title">
+          <div className="titleMain">图片修改</div>
+          <div className="titleLine" />
+        </div>
 
         {/*loading遮罩层*/}
         {isLoading && <div className="loading">

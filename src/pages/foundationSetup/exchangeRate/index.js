@@ -91,7 +91,7 @@ class ExchangeRate extends React.Component {
     }];
     const {tableList, editRateVisible, currency, rateCurrency, rate,editConfirmLoading,tableLoading} = this.state;
     return (
-      <div className="exchange-rate">
+      <div className="exchange-rate contentMain">
         <div className="title">
           <div className="titleMain">汇率</div>
           <div className="titleLine"/>

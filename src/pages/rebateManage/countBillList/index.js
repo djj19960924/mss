@@ -281,22 +281,24 @@ class countBillList extends React.Component {
     const columnsAdd = {title: '更新时间', dataIndex: 'updateTime', key: 'updateTime', width: 140,};
     const {tableDataList, verifyStatus, previewVisible, previewImage, selectedList, selectedIds, pageTotal, pageSize, pageNum, pageSizeOptions, tableIsLoading, downloadModalVisible, isOkLoading, textInfoList, textType, ticketSuccessList, passportSuccessList, closeIsAllowed, loadingTextList, ticketErrorList, passportErrorList, } = this.state;
     return (
-      <div className="countBillList">
+      <div className="countBillList contentMain">
         <div className="title">
           <div className="titleMain">对账管理</div>
           <div className="titleLine" />
         </div>
-        {/*查询条件单选行*/}
-        <RadioGroup buttonStyle="solid"
-                    className="radioBtn"
-                    value={verifyStatus}
-                    onChange={this.changeVerifyStatus.bind(this)}
-        >
-          <RadioButton value={0}>未发送</RadioButton>
-          <RadioButton value={1}>已发送</RadioButton>
-        </RadioGroup>
+        <div className="btnLine">
+          {/*查询条件单选行*/}
+          <RadioGroup buttonStyle="solid"
+                      className="radioBtn"
+                      value={verifyStatus}
+                      onChange={this.changeVerifyStatus.bind(this)}
+          >
+            <RadioButton value={0}>未发送</RadioButton>
+            <RadioButton value={1}>已发送</RadioButton>
+          </RadioGroup>
 
-        <span>共计: {pageTotal} 条</span>
+          <span style={{marginLeft: 10}}>共计: {pageTotal} 条</span>
+        </div>
 
         {/*执行行*/}
         <div className="btnLine" style={{marginLeft: 10}}>

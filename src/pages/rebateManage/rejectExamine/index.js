@@ -147,7 +147,7 @@ class rejectExamine extends React.Component{
         ),}];
     const {countries, shopList, country, mallName, pageTotal, pageSize, pageSizeOptions, pageNum, dataSource} = this.state;
     return (
-      <div className="rejectExamine">
+      <div className="rejectExamine contentMain">
         <div className="title">
           <div className="titleMain">已驳回小票</div>
           <div className="titleLine" />

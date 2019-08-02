@@ -251,7 +251,7 @@ class roles extends React.Component {
       },
     ];
     return (
-      <div className="roles">
+      <div className="roles contentMain">
         <div className="title">
           <div className="titleMain">角色管理</div>
           <div className="titleLine" />

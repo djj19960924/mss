@@ -175,8 +175,8 @@ class BCUploadOrder extends React.Component {
     const RadioButton = Radio.Button, RadioGroup = Radio.Group;
     const { tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, isTableLoading, showModal, isUpload, success, fail, newModal, BCStatus, } = this.state;
     return (
-      <div className="BCUploadOrder">
-        <div className="tadioLine">
+      <div className="BCUploadOrder contentMain">
+        <div className="btnLine">
           {/*查询条件单选行*/}
           <RadioGroup buttonStyle="solid"
                       className="radioBtn"

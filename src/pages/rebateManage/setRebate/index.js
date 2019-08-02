@@ -306,7 +306,7 @@ class setRebate extends React.Component{
     const {shopList, currentShop, country, tableDataList, pageTotal, pageSize, pageSizeOptions, pageNum, deleteModalVisible, currentRecord, modalVisible, modalType, tableIsLoading} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
-      <div className="setRebate">
+      <div className="setRebate contentMain">
         <div className="title">
           <div className="titleMain">设置返点</div>
           <div className="titleLine" />

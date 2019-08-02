@@ -13,7 +13,7 @@ class Home extends React.Component {
   }
   render() {
     return (
-      <div className="Home">
+      <div className="Home contentMain">
         <p className="title">
           <span>欢迎使用BuyersHouse后台管理系统</span>
         </p>

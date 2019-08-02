@@ -291,7 +291,7 @@ class commoditiesCreateAndEdit extends React.Component {
     const RadioButton = Radio.Button;
     const RadioGroup = Radio.Group;
     return (
-      <div className="commoditiesCreateAndEdit">
+      <div className="commoditiesCreateAndEdit contentMain">
         {/*loading遮罩层*/}
         {isLoading && <div className="loading">
           <div className="loadingMain">
@@ -300,7 +300,10 @@ class commoditiesCreateAndEdit extends React.Component {
         </div>}
 
         {/*标题*/}
-        <p className="titleName">商品{titleName}</p>
+        <div className="title">
+          <div className="titleMain">商品{titleName}</div>
+          <div className="titleLine" />
+        </div>
 
         {/*表单*/}
         <div className="formList">

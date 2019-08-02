@@ -179,7 +179,7 @@ class adoptExamineUnpaid extends React.Component{
     if (payment !== null) columns.push(columnsAdd);
     const {Option} = Select;
     return (
-      <div className="adoptExamineUnpaid">
+      <div className="adoptExamineUnpaid contentMain">
         <div className="title">
           <div className="titleMain">待返款</div>
           <div className="titleLine" />

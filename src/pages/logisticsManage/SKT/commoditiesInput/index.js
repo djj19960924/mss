@@ -1,5 +1,5 @@
 import React from 'react';
-import { message, Icon, Button, Row, Col, InputNumber, Modal, } from 'antd';
+import { message, Icon, Button, Row, Col, InputNumber } from 'antd';
 import allowedKeys from "@js/allowedKeys/";
 import './index.less';
 
@@ -232,7 +232,7 @@ class SKTCommoditiesInput extends React.Component {
   render() {
     const {boxesIsLoading, isFocusOnWindow, isSelectBox, currentBoxInfo, isOnFocusInput, parcelWeight} = this.state;
     return (
-      <div className="SKTCommoditiesInput">
+      <div className="SKTCommoditiesInput contentMain">
         <div className="title">
           <div className="titleMain">扫码录入商品</div>
           <div className="titleLine" />

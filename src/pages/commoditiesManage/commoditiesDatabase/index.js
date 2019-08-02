@@ -522,7 +522,7 @@ class commoditiesDataBase extends React.Component {
       // {title: `这一列请勿修改任何数据`, dataIndex: `skuId`, key: `skuId`, width: 80},
     ];
     return (
-      <div className="dataBase">
+      <div className="dataBase contentMain">
         <div className="title">
           <div className="titleMain">商品资料库</div>
           <div className="titleLine" />
@@ -627,22 +627,23 @@ class commoditiesDataBase extends React.Component {
           ))}
         </Modal>
 
-        {/*查询条件单选行*/}
-        <RadioGroup value={record}
-                    buttonStyle="solid"
-                    className="radioBtn"
-                    onChange={this.changeRecord.bind(this)}
-        >
-          <RadioButton value={0}>全部</RadioButton>
-          <RadioButton value={1}>已备案</RadioButton>
-          <RadioButton value={2}>待导出备案(未备案)</RadioButton>
-          <RadioButton value={3}>备案中</RadioButton>
-          <RadioButton value={5}>临时已备案</RadioButton>
-          <RadioButton value={4}>作废</RadioButton>
-        </RadioGroup>
+        <div className="btnLine">
+          {/*查询条件单选行*/}
+          <RadioGroup value={record}
+                      buttonStyle="solid"
+                      onChange={this.changeRecord.bind(this)}
+          >
+            <RadioButton value={0}>全部</RadioButton>
+            <RadioButton value={1}>已备案</RadioButton>
+            <RadioButton value={2}>待导出备案(未备案)</RadioButton>
+            <RadioButton value={3}>备案中</RadioButton>
+            <RadioButton value={5}>临时已备案</RadioButton>
+            <RadioButton value={4}>作废</RadioButton>
+          </RadioGroup>
+        </div>
 
         {/*新增按钮 excel导出 搜索框*/}
-        <div className="searchLine">
+        <div className="btnLine">
           {this.allow(60) && <Button type="primary"
                                      className="createNew"
                                      onClick={this.toCE.bind(this,'create', null)}

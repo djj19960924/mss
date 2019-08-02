@@ -67,7 +67,7 @@ class appointmentInfo extends React.Component{
       }];
     const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions } = this.state;
     return (
-      <div className="appointmentInfo">
+      <div className="appointmentInfo contentMain">
         <div className="title">
           <div className="titleMain">预约上门打包</div>
           <div className="titleLine" />

@@ -9,9 +9,9 @@ class logs extends React.Component{
   }
   render() {
     return (
-      <div className="logs">
+      <div className="logs contentMain">
         <p className="title">
-          <span>日志页面</span>
+          <span>系统日志</span>
         </p>
         <div className="dividingLine"/>
 

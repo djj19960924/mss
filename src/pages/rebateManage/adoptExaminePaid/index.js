@@ -116,7 +116,7 @@ class adoptExaminePaid extends React.Component {
     ];
     const {dataList, pageSizeOptions, pageTotal, pageSize, pageNum, payment, searchValue, tableIsLoading} = this.state;
     return (
-      <div className="adoptExaminePaid">
+      <div className="adoptExaminePaid contentMain">
         <div className="title">
           <div className="titleMain">已返款</div>
           <div className="titleLine" />

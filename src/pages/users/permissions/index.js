@@ -207,7 +207,7 @@ class permissions extends React.Component {
     ];
 
     return (
-      <div className="permissions">
+      <div className="permissions contentMain">
         <div className="title">
           <div className="titleMain">权限管理</div>
           <div className="titleLine"/>

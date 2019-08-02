@@ -241,8 +241,11 @@ class importExcel extends React.Component{
   render() {
     const { processedDataList, Num, successList, failList, repeatList, failListNum, repeatListNum, isStart, failListReason, } = this.state;
     return (
-      <div className="importExcel">
-        <h1 className="title">导入excel</h1>
+      <div className="importExcel contentMain">
+        <div className="title">
+          <div className="titleMain">导入excel</div>
+          <div className="titleLine" />
+        </div>
         <div className="btnLine">
           <p className="pTitle">- 这里导入excel文件</p>
           <Button onClick={this.clickIIT.bind(this)}

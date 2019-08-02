@@ -378,7 +378,7 @@ class appointmentTeamManage extends React.Component {
       )
     };
     return (
-      <div className="appointmentTeamManage">
+      <div className="appointmentTeamManage contentMain">
         <div className="title">
           <div className="titleMain">预约挂团</div>
           <div className="titleLine" />

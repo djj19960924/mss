@@ -208,7 +208,7 @@ class accounts extends React.Component {
       },
     ];
     return (
-      <div className="accounts">
+      <div className="accounts contentMain">
         <div className="title">
           <div className="titleMain">账户管理</div>
           <div className="titleLine" />

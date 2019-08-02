@@ -27,10 +27,10 @@ class GlobalErrands extends React.Component {
   render() {
     const {contentType} = this.state;
     return (
-      <div className="globalErrands">
+      <div className="globalErrands contentMain">
         <div className="title">
           <div className="titleMain">全球跑腿</div>
-          <div className="titleLine"></div>
+          <div className="titleLine" />
         </div>
         <Radio.Group defaultValue={contentType} buttonStyle="solid" onChange={(e) => {
           const {origin, pathname} = window.location;
@@ -42,13 +42,13 @@ class GlobalErrands extends React.Component {
           <Radio.Button value="2">采购行程</Radio.Button>
         </Radio.Group>
         {
-          contentType === "0" && <WaitPurchasing history={this.props.history}></WaitPurchasing>
+          contentType === "0" && <WaitPurchasing history={this.props.history} />
         }
         {
-          contentType === "1" && <EndOfOrder history={this.props.history}></EndOfOrder>
+          contentType === "1" && <EndOfOrder history={this.props.history} />
         }
         {
-          contentType === "2" && <PurchaseTrip></PurchaseTrip>
+          contentType === "2" && <PurchaseTrip />
         }
       </div>
     );

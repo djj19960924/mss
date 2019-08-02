@@ -86,60 +86,32 @@ class user extends React.Component {
 
     render() {
         const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions} = this.state;
-        
+        const hasInfo = val => <div>{val ? val : '无'}</div>;
         const columns = [
-            {title:'评价时间',dataIndex:'evaluationTime',key:'evaluationTime',width:160,
-                render(val){
-                    return <div>{ val ? moment(Number(val)).format('YYYY-MM-DD HH:mm:ss') : '无'}</div>
-                }
-                
-            },
-            {title:'微信号',dataIndex:'wechatNo',key:'wechatNo',width:130,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            {title:'微信昵称',dataIndex:'nickname',key:'nickname',width:200,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            {title:'客服',dataIndex:'servicer',key:'servicer',width:160,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                }        
-            },
-            {title:'买手',dataIndex:'buyer',key:'buyer',width:140,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            {title:'满意度',dataIndex:'evaluation',key:'evaluation',width:80,
-                render(val){
-                    return (<div>{val?val:'无'}</div>)
-                } 
-            },
-            {
-                title: '操作', dataIndex: '操作', key: '操作', width: 100, fixed: 'right',
+            {title:'评价时间',dataIndex:'evaluationTime',key:'evaluationTime',width:160, render: hasInfo},
+            {title:'微信号',dataIndex:'wechatNo',key:'wechatNo',width:130,render: hasInfo},
+            {title:'微信昵称',dataIndex:'nickname',key:'nickname',width:200,render: hasInfo},
+            {title:'客服',dataIndex:'servicer',key:'servicer',width:160,render: hasInfo},
+            {title:'买手',dataIndex:'buyer',key:'buyer',width:140,render: hasInfo},
+            {title:'满意度',dataIndex:'evaluation',key:'evaluation',width:80,render: hasInfo},
+            {title: '操作', dataIndex: '操作', key: '操作', width: 100, fixed: 'right',
                 render: (text,record) => (
-                    <Button type="primary"
-                        onClick={this.showDetail.bind(this,record)}
-                    >
-                        查看
-                    </Button>
+                  <Button type="primary"
+                          onClick={this.showDetail.bind(this,record)}
+                  >查看</Button>
                 )
             }
-        ]
+        ];
         
         return (
-            <div className="accounts">
+            <div className="globalErrandsAccounts contentMain">
                 <div className="title">
                     <div className="titleMain">用户评价表</div>
                     <div className="titleLine" />
                 </div>
 
                 <div className="tableMain"
-                    style={{maxWidth: 1000}}
+                    style={{maxWidth: 1000, marginTop: 10}}
                 >
                     {/*表单主体*/}
 

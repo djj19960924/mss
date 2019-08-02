@@ -103,7 +103,7 @@ class globalTranshipmentNotArrived extends React.Component {
       {title: `微信号`, dataIndex: `wechatNo`, key: 'wechatNo'},
     ];
     return (
-      <div className="globalTranshipmentNotArrived">
+      <div className="globalTranshipmentNotArrived contentMain">
         <div className="title">
           <div className="titleMain">全球转运 - 货物未到仓</div>
           <div className="titleLine" />

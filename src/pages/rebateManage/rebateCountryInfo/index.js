@@ -74,7 +74,7 @@ class rebateCountryInfo extends React.Component {
     const {nationName, copyInfo, allLoading} = this.state;
     const {TextArea} = Input;
     return (
-      <div className="rebateCountryInfo">
+      <div className="rebateCountryInfo contentMain">
         <div className="title">
           <div className="titleMain">设置说明文案</div>
           <div className="titleLine" />

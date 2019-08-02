@@ -80,7 +80,7 @@ class globalTranshipmentArrived extends React.Component {
       {title: `微信号`, dataIndex: `wechatNo`, key: 'wechatNo'},
     ];
     return (
-      <div className="globalTranshipmentArrived">
+      <div className="globalTranshipmentArrived contentMain">
         <div className="title">
           <div className="titleMain">全球转运 - 货物已到仓</div>
           <div className="titleLine" />

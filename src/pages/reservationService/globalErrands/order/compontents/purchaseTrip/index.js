@@ -241,7 +241,7 @@ class PurchaseTrip extends React.Component {
       },
     ];
     return (
-      <div className="purchase-trip ">
+      <div className="purchase-trip">
         <div className="tableMain">
           <Table className="tableList"
                  bordered

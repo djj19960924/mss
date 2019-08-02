@@ -188,15 +188,17 @@ class SKTYto extends React.Component {
     const RadioButton = Radio.Button, RadioGroup = Radio.Group;
     const {status, tableLoading, selectedIds, data, pageTotal, pageSize, pageNum, pageSizeOptions, selectedRows, buttonLoading} = this.state;
     return (
-      <div className="SKTYto">
-        <RadioGroup buttonStyle="solid"
-                    className="radioBtn"
-                    value={status}
-                    onChange={this.logisticsStatus.bind(this)}
-        >
-          <RadioButton value={0}>待上传</RadioButton>
-          <RadioButton value={1}>已上传</RadioButton>
-        </RadioGroup>
+      <div className="SKTYto contentMain">
+        <div className="btnLine">
+          <RadioGroup buttonStyle="solid"
+                      className="radioBtn"
+                      value={status}
+                      onChange={this.logisticsStatus.bind(this)}
+          >
+            <RadioButton value={0}>待上传</RadioButton>
+            <RadioButton value={1}>已上传</RadioButton>
+          </RadioGroup>
+        </div>
         {status === 0 && <div className="btnLine">
           <Button type="primary"
                   // disabled={null}

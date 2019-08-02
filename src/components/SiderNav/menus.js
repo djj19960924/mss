@@ -329,9 +329,9 @@ const menus = [
         id: 133,
         icon: 'user',
         testType: 'localTest',
-        key: '/rebate-manage/user',
+        key: '/rebate-manage/rebate-user',
         components: [
-          {name: 'user', path: '/rebate-manage/user'}
+          {name: 'rebateUser', path: '/rebate-manage/rebate-user'}
         ]
       }
     ]
