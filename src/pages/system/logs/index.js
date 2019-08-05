@@ -26,8 +26,8 @@ class logs extends React.Component{
                 <p key={mainIndex}
                    // 1. 判断是否包含 color 对象
                    // 2. 判断是否包含该属性
-                   style={!!item.color && item.color[`${mainIndex}`] ?
-                     {color: item.color[`${mainIndex}`]} : null}
+                   style={!!item.color && item.color[`${mainIndex + 1}`] ?
+                     {color: item.color[`${mainIndex + 1}`]} : null}
                 >{mainItem}</p>
               ))}
             </div>
