@@ -34,7 +34,7 @@ class GlobalErrands extends React.Component {
         </div>
         <Radio.Group defaultValue={contentType} buttonStyle="solid" onChange={(e) => {
           const {origin, pathname} = window.location;
-          window.history.replaceState('','',`${origin}${pathname}??contentType=${e.target.value}`);
+          window.history.replaceState('','',`${origin}${pathname}?contentType=${e.target.value}`);
           this.setState({contentType: e.target.value})
         }} className="menu-selection">
           <Radio.Button value="0">等待采购</Radio.Button>

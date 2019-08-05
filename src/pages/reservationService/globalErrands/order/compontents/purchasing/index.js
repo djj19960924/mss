@@ -84,7 +84,7 @@ class WaitPurchasing extends React.Component {
     if (followUper === null) {
       message.warn("请先编辑跟进人");
     } else {
-      this.props.history.push("/reservation-service/global-errands/edit-progress?id=" + id+"&contentType=0");
+      this.props.history.push("/reservation-service/global-errands/order/edit-progress?id=" + id+"&contentType=0");
     }
   }
 

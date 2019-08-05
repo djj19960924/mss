@@ -82,7 +82,7 @@ class EndOfOrder extends React.Component {
         key: "id",
         width: 150,
         render: (text, record) => (
-          <Button type={"primary"} onClick={()=>{this.props.history.push("/reservation-service/global-errands/edit-progress?id=" + record.id+"&contentType=1");}}>查看</Button>
+          <Button type={"primary"} onClick={()=>{this.props.history.push("/reservation-service/global-errands/order/edit-progress?id=" + record.id+"&contentType=1");}}>查看</Button>
         )
       },
       {
