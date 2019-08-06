@@ -88,7 +88,9 @@ class user extends React.Component {
         const { tableDataList, tableIsLoading, pageTotal, pageSize, pageNum, pageSizeOptions} = this.state;
         const hasInfo = val => <div>{val ? val : '无'}</div>;
         const columns = [
-            {title:'评价时间',dataIndex:'evaluationTime',key:'evaluationTime',width:160, render: hasInfo},
+            {title:'评价时间',dataIndex:'evaluationTime',key:'evaluationTime',width:160, render: hasInfo,
+                render: text => <div>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '无'}</div>
+            },
             {title:'微信号',dataIndex:'wechatNo',key:'wechatNo',width:130,render: hasInfo},
             {title:'微信昵称',dataIndex:'nickname',key:'nickname',width:200,render: hasInfo},
             {title:'客服',dataIndex:'servicer',key:'servicer',width:160,render: hasInfo},
