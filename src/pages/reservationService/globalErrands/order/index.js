@@ -1,11 +1,11 @@
 import React from "react";
-import {Radio, Input} from "antd";
+import {Radio} from "antd";
 import "./index.less";
 import PurchaseTrip from "./compontents/purchaseTrip";
 import WaitPurchasing from "./compontents/purchasing";
 import EndOfOrder from "./compontents/endOfOrder";
 
-class GlobalErrands extends React.Component {
+class GlobalErrandsOrder extends React.Component {
   constructor(props) {
     super(props);
 
@@ -27,7 +27,7 @@ class GlobalErrands extends React.Component {
   render() {
     const {contentType} = this.state;
     return (
-      <div className="globalErrands contentMain">
+      <div className="GlobalErrandsOrder contentMain">
         <div className="title">
           <div className="titleMain">全球跑腿</div>
           <div className="titleLine" />
@@ -56,4 +56,4 @@ class GlobalErrands extends React.Component {
 }
 
 
-export default GlobalErrands;
+export default GlobalErrandsOrder;
