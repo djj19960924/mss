@@ -35,13 +35,11 @@ class permissions extends React.Component {
     const Option = Select.Option;
     const { parentIdObject } = this.state;
     this.ajax.post('/permission/getPermissionList').then(r => {
-      if (r.data.status === 10000) {
-        parentIdObject['0'] = '根目录';
-        for (let Obj of r.data.data) parentIdObject[`${Obj.menuId}`] = Obj.name;
-        const parentIdList = [];
-        for(let i in parentIdObject){
-          parentIdList.push(<Option key={Number(i)} value={Number(i)}>{parentIdObject[i]}</Option>)
-        }
+      const {data, status} = r.data;
+      if (status === 10000) {
+        for (let Obj of data) parentIdObject[`${Obj.menuId}`] = Obj.name;
+        const parentIdList = [<Option key={0} value={0}>根目录</Option>];
+        for(let i of data) if(i.type === 1) parentIdList.push(<Option key={i.menuId}>{i.name}</Option>);
         this.setState({
           tableDataList: r.data.data,
           parentIdObject,
