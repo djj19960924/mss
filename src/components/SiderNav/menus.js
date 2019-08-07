@@ -367,7 +367,17 @@ const menus = [
         key: '/reservation-service/global-errands',
         subs: [
           {
-            title: '全球跑腿预订',
+            title: '订单管理',
+            id: 135,
+            icon: 'file-text',
+            testType: 'localTest',
+            key: '/reservation-service/global-errands/order-manage',
+            components: [
+              {name: 'orderManage', path: '/reservation-service/global-errands/order-manage'},
+            ]
+          },
+          {
+            title: '商品预订',
             id: 55,
             icon: 'thunderbolt',
             key: '/reservation-service/global-errands/order',
@@ -377,7 +387,7 @@ const menus = [
             ]
           },
           {
-            title: '全球跑腿评价',
+            title: '跑腿评价',
             id: 132,
             icon: 'message',
             testType: 'localTest',
