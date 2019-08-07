@@ -1,5 +1,3 @@
-import rebateCountryInfo from "../ContentMain";
-
 const menus = [
   {
     title: '首页',
@@ -11,11 +9,10 @@ const menus = [
     ]
   },
   {
-    title: '日志',
-    id: 24,
+    title: '系统日志',
+    id: 130,
     icon: 'ordered-list',
     key: '/logs',
-    testType: 'localTest',
     components: [
       {name: 'logs', path: '/logs'}
     ]
