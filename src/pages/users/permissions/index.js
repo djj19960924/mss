@@ -77,7 +77,7 @@ class permissions extends React.Component {
       this.setState(data, () => {
         setFieldsValue({
           type: 1,
-          parentId: 0,
+          parentId: '0',
         })
       });
     }else{
