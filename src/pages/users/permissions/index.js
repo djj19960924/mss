@@ -13,8 +13,8 @@ class permissions extends React.Component {
       // 表单加载状态
       tableIsLoading: false,
       // 分页相关
-      pageSize: 100,
-      pageSizeOptions: [`50`,`100`,`200`,`300`],
+      pageSize: 30,
+      pageSizeOptions: [`30`,`50`,`100`,`200`],
       // 显示弹窗
       showDetails: false,
       detailState: 'detail',
