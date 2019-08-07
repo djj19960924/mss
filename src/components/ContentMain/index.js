@@ -22,6 +22,10 @@ import logs from '@pages/system/logs/';
   // 权限列表
   import permissions from '@pages/users/permissions/';
 
+// CRM
+  // 客户信息表
+  import customerInfo from '@pages/CRM/customerInfo/';
+
 //基础设置
   //汇率
   import ExchangeRate from '@pages/foundationSetup/exchangeRate/';
@@ -120,6 +124,7 @@ const componentsList = {
   roles,
   accounts,
   permissions,
+  customerInfo,
   commoditiesPackaging,
   customerLogin,
   YTO,

@@ -60,6 +60,24 @@ const menus = [
     ]
   },
   {
+    title: 'CRM',
+    id: 136,
+    icon: 'solution',
+    key: '/CRM',
+    // testType: 'serverTest',
+    subs: [
+      {
+        title: '客户信息表',
+        id: 137,
+        icon: 'file-search',
+        key: '/CRM/customer-info',
+        components: [
+          {name: 'customerInfo', path: '/CRM/customer-info'}
+        ]
+      },
+    ]
+  },
+  {
     title: '物流管理',
     id: 26,
     icon: 'rocket',
