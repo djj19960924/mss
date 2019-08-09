@@ -1,7 +1,9 @@
 import React from "react";
 import {Table, Pagination, Button, Modal, Input, message} from "antd";
-import "./index.less";
+import { inject, observer } from 'mobx-react';
+import './index.less';
 
+@inject('appStore') @observer
 class customerInfo extends React.Component {
   constructor(props) {
     super(props);
@@ -23,6 +25,7 @@ class customerInfo extends React.Component {
       manager: ''
     };
   }
+  allow = this.props.appStore.getAllow.bind(this);
 
   componentDidMount() {
     this.getCustomerInfoList()
@@ -150,7 +153,7 @@ class customerInfo extends React.Component {
         }
       },
       {title: '微信名', dataIndex: 'nickname', key: 'nickname', width: 160},
-      {title: '手机号', dataIndex: 'phoneNum', key: 'phoneNum', width: 160,
+      {title: '手机号', dataIndex: 'phoneNum', key: 'phoneNum', width: 140,
         render: (text,record) => (
           <div  style={hidden}>
             <table>
@@ -167,6 +170,8 @@ class customerInfo extends React.Component {
                             modalType: 'phoneNum',
                             manager: record.phoneNum ? record.phoneNum : ''
                           })}
+                          disabled={!this.allow(137)}
+                          title={!this.allow(137) ? '没有该操作权限' : null}
                   /></td>
               </tr>
               </tbody>
@@ -191,6 +196,8 @@ class customerInfo extends React.Component {
                               modalType: 'manager',
                               manager: record.manager ? record.manager : ''
                             })}
+                            disabled={!this.allow(137)}
+                            title={!this.allow(137) ? '没有该操作权限' : null}
                     /></td>
                 </tr>
               </tbody>
@@ -215,6 +222,8 @@ class customerInfo extends React.Component {
                               modalType: 'saleNote',
                               saleNote: record.note ? record.note : ''
                             })}
+                            disabled={!this.allow(137)}
+                            title={!this.allow(137) ? '没有该操作权限' : null}
                   /></td>
                 </tr>
               </tbody>
