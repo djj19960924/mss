@@ -18,6 +18,7 @@ class customerInfo extends React.Component {
       showEditModal: false,
       modalLoading: false,
       modalType: 'manager',
+      phoneNum: '',
       saleNote: '',
       manager: ''
     };
@@ -53,12 +54,14 @@ class customerInfo extends React.Component {
   }
 
   editSaleInfoByUnionId() {
-    const {modalType,saleNote,manager,unionId} = this.state;
+    const {modalType,saleNote,manager,unionId,phoneNum} = this.state;
     const data = {unionId};
     if (modalType === 'manager') {
       data.manager = manager
     } else if (modalType === 'saleNote') {
       data.saleNote = saleNote
+    } else if (modalType === 'phoneNum') {
+      data.phoneNum = phoneNum
     } else {
       message.error('类型异常!')
     }
@@ -71,9 +74,6 @@ class customerInfo extends React.Component {
         const setData = {
           showEditModal: false
         };
-        // 接口调取成功时, 清空选框
-        if (modalType === 'manager') setData.manager = '';
-        if (modalType === 'saleNote') setData.saleNote = '';
         this.setState(setData);
         this.getCustomerInfoList();
       }
@@ -150,7 +150,30 @@ class customerInfo extends React.Component {
         }
       },
       {title: '微信名', dataIndex: 'nickname', key: 'nickname', width: 160},
-      {title: '手机号', dataIndex: 'phoneNum', key: 'phoneNum', width: 120},
+      {title: '手机号', dataIndex: 'phoneNum', key: 'phoneNum', width: 160,
+        render: (text,record) => (
+          <div  style={hidden}>
+            <table>
+              <tbody>
+              <tr>
+                <td style={{padding: 0,width: 'calc(100% - 32px)'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
+                <td style={{padding: 0,width: '32px'}}>
+                  <Button type="link"
+                          icon="form"
+                          style={{padding: 0}}
+                          onClick={() => this.setState({
+                            unionId: record.unionId,
+                            showEditModal: true,
+                            modalType: 'phoneNum',
+                            manager: record.phoneNum ? record.phoneNum : ''
+                          })}
+                  /></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        )
+      },
       {title: '跟进人', dataIndex: 'manager', key: 'manager', width: 160,
         render: (text,record) => (
           <div  style={hidden}>
@@ -288,7 +311,7 @@ class customerInfo extends React.Component {
       // }
     ];
     const { Search } = Input;
-    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, tableLoading, parm, modalLoading, showEditModal, modalType, manager, saleNote} = this.state;
+    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, tableLoading, parm, modalLoading, showEditModal, modalType, manager, saleNote, phoneNum} = this.state;
     return (
       <div className="orderManage contentMain">
         <div className="title">
@@ -305,13 +328,23 @@ class customerInfo extends React.Component {
         </div>
 
         {/*弹窗*/}
-        <Modal title={`修改${modalType === 'saleNote' ? '销售备注' : '跟进人'}`}
+        <Modal title={(() => {
+                 if (modalType === 'manager') {
+                   return '修改跟进人'
+                 } else if (modalType === 'saleNote') {
+                   return '修改销售备注'
+                 } else if (modalType === 'phoneNum') {
+                   return '修改手机号'
+                 }})()}
                visible={showEditModal}
                width={400}
                confirmLoading={modalLoading}
                onCancel={() => this.setState({showEditModal: false})}
                onOk={this.editSaleInfoByUnionId.bind(this)}
         >
+          {modalType === 'phoneNum' && <Input value={phoneNum}
+                                             onChange={e => this.setState({phoneNum: e.target.value})}
+          />}
           {modalType === 'manager' && <Input value={manager}
                                              onChange={e => this.setState({manager: e.target.value})}
           />}
