@@ -165,7 +165,8 @@ class customerInfo extends React.Component {
                             onClick={() => this.setState({
                               unionId: record.unionId,
                               showEditModal: true,
-                              modalType: 'manager'
+                              modalType: 'manager',
+                              manager: record.manager ? record.manager : ''
                             })}
                     /></td>
                 </tr>
@@ -188,7 +189,8 @@ class customerInfo extends React.Component {
                             onClick={() => this.setState({
                               unionId: record.unionId,
                               showEditModal: true,
-                              modalType: 'saleNote'
+                              modalType: 'saleNote',
+                              saleNote: record.note ? record.note : ''
                             })}
                   /></td>
                 </tr>
