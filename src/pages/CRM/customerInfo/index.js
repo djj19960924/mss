@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, Pagination} from "antd";
+import {Table, Pagination, Button, Modal, Input, message} from "antd";
 import "./index.less";
 
 class customerInfo extends React.Component {
@@ -10,34 +10,326 @@ class customerInfo extends React.Component {
       pageTotal: 0,
       pageSize: 100,
       pageNum: 1,
-      pageSizeOptions: ['50','100','200','300']
+      pageSizeOptions: ['50','100','200','300'],
+      tableLoading: false,
+      // 搜索参数
+      parm: '',
+      unionId: '',
+      showEditModal: false,
+      modalLoading: false,
+      modalType: 'manager',
+      saleNote: '',
+      manager: ''
     };
+  }
+
+  componentDidMount() {
+    this.getCustomerInfoList()
+  }
+
+  getCustomerInfoList() {
+    const {pageNum, pageSize, parm} = this.state;
+    const showLoading = Is => this.setState({tableLoading: Is});
+    showLoading(true);
+    const data = {pageNum, pageSize, parm: parm.trim()};
+    this.ajax.post('/backend/customer/getCustomerInfoList', data).then(r => {
+      const {data, status} = r.data;
+      const dataObj = {
+        tableDataList: data.list,
+        pageTotal : data.total
+      };
+      if (status < 10000) {
+        dataObj.pageTotal = 0;
+        dataObj.tableDataList = [];
+      }
+      this.setState(dataObj);
+      showLoading(false);
+      r.showError();
+    }).catch(r => {
+      showLoading(false);
+      console.error(r);
+      this.ajax.isReturnLogin(r, this);
+    });
+  }
+
+  editSaleInfoByUnionId() {
+    const {modalType,saleNote,manager,unionId} = this.state;
+    const data = {unionId};
+    if (modalType === 'manager') {
+      data.manager = manager
+    } else if (modalType === 'saleNote') {
+      data.saleNote = saleNote
+    } else {
+      message.error('类型异常!')
+    }
+    const showLoading = Is => this.setState({modalLoading: Is});
+    showLoading(true);
+    this.ajax.post('/backend/customer/editSaleInfoByUnionId', data).then(r => {
+      const {status, msg} = r.data;
+      if (status === 10000) {
+        message.success(msg);
+        const setData = {
+          showEditModal: false
+        };
+        // 接口调取成功时, 清空选框
+        if (modalType === 'manager') setData.manager = '';
+        if (modalType === 'saleNote') setData.saleNote = '';
+        this.setState(setData);
+        this.getCustomerInfoList();
+      }
+      showLoading(false);
+      r.showError();
+    }).catch(r => {
+      showLoading(false);
+      console.error(r);
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   changePage(pageNum, pageSize) {
     this.setState({pageNum, pageSize},()=>{
-      // refresh table
+      this.getCustomerInfoList();
     });
   }
 
+  showDetails(record) {
+    const style = {float:'left',width:'120px'}, hidden = {overflow:'hidden'}, title = {color: '#000', fontSize: '18px', margin: '4px 0'};
+    Modal.info({
+      title: '查看客户详情',
+      okText: '确定',
+      okType: 'default',
+      maskClosable: true,
+      // width: 600,
+      content: <div style={hidden}>
+        <div style={title}>- 全球跑腿 -</div>
+        <div style={hidden}><div style={style}>全球跑腿: </div>{record.legworkInfoVo.reservationTotal ?
+          record.legworkInfoVo.reservationTotal : 0} 次</div>
+        <div style={title}>- 返点 -</div>
+        <div style={hidden}><div style={style}>待返现: </div>{record.rebateInfoVo ?
+          record.rebateInfoVo.returningMoney : 0} 元</div>
+        <div style={hidden}><div style={style}>已返现: </div>{record.rebateInfoVo ?
+          record.rebateInfoVo.returnedMoney : 0} 元</div>
+        <div style={hidden}><div style={style}>余额: </div>{record.rebateInfoVo ?
+          record.rebateInfoVo.balance : 0} 元</div>
+        <div style={title}>- 接送机 -</div>
+        <div style={hidden}><div style={style}>接机: </div>{record.transferInfoVo.receptionTotal ?
+          record.transferInfoVo.receptionTotal : 0} 次</div>
+        <div style={hidden}><div style={style}>送机: </div>{record.transferInfoVo.sendTotal ?
+          record.transferInfoVo.sendTotal : 0} 次</div>
+        <div style={title}>- 物流 -</div>
+        <div style={hidden}><div style={style}>速跨通: </div>{record.logisticsInfoVo.sktTotal ?
+          record.logisticsInfoVo.sktTotal : 0} 次</div>
+        <div style={hidden}><div style={style}>BC: </div>{record.logisticsInfoVo.bcTotal ?
+          record.logisticsInfoVo.bcTotal : 0} 次</div>
+        <div style={hidden}><div style={style}>ETK: </div>{record.logisticsInfoVo.etkTotal ?
+          record.logisticsInfoVo.etkTotal : 0} 次</div>
+        <div style={hidden}><div style={style}>邮政: </div>{record.logisticsInfoVo.postalTotal ?
+          record.logisticsInfoVo.postalTotal : 0} 次</div>
+        <div style={hidden}><div style={style}>全球运转: </div>{record.logisticsInfoVo.globalTotal ?
+          record.logisticsInfoVo.globalTotal : 0} 次</div>
+      </div>
+    })
+  }
+
   render() {
-    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions} = this.state;
-    const columns = [];
+    const hidden = {overflow: 'hidden'};
+    // const left = {float: 'left'};
+    // const right = {float: 'right'};
+    const remarks = {lineHeight: '16px', padding: '8px 0',whiteSpace: 'pre-wrap'};
+    const tabsStyle = {display: 'inline-block',border: '1px solid rgba(64,158,255,.2)', borderRadius: '5px', padding: '2px 4px', margin: '2px 4px', color: '#409eff', backgroundColor: 'rgba(64,158,255,.1)'};
+    const columns = [
+      {title: '头像', dataIndex: 'headImg', key: 'headImg', width:60,
+        render: text => {
+          if(text) {
+            return <img src={text} alt=""
+                 style={{width: 40, height: 40, display: 'block'}}
+            />
+          } else {
+            return <div style={{width: 40, height: 40,lineHeight: '40px'}}>无</div>
+          }
+        }
+      },
+      {title: '微信名', dataIndex: 'nickname', key: 'nickname', width: 160},
+      {title: '手机号', dataIndex: 'phoneNum', key: 'phoneNum', width: 120},
+      {title: '跟进人', dataIndex: 'manager', key: 'manager', width: 160,
+        render: (text,record) => (
+          <div  style={hidden}>
+            <table>
+              <tbody>
+                <tr>
+                  <td style={{padding: 0,width: '80%'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
+                  <td style={{padding: 0,width: '20%'}}>
+                    <Button type="link"
+                            icon="form"
+                            style={{padding: 0}}
+                            onClick={() => this.setState({
+                              unionId: record.unionId,
+                              showEditModal: true,
+                              modalType: 'manager'
+                            })}
+                    /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )
+      },
+      {title: '销售备注', dataIndex: 'note', key: 'note',
+        render: (text,record) => (
+          <div style={hidden}>
+            <table>
+              <tbody>
+                <tr>
+                  <td style={{padding: 0,width: '80%'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
+                  <td style={{padding: 0,width: '20%'}}>
+                    <Button type="link"
+                            icon="form"
+                            style={{padding: 0}}
+                            onClick={() => this.setState({
+                              unionId: record.unionId,
+                              showEditModal: true,
+                              modalType: 'saleNote'
+                            })}
+                  /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )},
+      {title: '用户标签', dataIndex: '用户标签', key: '用户标签', width: 160,
+        render: (text, record) => (
+          <div>
+            {record.legworkInfoVo.reservationTotal &&
+              // <div>跑腿: {record.legworkInfoVo.reservationTotal} 次</div>
+              <div style={tabsStyle}>跑腿</div>
+            }
+            {record.rebateInfoVo &&
+              <div style={tabsStyle}>返点</div>
+            }
+            {(record.transferInfoVo.receptionTotal || record.transferInfoVo.sendTotal) &&
+              <div style={tabsStyle}>接送机</div>
+            }
+            {(record.logisticsInfoVo.sktTotal || record.logisticsInfoVo.bcTotal || record.logisticsInfoVo.etkTotal || record.logisticsInfoVo.postalTotal || record.logisticsInfoVo.globalTotal) &&
+              <div style={tabsStyle}>物流</div>
+            }
+          </div>
+        )
+      },
+      {title: '操作', dataIndex: '操作', key: '操作', width: 100, fixed: 'right',
+        render: (text, record) =>
+          <div>
+            <Button type="primary"
+                    onClick={this.showDetails.bind(this, record)}
+            >查看</Button>
+          </div>
+      },
+      // {title: '全球跑腿', dataIndex: 'legworkInfoVo', key: 'legworkInfoVo', width: 120,
+      //   render: obj => {
+      //     if(obj.reservationTotal) {
+      //       return <div>共跑腿 {obj.reservationTotal} 次</div>
+      //     } else {
+      //       return <div>无</div>
+      //     }
+      //   }
+      // },
+      // {title: '返点', dataIndex: 'rebateInfoVo', key: 'rebateInfoVo', width: 160,
+      //   render: obj => {
+      //     if (obj) {
+      //       return <div style={{padding: '0 5px'}}>
+      //         <div style={hidden}><div style={left}>待返现:</div><div style={right}>{obj.returningMoney} 元</div></div>
+      //         <div style={hidden}><div style={left}>已返现:</div><div style={right}>{obj.returnedMoney} 元</div></div>
+      //         <div style={hidden}><div style={left}>余额:</div><div style={right}>{obj.balance} 元</div></div>
+      //       </div>
+      //     } else {
+      //       return <div>无</div>
+      //     }
+      //   }
+      // },
+      // {title: '接送机', dataIndex: 'transferInfoVo', key: 'transferInfoVo', width: 120,
+      //   render: obj => {
+      //     if (obj.receptionTotal || obj.sendTotal) {
+      //       return <div>
+      //         {obj.receptionTotal && <div>共接机 {obj.receptionTotal} 次</div>}
+      //         {obj.sendTotal && <div>共送机 {obj.sendTotal} 次</div>}
+      //       </div>
+      //     } else {
+      //       return <div>无</div>
+      //     }
+      //   }
+      // },
+      // {title: '物流', dataIndex: 'logisticsInfoVo', key: 'logisticsInfoVo', width: 160,
+      //   render: obj => {
+      //     if (obj.sktTotal || obj.bcTotal || obj.etkTotal || obj.postalTotal || obj.globalTotal) {
+      //       return <div>
+      //         {obj.sktTotal &&
+      //           <div style={hidden}>
+      //             <div style={left}>速跨通:</div><div style={right}>{obj.sktTotal}次</div>
+      //           </div>
+      //         }
+      //         {obj.bcTotal &&
+      //           <div style={hidden}><div style={left}>BC:</div><div style={right}>{obj.bcTotal}次</div></div>
+      //         }
+      //         {obj.etkTotal &&
+      //           <div style={hidden}><div style={left}>ETK:</div><div style={right}>{obj.etkTotal}次</div></div>
+      //         }
+      //         {obj.postalTotal &&
+      //           <div style={hidden}><div style={left}>邮政:</div><div style={right}>{obj.postalTotal}次</div></div>
+      //         }
+      //         {obj.globalTotal &&
+      //           <div style={hidden}><div style={left}>全球运转:</div><div style={right}>{obj.globalTotal}次</div></div>
+      //         }
+      //       </div>
+      //     } else {
+      //       return <div>无</div>
+      //     }
+      //   }
+      // }
+    ];
+    const { Search } = Input;
+    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, tableLoading, parm, modalLoading, showEditModal, modalType, manager, saleNote} = this.state;
     return (
       <div className="orderManage contentMain">
         <div className="title">
           <div className="titleMain">客户信息表</div>
           <div className="titleLine" />
         </div>
-        <div className="tableMain">
+        <div className="btnLine">
+          <Search placeholder="请输入关键字进行搜索"
+                  style={{width: 200}}
+                  onSearch={this.getCustomerInfoList.bind(this)}
+                  value={parm}
+                  onChange={e => this.setState({parm: e.target.value})}
+          />
+        </div>
+
+        {/*弹窗*/}
+        <Modal title={`修改${modalType === 'saleNote' ? '销售备注' : '跟进人'}`}
+               visible={showEditModal}
+               width={400}
+               confirmLoading={modalLoading}
+               onCancel={() => this.setState({showEditModal: false})}
+               onOk={this.editSaleInfoByUnionId.bind(this)}
+        >
+          {modalType === 'manager' && <Input value={manager}
+                                             onChange={e => this.setState({manager: e.target.value})}
+          />}
+          {modalType === 'saleNote' && <Input.TextArea value={saleNote}
+                                                       onChange={e => this.setState({saleNote: e.target.value})}
+          />}
+        </Modal>
+
+        <div className="tableMain"
+             style={{marginTop: 10, maxWidth: 1200}}
+        >
           <Table id="table"
                  className="tableList"
                  columns={columns}
                  dataSource={tableDataList}
                  bordered
                  rowKey={(record, index) => `${index}`}
-                 scroll={{ y: 550, x: 800 }}
+                 scroll={{ y: 550, x: 860 }}
                  pagination={false}
+                 loading={tableLoading}
           />
           <Pagination className="tablePagination"
                       total={pageTotal}
