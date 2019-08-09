@@ -319,7 +319,7 @@ class customerInfo extends React.Component {
         </Modal>
 
         <div className="tableMain"
-             style={{marginTop: 10, maxWidth: 1200}}
+             style={{maxWidth: 1200}}
         >
           <Table id="table"
                  className="tableList"

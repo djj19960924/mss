@@ -108,7 +108,7 @@ class rebateUser extends React.Component {
         ];
         
         return (
-            <div className="rebateUser">
+            <div className="rebateUser contentMain">
                 <div className="title">
                     <div className="titleMain">用户表管理</div>
                     <div className="titleLine" />
