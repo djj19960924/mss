@@ -157,8 +157,8 @@ class customerInfo extends React.Component {
             <table>
               <tbody>
                 <tr>
-                  <td style={{padding: 0,width: '80%'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
-                  <td style={{padding: 0,width: '20%'}}>
+                  <td style={{padding: 0,width: 'calc(100% - 32px)'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
+                  <td style={{padding: 0,width: '32px'}}>
                     <Button type="link"
                             icon="form"
                             style={{padding: 0}}
@@ -180,8 +180,8 @@ class customerInfo extends React.Component {
             <table>
               <tbody>
                 <tr>
-                  <td style={{padding: 0,width: '80%'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
-                  <td style={{padding: 0,width: '20%'}}>
+                  <td style={{padding: 0,width: 'calc(100% - 32px)'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
+                  <td style={{padding: 0,width: '32px'}}>
                     <Button type="link"
                             icon="form"
                             style={{padding: 0}}
