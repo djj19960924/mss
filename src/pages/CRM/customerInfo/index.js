@@ -139,6 +139,7 @@ class customerInfo extends React.Component {
     // const left = {float: 'left'};
     // const right = {float: 'right'};
     const remarks = {lineHeight: '16px', padding: '8px 0',whiteSpace: 'pre-wrap'};
+    const ellipsis = {textOverflow:'ellipsis',overflow: 'hidden',whiteSpace: 'nowrap'};
     const tabsStyle = {display: 'inline-block',border: '1px solid rgba(64,158,255,.2)', borderRadius: '5px', padding: '2px 4px', margin: '2px 4px', color: '#409eff', backgroundColor: 'rgba(64,158,255,.1)'};
     const columns = [
       {title: '头像', dataIndex: 'headImg', key: 'headImg', width:60,
@@ -152,7 +153,13 @@ class customerInfo extends React.Component {
           }
         }
       },
-      {title: '微信名', dataIndex: 'nickname', key: 'nickname', width: 160},
+      {title: '微信名', dataIndex: 'nickname', key: 'nickname', width: 160,
+        render: nickname => (
+          <div style={Object.assign({width: 139}, ellipsis)}
+               title={nickname}
+          >{nickname}</div>
+        )
+      },
       {title: '手机号', dataIndex: 'phoneNum', key: 'phoneNum', width: 140,
         render: (text,record) => (
           <div  style={hidden}>
