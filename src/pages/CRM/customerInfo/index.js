@@ -40,11 +40,13 @@ class customerInfo extends React.Component {
       const {data, status} = r.data;
       const dataObj = {
         tableDataList: data.list,
-        pageTotal : data.total
+        pageTotal: data.total,
+        pageSizeOptions : ['50','100','200',`${data.total > 300 ? data.total : 300}`]
       };
       if (status < 10000) {
         dataObj.pageTotal = 0;
         dataObj.tableDataList = [];
+        dataObj.pageSizeOptions = ['50','100','200','300']
       }
       this.setState(dataObj);
       showLoading(false);
