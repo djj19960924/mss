@@ -137,6 +137,7 @@ class user extends React.Component {
                                 }
                                 onChange={this.changePage.bind(this)}
                                 pageSizeOptions={pageSizeOptions}
+                                showSizeChanger
                                 onShowSizeChange={this.changePage.bind(this)}
                     />
                     

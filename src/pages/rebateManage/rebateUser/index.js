@@ -47,6 +47,7 @@ class rebateUser extends React.Component {
         })
     }
 
+
     //换页刷新
     changePage(pageNum, pageSize) {
       this.setState({
@@ -139,6 +140,7 @@ class rebateUser extends React.Component {
                                 }
                                 onChange={this.changePage.bind(this)}
                                 pageSizeOptions={pageSizeOptions}
+                                showSizeChanger
                                 onShowSizeChange={this.changePage.bind(this)}
                     />
                     
