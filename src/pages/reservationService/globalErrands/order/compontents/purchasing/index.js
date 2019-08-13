@@ -197,8 +197,8 @@ class WaitPurchasing extends React.Component {
         width: 250,
         render: (text, record) => (
           <div>
-            <Button type="primary" onClick={this.editOrder.bind(this, record.id, record.followUper)}>编辑进度</Button>
-            <Button onClick={this.endOrder.bind(this, record.id, record.followUper)} style={{
+            <Button type="primary" onClick={this.editOrder.bind(this, record.legworkId, record.followUper)}>编辑进度</Button>
+            <Button onClick={this.endOrder.bind(this, record.legworkId, record.followUper)} style={{
               "marginLeft": 10,
               "backgroundColor": "#e2bc14",
               "color": "#fff",
@@ -218,7 +218,7 @@ class WaitPurchasing extends React.Component {
             <span style={{"color": "#FF5406", "marginRight": 10}}>{record.followUper}</span>}
             {record.followUper === null && <span style={{"marginRight": 10}}>暂无跟进人</span>}
             <Button type="primary" onClick={() => {
-              this.setState({orderId: record.id, followVisible: true, followUpper: record.followUper})
+              this.setState({orderId: record.legworkId, followVisible: true, followUpper: record.followUper})
             }}>编辑</Button>
           </div>
         )
@@ -319,7 +319,7 @@ class WaitPurchasing extends React.Component {
                dataSource={dataSource}
                pagination={false}
                style={{display: `none`}}
-               rowKey={(record, index) => `${record.id}`}
+               rowKey={(record, index) => `${record.legworkId}`}
         />
         <div className="purchaseTableMain tableMain">
           <Table className="tableList"
@@ -328,7 +328,7 @@ class WaitPurchasing extends React.Component {
                  dataSource={dataSource}
                  pagination={false}
                  loading={tableLoading}
-                 rowKey={(record, index) => `${record.id}`}
+                 rowKey={(record, index) => `${record.legworkId}`}
                  scroll={{x: 960, y: 600}}
           />
           <Pagination className="tablePagination"
