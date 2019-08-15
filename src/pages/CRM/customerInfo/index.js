@@ -266,67 +266,6 @@ class customerInfo extends React.Component {
             >查看</Button>
           </div>
       },
-      // {title: '全球跑腿', dataIndex: 'legworkInfoVo', key: 'legworkInfoVo', width: 120,
-      //   render: obj => {
-      //     if(obj.reservationTotal) {
-      //       return <div>共跑腿 {obj.reservationTotal} 次</div>
-      //     } else {
-      //       return <div>无</div>
-      //     }
-      //   }
-      // },
-      // {title: '返点', dataIndex: 'rebateInfoVo', key: 'rebateInfoVo', width: 160,
-      //   render: obj => {
-      //     if (obj) {
-      //       return <div style={{padding: '0 5px'}}>
-      //         <div style={hidden}><div style={left}>待返现:</div><div style={right}>{obj.returningMoney} 元</div></div>
-      //         <div style={hidden}><div style={left}>已返现:</div><div style={right}>{obj.returnedMoney} 元</div></div>
-      //         <div style={hidden}><div style={left}>余额:</div><div style={right}>{obj.balance} 元</div></div>
-      //       </div>
-      //     } else {
-      //       return <div>无</div>
-      //     }
-      //   }
-      // },
-      // {title: '接送机', dataIndex: 'transferInfoVo', key: 'transferInfoVo', width: 120,
-      //   render: obj => {
-      //     if (obj.receptionTotal || obj.sendTotal) {
-      //       return <div>
-      //         {obj.receptionTotal && <div>共接机 {obj.receptionTotal} 次</div>}
-      //         {obj.sendTotal && <div>共送机 {obj.sendTotal} 次</div>}
-      //       </div>
-      //     } else {
-      //       return <div>无</div>
-      //     }
-      //   }
-      // },
-      // {title: '物流', dataIndex: 'logisticsInfoVo', key: 'logisticsInfoVo', width: 160,
-      //   render: obj => {
-      //     if (obj.sktTotal || obj.bcTotal || obj.etkTotal || obj.postalTotal || obj.globalTotal) {
-      //       return <div>
-      //         {obj.sktTotal &&
-      //           <div style={hidden}>
-      //             <div style={left}>速跨通:</div><div style={right}>{obj.sktTotal}次</div>
-      //           </div>
-      //         }
-      //         {obj.bcTotal &&
-      //           <div style={hidden}><div style={left}>BC:</div><div style={right}>{obj.bcTotal}次</div></div>
-      //         }
-      //         {obj.etkTotal &&
-      //           <div style={hidden}><div style={left}>ETK:</div><div style={right}>{obj.etkTotal}次</div></div>
-      //         }
-      //         {obj.postalTotal &&
-      //           <div style={hidden}><div style={left}>邮政:</div><div style={right}>{obj.postalTotal}次</div></div>
-      //         }
-      //         {obj.globalTotal &&
-      //           <div style={hidden}><div style={left}>全球运转:</div><div style={right}>{obj.globalTotal}次</div></div>
-      //         }
-      //       </div>
-      //     } else {
-      //       return <div>无</div>
-      //     }
-      //   }
-      // }
     ];
     const { Search } = Input;
     const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, tableLoading, parm, modalLoading, showEditModal, modalType, manager, saleNote, phoneNum} = this.state;

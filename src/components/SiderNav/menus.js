@@ -389,6 +389,7 @@ const menus = [
             key: '/reservation-service/global-errands/order-manage',
             components: [
               {name: 'orderManage', path: '/reservation-service/global-errands/order-manage'},
+              {name: 'orderManageEdit', path: '/reservation-service/global-errands/order-manage/edit'},
             ]
           },
           {

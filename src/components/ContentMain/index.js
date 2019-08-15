@@ -81,6 +81,8 @@ import logs from '@pages/system/logs/';
 // 全球跑腿
   // 全球跑腿订单管理
   import orderManage from '@pages/reservationService/globalErrands/orderManage/';
+    // 全球跑腿编辑订单详情
+    import orderManageEdit from '@pages/reservationService/globalErrands/orderManage/orderManageEdit/'
   // 全球跑腿预订
   import GlobalErrandsOrder from '@pages/reservationService/globalErrands/order/';
     // 编辑进度
@@ -141,6 +143,7 @@ const componentsList = {
   GlobalErrandsOrder,
   EditProgress,
   GlobalErrandsAssess,
+  orderManageEdit,
   adoptExaminePaid,
   adoptExamineUnpaid,
   rejectExamine,
