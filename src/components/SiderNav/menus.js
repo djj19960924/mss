@@ -343,7 +343,7 @@ const menus = [
         title: '用户表',
         id: 133,
         icon: 'user',
-        testType: 'localTest',
+        // testType: 'localTest',
         key: '/rebate-manage/rebate-user',
         components: [
           {name: 'rebateUser', path: '/rebate-manage/rebate-user'}
@@ -385,7 +385,7 @@ const menus = [
             title: '订单管理',
             id: 135,
             icon: 'file-text',
-            testType: 'localTest',
+            // testType: 'localTest',
             key: '/reservation-service/global-errands/order-manage',
             components: [
               {name: 'orderManage', path: '/reservation-service/global-errands/order-manage'},
@@ -406,7 +406,7 @@ const menus = [
             title: '跑腿评价',
             id: 132,
             icon: 'message',
-            testType: 'localTest',
+            // testType: 'localTest',
             key: '/reservation-service/global-errands/assess',
             components: [
               {name: 'GlobalErrandsAssess', path: '/reservation-service/global-errands/assess'},
