@@ -34,7 +34,7 @@ class rebateUser extends React.Component {
         this.ajax.post('/programUser/getRebateUserInfo',dataObj).then(r => {
             if(r.data.status === 10000){
                 this.setState({
-                    tableDataList: r.data.data,
+                    tableDataList: r.data.data.list,
                     pageTotal: r.data.data.length
                 });
             }
