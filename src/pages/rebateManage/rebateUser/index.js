@@ -93,15 +93,15 @@ class rebateUser extends React.Component {
             {title: '操作', dataIndex: '操作', key: '操作', width: 330, fixed: 'right',
                 render: (text, record) =>
                   <div>
-                      <Button type="primary"
+                      <Button type="primary" 
                               onClick={this.showDetail.bind(this, record)}
                       >查看</Button>
-                      <Button type="primary"
+                      <Button type="primary" disabled
                               style={{marginLeft: 10}}>设置</Button>
-                      {<Button type="primary"
+                      {<Button type="primary" disabled
                                style={{marginLeft: 10}}
                       >返现</Button>}
-                      {<Button type="primary"
+                      {<Button type="primary" disabled
                                style={{marginLeft: 10}}
                       >追加</Button>}
                   </div>
