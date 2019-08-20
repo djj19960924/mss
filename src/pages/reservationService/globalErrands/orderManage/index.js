@@ -51,7 +51,7 @@ class orderManage extends React.Component {
     const style = {float:'left',width:'120px',color: '#333', fontWeight: 'bold'},
       hidden = {overflow:'hidden'},
       title = {fontSize: '18px', color: '#000', lineHeight: '28px'},
-      imgFloat = {overflow: 'hidden',float: 'left', width: 110,display: 'block', backgroundColor: 'rgba(0,0,0,.1)', marginBottom: 10};
+      imgFloat = {overflow: 'hidden',float: 'left', width: 110,display: 'block', backgroundColor: 'rgba(0,0,0,.1)', marginBottom: 10, cursor: 'pointer'};
     const voImg = {float: 'left', width: 60,display: 'block',backgroundColor: 'rgba(0,0,0,.1)'},
       voProductName = {float: 'left', marginLeft: 10};
     Modal.info({
