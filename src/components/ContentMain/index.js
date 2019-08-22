@@ -79,7 +79,7 @@ import logs from '@pages/system/logs/';
   import appointmentInfo from '@pages/reservationService/appointmentInfo/';
 
 // 全球跑腿
-  // 全球跑腿订单管理
+  // 全球跑腿原始订单
   import orderManage from '@pages/reservationService/globalErrands/orderManage/';
     // 全球跑腿编辑订单详情
     import orderManageEdit from '@pages/reservationService/globalErrands/orderManage/orderManageEdit/'

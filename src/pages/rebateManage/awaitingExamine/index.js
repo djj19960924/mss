@@ -30,7 +30,7 @@ class awaitingExamine extends React.Component {
       // 图片查看器开关
       showImageViewer: false,
       // 选择的国家
-      country: '',
+      country: '中国',
       // 当前所选商场
       currentShop: undefined,
       // 是否有剩余的小票
@@ -67,7 +67,7 @@ class awaitingExamine extends React.Component {
       previewImageWH: 'width',
       // 默认汇率, 当以某一汇率提交成功小票以后
       // 会固定汇率选择框, 直到替换国家
-      defaultExchangeRate: 1,
+      // defaultExchangeRate: 1,
       // 自增变数, 用于获取页面刷新
       hasChange: 0,
       // 重复选择框
@@ -89,6 +89,43 @@ class awaitingExamine extends React.Component {
     this.imgHandle();
     this.getMallListByNationName();
     this.getTicketList();
+    this.getRateByCurrency();
+  }
+
+  // 获取汇率
+  getRateByCurrency() {
+    const {country} = this.state;
+    let currency;
+    // 判断国别币种
+    if (country === '韩国') {
+      currency = '美元';
+    } else if (country === '日本') {
+      currency = '日元';
+    } else if (country === '法国') {
+      currency = '欧元';
+    } else {
+      currency = '人民币'
+    }
+    const data = {currency,rateCurrency: '人民币'};
+    if (currency === '人民币') {
+      this.props.form.setFieldsValue({
+        exchangeRate: 1
+      });
+    } else {
+      this.ajax.post('/rate/getRateByCurrency', data).then(r => {
+        const {status, data} = r.data;
+        if (status === 10000) {
+          // console.log(r.data);
+          this.props.form.setFieldsValue({
+            exchangeRate: data.rate
+          });
+        }
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    }
   }
 
   // 处理图片加载完成事件
@@ -141,6 +178,7 @@ class awaitingExamine extends React.Component {
       country: option.props.country
     },() => {
       this.getBrandListBymallName();
+      this.getRateByCurrency();
       // this.getTicketList();
     })
   }
@@ -309,7 +347,7 @@ class awaitingExamine extends React.Component {
           this.ajax.post('/recipt/checkReciptAllow', data).then(r => {
             if (r.data.status === 10000) {
               message.success(r.data.msg);
-              this.setState({defaultExchangeRate: val.exchangeRate});
+              // this.setState({defaultExchangeRate: val.exchangeRate});
               this.hasSubmit();
             }
             r.showError();
@@ -339,7 +377,7 @@ class awaitingExamine extends React.Component {
       totalMoney: null,
       emptyList: [],
       repeatList: [],
-      country: '',
+      country: '中国',
       currentShop: undefined,
       brandListOrigin: [],
       imgLoading: true
@@ -358,10 +396,11 @@ class awaitingExamine extends React.Component {
         rejectSpecificReason: null
       });
     }
+    this.getRateByCurrency()
     // 将汇率修正为成功提交的数值
-    this.props.form.setFieldsValue({
-      exchangeRate: defaultExchangeRate
-    });
+    // this.props.form.setFieldsValue({
+    //   exchangeRate: defaultExchangeRate
+    // });
   }
 
   //驳回备注确定
@@ -548,7 +587,7 @@ class awaitingExamine extends React.Component {
                     {required: true},
                     {validator: this.exchangeRateValidator.bind(this)}
                   ],
-                  initialValue: defaultExchangeRate
+                  // initialValue: defaultExchangeRate
                 })(
                   <InputNumber style={{width: 100, marginLeft: 10}}
                          id="exchangeRate"
@@ -557,6 +596,7 @@ class awaitingExamine extends React.Component {
                          onChange={() => this.changeReciptMoney()}
                   />
                 )}
+                <span style={{color:'rgba(255,0,0,.5)',marginLeft: 10}}>(默认汇率可在 基础设置-汇率 内修改)</span>
               </FormItem>
 
               {/* 显示返点金额 */}

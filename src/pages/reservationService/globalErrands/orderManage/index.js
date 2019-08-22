@@ -274,7 +274,7 @@ class orderManage extends React.Component {
     return (
       <div className="orderManage contentMain">
         <div className="title">
-          <div className="titleMain">订单管理</div>
+          <div className="titleMain">原始订单</div>
           <div className="titleLine" />
         </div>
 
