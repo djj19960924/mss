@@ -64,7 +64,7 @@ class WaitPurchasing extends React.Component {
             pageSizeOptions.push(res.data.total.toString());
             this.setState({pageSizeOptions: pageSizeOptions});
           }
-        } else if (res.status === 10004) {
+        } else if (res.status < 10000) {
           message.warn(res.msg);
           this.setState({dataSource: [], orderTotal: 0});
         } else {

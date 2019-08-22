@@ -12,8 +12,8 @@
 /build
 /buildTest
 
-/.ideal
-.ideal/
+/.idea
+.idea/
 
 # shell
 *.sh

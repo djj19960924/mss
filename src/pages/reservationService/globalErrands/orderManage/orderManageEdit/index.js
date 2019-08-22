@@ -64,6 +64,7 @@ class orderManageEdit extends React.Component {
     });
   }
 
+  // 创建图片选择框
   buildImg(url, index) {
     return <img src={url} alt=""
                 className="imgStyle"
@@ -72,6 +73,7 @@ class orderManageEdit extends React.Component {
     />
   }
 
+  // 图片详情
   imgDetail(url) {
     Modal.info({
       title: '查看商品图片',
@@ -91,7 +93,7 @@ class orderManageEdit extends React.Component {
     });
   }
 
-  // 新增/修改
+  // 新增/修改弹窗打开
   addOrEdit(type, record) {
     const {imgList} = this.state;
     const dataObj = {
@@ -128,6 +130,7 @@ class orderManageEdit extends React.Component {
     });
   }
 
+  // 去除图片边框样式
   clearBorder() {
     const ImgRadios = document.querySelectorAll('.imgRadio');
     for (let i in ImgRadios) {
@@ -183,6 +186,7 @@ class orderManageEdit extends React.Component {
     })
   }
 
+  // 新增/编辑商品详情
   changeLegworkProduct() {
     const {currentInfo, addEditModalDetail, legworkId} = this.state;
     const showLoading = Is => this.setState({okIsLoading: Is});
@@ -212,6 +216,7 @@ class orderManageEdit extends React.Component {
     });
   }
 
+  // 关闭弹窗
   closeModal() {
     this.setState({
       addEditModalShow: false,
@@ -220,6 +225,31 @@ class orderManageEdit extends React.Component {
         productNum: 1,
         productName: ''
       }
+    })
+  }
+
+  // 完成商品编辑弹窗
+  finishEdit() {
+    const {legworkId} = this.state;
+    // 该接口权限较深, 注意处理
+    const updateLegworkIsEnd = () => {
+      const data = {id: legworkId, isEnd: -1};
+      this.ajax.post('/legwork/updateLegworkIsEnd', data).then(r => {
+        const {msg, status} = r.data;
+        if (status === 10000) {
+          message.success(msg);
+          this.props.history.push('/reservation-service/global-errands/order-manage');
+        }
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    };
+    Modal.confirm({
+      title: '完成编辑',
+      content: '是否确认已完成商品明细编辑?',
+      onOk: updateLegworkIsEnd,
     })
   }
 
@@ -383,13 +413,20 @@ class orderManageEdit extends React.Component {
                  pagination={false}
                  loading={tableIsLoading}
                  bordered
-                 scroll={{ y: 350, x: 750 }}
+                 scroll={{ y: 300, x: 750 }}
                  rowKey={(record, index) => `id_${index}`}
           />
+
           <div className="btnLine">
-            <Button type="primary"
+            <Button type="default"
                     onClick={this.addOrEdit.bind(this, 'add')}
             ><Icon type="plus" />新增商品明细</Button>
+          </div>
+
+          <div className="btnLine">
+            <Button type="primary"
+                    onClick={this.finishEdit.bind(this)}
+            >完成商品编辑</Button>
             <Button type="danger"
                     onClick={()=>{
                       this.props.history.push('/reservation-service/global-errands/order-manage')

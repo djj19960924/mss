@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, Pagination, Button, Modal} from "antd";
+import {Table, Pagination, Button, Modal, Radio, message} from "antd";
 import moment from 'moment';
 import { inject, observer } from 'mobx-react';
 import './index.less';
@@ -13,7 +13,8 @@ class orderManage extends React.Component {
       pageTotal: 0,
       pageSize: 100,
       pageNum: 1,
-      pageSizeOptions: ['50','100','200','300']
+      pageSizeOptions: ['50','100','200','300'],
+      isEnd: -2
     };
   }
   allow = this.props.appStore.getAllow.bind(this);
@@ -22,11 +23,12 @@ class orderManage extends React.Component {
     this.getLegworkByIsEnd()
   }
 
+  // 查询表单数据
   getLegworkByIsEnd() {
-    const {pageNum, pageSize} = this.state;
+    const {pageNum, pageSize, isEnd} = this.state;
     const showLoading = Is => this.setState({tableLoading: Is});
     showLoading(true);
-    const data = {pageNum, pageSize, isEnd: 0};
+    const data = {pageNum, pageSize, isEnd};
     this.ajax.post('/legworkBackend/getLegworkByIsEnd', data).then(r => {
       const {data, status} = r.data;
       const dataObj = {};
@@ -47,6 +49,7 @@ class orderManage extends React.Component {
     });
   }
 
+  // 详情弹窗
   showDetails(record) {
     const style = {float:'left',width:'120px',color: '#333', fontWeight: 'bold'},
       hidden = {overflow:'hidden'},
@@ -91,7 +94,9 @@ class orderManage extends React.Component {
             {record.legworkProductVos ?
               record.legworkProductVos.map((obj, index) => {
                 return (
-                  <div style={hidden}>
+                  <div style={hidden}
+                       key={index}
+                  >
                     <img src={obj.imgUrl} alt=""
                          style={voImg}
                     />
@@ -140,6 +145,7 @@ class orderManage extends React.Component {
     })
   }
 
+  // 查看图片弹窗
   imgDetail(url) {
     Modal.info({
       title: '查看商品图片',
@@ -159,15 +165,49 @@ class orderManage extends React.Component {
     });
   }
 
+  // 编辑详情跳转
   editDetail(record) {
     const {push} = this.props.history;
     // window.localStorage.currentGEOrder = JSON.stringify(record);
     push(`/reservation-service/global-errands/order-manage/edit/?legworkId=${record.legworkId}`);
   }
 
+  // 切换标签
+  changeIsEnd(e) {
+    // console.log(e.target.value)
+    this.setState({isEnd: e.target.value},() => {
+      this.getLegworkByIsEnd()
+    })
+  }
+
+  // 确认尾款已收
+  isPaid(record) {
+    // 该接口权限较深, 注意处理
+    const updateLegworkIsEnd = () => {
+      const data = {id: record.legworkId, isEnd: 0};
+      this.ajax.post('/legwork/updateLegworkIsEnd', data).then(r => {
+        const {msg, status} = r.data;
+        if (status === 10000) {
+          message.success(msg);
+          this.getLegworkByIsEnd()
+        }
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    };
+    Modal.confirm({
+      title: '确认收款',
+      content: '是否确认已收到该商品尾款?',
+      onOk: updateLegworkIsEnd,
+    })
+  }
+
+  // 换页
   changePage(pageNum, pageSize) {
     this.setState({pageNum, pageSize},()=>{
-      // refresh table
+      this.getLegworkByIsEnd()
     });
   }
 
@@ -177,7 +217,7 @@ class orderManage extends React.Component {
   }
 
   render() {
-    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions} = this.state;
+    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, isEnd} = this.state;
     const ellipsis = {textOverflow:'ellipsis',overflow: 'hidden',whiteSpace: 'nowrap'};
     const columns = [
       // {title: '更新时间', dataIndex: 'updateTime', key: 'updateTime', width: 160,
@@ -220,10 +260,14 @@ class orderManage extends React.Component {
             <Button type="primary"
                     onClick={this.showDetails.bind(this, record)}
             >查看</Button>
-            <Button type="primary"
+            {isEnd === -2 && <Button type="primary"
                     style={{marginLeft: 10}}
                     onClick={this.editDetail.bind(this, record)}
-            >编辑</Button>
+            >编辑</Button>}
+            {isEnd === -1 && <Button type="primary"
+                                     style={{marginLeft: 10}}
+                                     onClick={this.isPaid.bind(this, record)}
+            >收款</Button>}
           </div>
       },
     ];
@@ -233,6 +277,17 @@ class orderManage extends React.Component {
           <div className="titleMain">订单管理</div>
           <div className="titleLine" />
         </div>
+
+        <div className="btnLine">
+          <Radio.Group buttonStyle="solid"
+                       value={isEnd}
+                       onChange={this.changeIsEnd.bind(this)}
+          >
+            <Radio.Button value={-2}>商品编辑</Radio.Button>
+            <Radio.Button value={-1}>确认尾款</Radio.Button>
+          </Radio.Group>
+        </div>
+
         <div className="tableMain"
              style={{maxWidth: 920}}
         >
