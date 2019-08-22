@@ -217,7 +217,7 @@ class orderManage extends React.Component {
   }
 
   render() {
-    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, isEnd} = this.state;
+    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, isEnd, tableLoading} = this.state;
     const ellipsis = {textOverflow:'ellipsis',overflow: 'hidden',whiteSpace: 'nowrap'};
     const columns = [
       // {title: '更新时间', dataIndex: 'updateTime', key: 'updateTime', width: 160,
@@ -299,6 +299,7 @@ class orderManage extends React.Component {
                  rowKey={(record, index) => `${index}`}
                  scroll={{ y: 550, x: 890 }}
                  pagination={false}
+                 loading={tableLoading}
           />
           <Pagination className="tablePagination"
                       total={pageTotal}
