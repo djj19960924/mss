@@ -173,36 +173,36 @@ class orderManage extends React.Component {
   }
 
   // 切换标签
-  changeIsEnd(e) {
-    // console.log(e.target.value)
-    this.setState({isEnd: e.target.value},() => {
-      this.getLegworkByIsEnd()
-    })
-  }
+  // changeIsEnd(e) {
+  //   // console.log(e.target.value)
+  //   this.setState({isEnd: e.target.value},() => {
+  //     this.getLegworkByIsEnd()
+  //   })
+  // }
 
   // 确认尾款已收
-  isPaid(record) {
-    // 该接口权限较深, 注意处理
-    const updateLegworkIsEnd = () => {
-      const data = {id: record.legworkId, isEnd: 0};
-      this.ajax.post('/legwork/updateLegworkIsEnd', data).then(r => {
-        const {msg, status} = r.data;
-        if (status === 10000) {
-          message.success(msg);
-          this.getLegworkByIsEnd()
-        }
-        r.showError();
-      }).catch(r => {
-        console.error(r);
-        this.ajax.isReturnLogin(r, this);
-      });
-    };
-    Modal.confirm({
-      title: '确认收款',
-      content: '是否确认已收到该商品尾款?',
-      onOk: updateLegworkIsEnd,
-    })
-  }
+  // isPaid(record) {
+  //   // 该接口权限较深, 注意处理
+  //   const updateLegworkIsEnd = () => {
+  //     const data = {id: record.legworkId, isEnd: 0};
+  //     this.ajax.post('/legwork/updateLegworkIsEnd', data).then(r => {
+  //       const {msg, status} = r.data;
+  //       if (status === 10000) {
+  //         message.success(msg);
+  //         this.getLegworkByIsEnd()
+  //       }
+  //       r.showError();
+  //     }).catch(r => {
+  //       console.error(r);
+  //       this.ajax.isReturnLogin(r, this);
+  //     });
+  //   };
+  //   Modal.confirm({
+  //     title: '确认收款',
+  //     content: '是否确认已收到该商品尾款?',
+  //     onOk: updateLegworkIsEnd,
+  //   })
+  // }
 
   // 换页
   changePage(pageNum, pageSize) {
@@ -264,10 +264,10 @@ class orderManage extends React.Component {
                     style={{marginLeft: 10}}
                     onClick={this.editDetail.bind(this, record)}
             >编辑</Button>}
-            {isEnd === -1 && <Button type="primary"
-                                     style={{marginLeft: 10}}
-                                     onClick={this.isPaid.bind(this, record)}
-            >收款</Button>}
+            {/*{isEnd === -1 && <Button type="primary"*/}
+            {/*                         style={{marginLeft: 10}}*/}
+            {/*                         onClick={this.isPaid.bind(this, record)}*/}
+            {/*>收款</Button>}*/}
           </div>
       },
     ];
@@ -278,15 +278,15 @@ class orderManage extends React.Component {
           <div className="titleLine" />
         </div>
 
-        <div className="btnLine">
-          <Radio.Group buttonStyle="solid"
-                       value={isEnd}
-                       onChange={this.changeIsEnd.bind(this)}
-          >
-            <Radio.Button value={-2}>商品编辑</Radio.Button>
-            <Radio.Button value={-1}>确认尾款</Radio.Button>
-          </Radio.Group>
-        </div>
+        {/*<div className="btnLine">*/}
+        {/*  <Radio.Group buttonStyle="solid"*/}
+        {/*               value={isEnd}*/}
+        {/*               onChange={this.changeIsEnd.bind(this)}*/}
+        {/*  >*/}
+        {/*    <Radio.Button value={-2}>商品编辑</Radio.Button>*/}
+        {/*    <Radio.Button value={-1}>确认尾款</Radio.Button>*/}
+        {/*  </Radio.Group>*/}
+        {/*</div>*/}
 
         <div className="tableMain"
              style={{maxWidth: 920}}

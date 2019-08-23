@@ -233,7 +233,7 @@ class orderManageEdit extends React.Component {
     const {legworkId} = this.state;
     // 该接口权限较深, 注意处理
     const updateLegworkIsEnd = () => {
-      const data = {id: legworkId, isEnd: -1};
+      const data = {id: legworkId, isEnd: 0};
       this.ajax.post('/legwork/updateLegworkIsEnd', data).then(r => {
         const {msg, status} = r.data;
         if (status === 10000) {
@@ -247,8 +247,11 @@ class orderManageEdit extends React.Component {
       });
     };
     Modal.confirm({
-      title: '完成编辑',
-      content: '是否确认已完成商品明细编辑?',
+      title: '确认已收尾款',
+      content: <div>
+        <div style={{color:'rgba(255,0,0,.7)'}}>确认是否已收到用户所发尾款?</div>
+        <div>是否已完成商品明细编辑?</div>
+      </div>,
       onOk: updateLegworkIsEnd,
     })
   }
@@ -426,7 +429,7 @@ class orderManageEdit extends React.Component {
           <div className="btnLine">
             <Button type="primary"
                     onClick={this.finishEdit.bind(this)}
-            >完成商品编辑</Button>
+            >完成商品编辑并确认已收尾款</Button>
             <Button type="danger"
                     onClick={()=>{
                       this.props.history.push('/reservation-service/global-errands/order-manage')

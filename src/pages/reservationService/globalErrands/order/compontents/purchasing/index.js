@@ -192,13 +192,13 @@ class WaitPurchasing extends React.Component {
     const columns = [
       {
         title: "操作",
-        dataIndex: "id",
-        key: "id",
+        dataIndex: "legworkId",
+        key: "legworkId",
         width: 250,
         render: (text, record) => (
           <div>
-            <Button type="primary" onClick={this.editOrder.bind(this, record.legworkId, record.followUper)}>编辑进度</Button>
-            <Button onClick={this.endOrder.bind(this, record.legworkId, record.followUper)} style={{
+            <Button type="primary" onClick={this.editOrder.bind(this, text, record.followUper)}>编辑进度</Button>
+            <Button onClick={this.endOrder.bind(this, text, record.followUper)} style={{
               "marginLeft": 10,
               "backgroundColor": "#e2bc14",
               "color": "#fff",
@@ -258,8 +258,8 @@ class WaitPurchasing extends React.Component {
       },
       {
         title: "商品内容",
-        dataIndex: "productName",
-        key: "productName"
+        dataIndex: "productDetail",
+        key: "productDetail"
       }
     ];
     const exportColumns = [
@@ -280,8 +280,8 @@ class WaitPurchasing extends React.Component {
       },
       {
         title: "商品内容",
-        dataIndex: "productName",
-        key: "productName",
+        dataIndex: "productDetail",
+        key: "productDetail",
         width: 150
       },
       {
@@ -319,7 +319,7 @@ class WaitPurchasing extends React.Component {
                dataSource={dataSource}
                pagination={false}
                style={{display: `none`}}
-               rowKey={(record, index) => `${record.legworkId}`}
+               rowKey={(record, index) => index}
         />
         <div className="purchaseTableMain tableMain">
           <Table className="tableList"
