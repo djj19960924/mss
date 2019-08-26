@@ -119,21 +119,21 @@ class EndOfOrder extends React.Component {
         )
       },
       {
+        title: "物流单号",
+        dataIndex: "trackNo",
+        key: "trackNo",
+        width: 150,
+        render: trackNo => (
+          <div>{trackNo ? trackNo : "暂无物流单号"}</div>
+        )
+      },
+      {
         title: "最近进度更新时间",
         dataIndex: "updateTime",
         key: "updateTime",
         width: 150,
         render: (text, record) => (
           <div>{record.updateTime ? moment(record.updateTime).format("YYYY-MM-DD HH:mm:ss") : "暂无更新时间"}</div>
-        )
-      },
-      {
-        title: "最新更新进度",
-        dataIndex: "scheduleInfo",
-        key: "scheduleInfo",
-        width: 150,
-        render: (text, record) => (
-          <div>{record.scheduleInfo ? record.scheduleInfo : "暂无进度"}</div>
         )
       },
       {

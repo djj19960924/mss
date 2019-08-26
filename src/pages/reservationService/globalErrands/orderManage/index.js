@@ -117,6 +117,8 @@ class orderManage extends React.Component {
                             key={index}
                             style={(index % 4 === 0) ? imgFloat : Object.assign({marginLeft: 10}, imgFloat)}
                             onClick={this.imgDetail.bind(this, url)}/>
+              } else {
+                return null;
               }
             })}
           </div>
@@ -127,6 +129,8 @@ class orderManage extends React.Component {
                             key={index}
                             style={(index % 4 === 0) ? imgFloat : Object.assign({marginLeft: 10}, imgFloat)}
                             onClick={this.imgDetail.bind(this, url)}/>
+              } else {
+                return null;
               }
             })}
           </div>
@@ -137,6 +141,8 @@ class orderManage extends React.Component {
                             key={index}
                             style={(index % 4 === 0) ? imgFloat : Object.assign({marginLeft: 10}, imgFloat)}
                             onClick={this.imgDetail.bind(this, url)}/>
+              } else {
+                return null;
               }
             })}
           </div>

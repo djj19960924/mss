@@ -228,6 +228,15 @@ class WaitPurchasing extends React.Component {
         )
       },
       {
+        title: "接单买手",
+        dataIndex: "userName",
+        key: "userName",
+        width: 150,
+        render: text => (
+          <div>{text ? text : "暂未被买手接单"}</div>
+        )
+      },
+      {
         title: "最近进度更新时间",
         dataIndex: "updateTime",
         key: "updateTime",
@@ -236,15 +245,15 @@ class WaitPurchasing extends React.Component {
           <div>{record.updateTime ? moment(record.updateTime).format("YYYY-MM-DD HH:mm:ss") : "暂无更新时间"}</div>
         )
       },
-      {
-        title: "最新更新进度",
-        dataIndex: "scheduleInfo",
-        key: "scheduleInfo",
-        width: 150,
-        render: (text, record) => (
-          <div>{record.scheduleInfo ? record.scheduleInfo : "暂无进度"}</div>
-        )
-      },
+      // {
+      //   title: "最新更新进度",
+      //   dataIndex: "scheduleInfo",
+      //   key: "scheduleInfo",
+      //   width: 150,
+      //   render: (text, record) => (
+      //     <div>{record.scheduleInfo ? record.scheduleInfo : "暂无进度"}</div>
+      //   )
+      // },
       {
         title: "预订时间",
         dataIndex: "createTime",
