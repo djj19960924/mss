@@ -188,6 +188,10 @@ class WaitPurchasing extends React.Component {
 
   }
 
+  componentWillUnmount() {
+    this.setState = () => null
+  }
+
   render() {
     const columns = [
       {

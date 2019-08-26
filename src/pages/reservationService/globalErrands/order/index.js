@@ -24,6 +24,7 @@ class GlobalErrandsOrder extends React.Component {
   componentWillUnmount() {
     this.setState = () => null
   }
+
   render() {
     const {contentType} = this.state;
     return (

@@ -204,6 +204,10 @@ class PurchaseTrip extends React.Component {
     })
   }
 
+  componentWillUnmount() {
+    this.setState = () => null
+  }
+
   render() {
     const {tripList, editVisible, deleteVisible, tableLoading, purchaseAddress, startTime, endTime} = this.state;
     const columns = [{
