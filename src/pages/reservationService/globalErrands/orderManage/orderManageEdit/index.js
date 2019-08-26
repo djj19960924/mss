@@ -394,7 +394,7 @@ class orderManageEdit extends React.Component {
               {/*订单详情*/}
               <Col span={12}>
                 {/*商品详细信息*/}
-                <div className="detailTitle">商品详细信息:</div>
+                <div className="detailTitle">商品详细信息 <span style={{fontSize: '16px',color:'rgba(255,0,0,.5)'}}>请将下列信息整理成商品明细</span></div>
                 <div className="overflow">
                   <div className="detailsMain">
                     {productDetail ? productDetail : '无'}
