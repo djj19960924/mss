@@ -25,7 +25,7 @@ class EndOfOrder extends React.Component {
   //获取表格信息
   getOrderInfo(pageNum = this.state.pageNum, pageSize = this.state.pageSize,searchParm=this.state.searchParm) {
     let data = {
-      isEnd: 1,
+      isEnd: 2,
       pageNum: pageNum,
       pageSize: pageSize,
       searchParm: searchParm
