@@ -22,7 +22,8 @@ class customerInfo extends React.Component {
       modalType: 'manager',
       phoneNum: '',
       saleNote: '',
-      manager: ''
+      manager: '',
+      wechatNo: ''
     };
   }
   allow = this.props.appStore.getAllow.bind(this);
@@ -59,7 +60,7 @@ class customerInfo extends React.Component {
   }
 
   editSaleInfoByUnionId() {
-    const {modalType,saleNote,manager,unionId,phoneNum} = this.state;
+    const {modalType,saleNote,manager,unionId,phoneNum,wechatNo} = this.state;
     const data = {unionId};
     if (modalType === 'manager') {
       data.manager = manager
@@ -67,6 +68,8 @@ class customerInfo extends React.Component {
       data.saleNote = saleNote
     } else if (modalType === 'phoneNum') {
       data.phoneNum = phoneNum
+    } else if(modalType === 'wechatNo'){
+      data.wechatNo = wechatNo
     } else {
       message.error('类型异常!')
     }
@@ -214,6 +217,32 @@ class customerInfo extends React.Component {
           </div>
         )
       },
+      {title: '微信号', dataIndex: 'wechatNo', key: 'wechatNo', width: 160,
+        render: (text,record) => (
+          <div  style={hidden}>
+            <table>
+              <tbody>
+                <tr>
+                  <td style={{padding: 0,width: 'calc(100% - 32px)'}}><div style={remarks}>{text ? text : '暂无'}</div></td>
+                  <td style={{padding: 0,width: '32px'}}>
+                    <Button type="link"
+                            icon="form"
+                            style={{padding: 0}}
+                            onClick={() => this.setState({
+                              unionId: record.unionId,
+                              showEditModal: true,
+                              modalType: 'wechatNo',
+                              wechatNo: record.wechatNo ? record.wechatNo : ''
+                            })}
+                            disabled={!this.allow(137)}
+                            title={!this.allow(137) ? '没有该操作权限' : null}
+                    /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )
+      },
       {title: '销售备注', dataIndex: 'note', key: 'note',
         render: (text,record) => (
           <div style={hidden}>
@@ -268,7 +297,7 @@ class customerInfo extends React.Component {
       },
     ];
     const { Search } = Input;
-    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, tableLoading, parm, modalLoading, showEditModal, modalType, manager, saleNote, phoneNum} = this.state;
+    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, tableLoading, parm, modalLoading, showEditModal, modalType, manager, saleNote, phoneNum, wechatNo} = this.state;
     return (
       <div className="orderManage contentMain">
         <div className="title">
@@ -292,6 +321,8 @@ class customerInfo extends React.Component {
                    return '修改销售备注'
                  } else if (modalType === 'phoneNum') {
                    return '修改手机号'
+                 } else if (modalType === 'wechatNo'){
+                   return '修改微信号'
                  }})()}
                visible={showEditModal}
                width={400}
@@ -307,6 +338,9 @@ class customerInfo extends React.Component {
           />}
           {modalType === 'saleNote' && <Input.TextArea value={saleNote}
                                                        onChange={e => this.setState({saleNote: e.target.value})}
+          />}
+          {modalType === 'wechatNo' && <Input value={wechatNo}
+                                             onChange={e => this.setState({wechatNo: e.target.value})}
           />}
         </Modal>
 
