@@ -353,7 +353,7 @@ class customerInfo extends React.Component {
                  dataSource={tableDataList}
                  bordered
                  rowKey={(record, index) => `${index}`}
-                 scroll={{ y: 550, x: 860 }}
+                 scroll={{ y: 550, x: 1100 }}
                  pagination={false}
                  loading={tableLoading}
           />
