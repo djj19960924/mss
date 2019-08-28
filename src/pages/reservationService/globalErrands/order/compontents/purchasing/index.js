@@ -44,14 +44,13 @@ class WaitPurchasing extends React.Component {
   //获取表格数据
   getOrderInfo(pageNum = this.state.pageNum, pageSize = this.state.pageSize, searchParm = this.state.searchParm) {
     let data = {
-      isEnd: 0,
       pageNum: pageNum,
       pageSize: pageSize,
       searchParm: searchParm
     };
     this.setState({tableLoading: true});
-    this.ajax.post('/legworkBackend/getLegworkByIsEnd', data).then(r => {
-      const {status, data, msg} = r.data;
+    this.ajax.post('/legworkBackend/getLegworkOrder', data).then(r => {
+      const {status, data} = r.data;
       if (status === 10000) {
         this.setState({
           dataSource: data.list,
@@ -199,6 +198,12 @@ class WaitPurchasing extends React.Component {
       //   )
       // },
       {
+        title: "微信号",
+        dataIndex: "wechatNo",
+        key: "wechatNo",
+        width: 150
+      },
+      {
         title: "跟进人",
         dataIndex: "followUper",
         key: "followUper",
@@ -262,12 +267,6 @@ class WaitPurchasing extends React.Component {
         render: (text, record) => (
           <div>{record.createTime ? moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") : ""}</div>
         )
-      },
-      {
-        title: "微信号",
-        dataIndex: "wechatNo",
-        key: "wechatNo",
-        width: 150
       },
       {
         title: "商品内容",
