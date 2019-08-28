@@ -14,7 +14,7 @@ class WaitPurchasing extends React.Component {
       orderTotal: 0,
       pageNum: 1,
       pageSize: 50,
-      pageSizeOptions: ["50", "100", "500", "1000"],
+      pageSizeOptions: ["50", "100", "200", "300"],
       //表格数据
       dataSource: [],
       //表格加载loading
@@ -30,7 +30,7 @@ class WaitPurchasing extends React.Component {
       //结单按钮loading
       btnLoading: false,
       //跟进人
-      followUpper: null,
+      followUper: null,
       //跟进modal确定loading
       confirmLoading: false
     };
@@ -50,52 +50,43 @@ class WaitPurchasing extends React.Component {
       searchParm: searchParm
     };
     this.setState({tableLoading: true});
-    fetch(window.apiUrl + "/legworkBackend/getLegworkByIsEnd", {
-      method: "post",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(data)
-    }).then(r => r.json()).then(res => {
-        this.setState({tableLoading: false});
-        if (res.status === 10000) {
-          message.success(res.msg);
-          this.setState({dataSource: res.data.list, orderTotal: res.data.total});
-          if (res.data.total > this.state.pageSizeOptions[this.state.pageSizeOptions.length - 1]) {
-            let pageSizeOptions = this.state.pageSizeOptions;
-            pageSizeOptions.push(res.data.total.toString());
-            this.setState({pageSizeOptions: pageSizeOptions});
-          }
-        } else if (res.status < 10000) {
-          message.warn(res.msg);
-          this.setState({dataSource: [], orderTotal: 0});
-        } else {
-          message.error(res.msg);
-          this.setState({dataSource: [], orderTotal: 0});
-        }
+    this.ajax.post('/legworkBackend/getLegworkByIsEnd', data).then(r => {
+      const {status, data, msg} = r.data;
+      if (status === 10000) {
+        this.setState({
+          dataSource: data.list,
+          orderTotal: data.total,
+          pageSizeOptions: ["50", "100", "200", `${data.total > 300 ? data.total : 300}`],
+        });
+      } else if (status < 10000) {
+        this.setState({dataSource: [], orderTotal: 0});
       }
-    ).catch(r => {
+      this.setState({tableLoading: false});
+      r.showError();
+    }).catch(r => {
       this.setState({tableLoading: false});
       console.error(r);
-      console.log('前端接口调取错误')
-    })
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   //编辑订单
-  editOrder(id, followUper) {
-    if (followUper === null) {
-      message.warn("请先编辑跟进人");
-    } else {
-      this.props.history.push("/reservation-service/global-errands/order/edit-progress?id=" + id+"&contentType=0");
-    }
-  }
+  // editOrder(id, followUper) {
+  //   if (followUper === null) {
+  //     message.warn("请先编辑跟进人");
+  //   } else {
+  //     this.props.history.push("/reservation-service/global-errands/order/edit-progress?id=" + id+"&contentType=0");
+  //   }
+  // }
 
   //显示完结订单modal
-  endOrder(id, followUper) {
-    if (followUper === null) {
-      message.warn("请先编辑跟进人");
-    } else {
-      this.setState({orderId: id, endVisible: true})
-    }
-  }
+  // endOrder(id, followUper) {
+  //   if (followUper === null) {
+  //     message.warn("请先编辑跟进人");
+  //   } else {
+  //     this.setState({orderId: id, endVisible: true})
+  //   }
+  // }
 
 //选择结单原因
   statementReason(e) {
@@ -106,48 +97,47 @@ class WaitPurchasing extends React.Component {
   }
 
 //获取未采购商品名称
-  getNoPurchasedInfo(e) {
-    this.setState({noPurchased: e.target.value});
-  }
+//   getNoPurchasedInfo(e) {
+//     this.setState({noPurchased: e.target.value});
+//   }
 
 //订单完结确定
-  confirmOk() {
-    const {orderId, endState, noPurchased} = this.state;
-    if (endState === 0 && !noPurchased) {
-      message.warn("请填写未采购商品名");
-    } else if (!orderId) {
-      message.error("订单错误,请重新选择订单");
-      this.setState({orderId: null, endVisible: false, endState: 1, noPurchased: null});
-    } else {
-      this.setState({btnLoading: true});
-      fetch(window.apiUrl + "/legworkBackend/setLegworkIsEnd", {
-        method: "post",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({id: orderId, choice: endState, unpurchasedProductName: noPurchased})
-      }).then(r => r.json()).then(res => {
-        this.setState({btnLoading: false});
-        if (res.status === 10000) {
-          message.success(res.msg);
-          this.setState({orderId: null, endVisible: false, endState: 1, noPurchased: null});
-          this.getOrderInfo();
-        } else if (res.status === 10004) {
-          message.warn(res.msg);
-        } else {
-          message.error(res.msg);
-        }
-      }).catch(r => {
-        this.setState({tableLoading: false});
-        console.error(r);
-        console.log('前端接口调取错误')
-      })
-    }
-
-  }
+//   confirmOk() {
+//     const {orderId, endState, noPurchased} = this.state;
+//     if (endState === 0 && !noPurchased) {
+//       message.warn("请填写未采购商品名");
+//     } else if (!orderId) {
+//       message.error("订单错误,请重新选择订单");
+//       this.setState({orderId: null, endVisible: false, endState: 1, noPurchased: null});
+//     } else {
+//       this.setState({btnLoading: true});
+//       fetch(window.apiUrl + "/legworkBackend/setLegworkIsEnd", {
+//         method: "post",
+//         headers: {"Content-Type": "application/json"},
+//         body: JSON.stringify({id: orderId, choice: endState, unpurchasedProductName: noPurchased})
+//       }).then(r => r.json()).then(res => {
+//         this.setState({btnLoading: false});
+//         if (res.status === 10000) {
+//           message.success(res.msg);
+//           this.setState({orderId: null, endVisible: false, endState: 1, noPurchased: null});
+//           this.getOrderInfo();
+//         } else if (res.status === 10004) {
+//           message.warn(res.msg);
+//         } else {
+//           message.error(res.msg);
+//         }
+//       }).catch(r => {
+//         this.setState({tableLoading: false});
+//         console.error(r);
+//         console.log('前端接口调取错误')
+//       })
+//     }
+//   }
 
   //订单完结取消
-  endCancel() {
-    this.setState({orderId: null, endVisible: false})
-  }
+  // endCancel() {
+  //   this.setState({orderId: null, endVisible: false})
+  // }
 
 //改变pageNum,pageSize
   changePage(pageNum, pageSize) {
@@ -165,23 +155,21 @@ class WaitPurchasing extends React.Component {
 
 //显示跟进人modal
   editFollowUp() {
-    const {followUpper, orderId} = this.state;
-    if (followUpper) {
+    const {followUper, orderId} = this.state;
+    const data = {id: orderId, followUper};
+    if (followUper) {
       this.setState({confirmLoading: true});
-      fetch(window.apiUrl + "/legworkBackend/updateFollowUper", {
-        method: "post",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({id: orderId, followUper: followUpper})
-      }).then(r => r.json()).then(res => {
-        this.setState({confirmLoading: false});
-        if (res.status === 10000) {
+      this.ajax.post('/legworkBackend/updateFollowUper', data).then(r => {
+        const {status, msg} = r.data;
+        if (status === 10000) {
           this.setState({orderId: null, followUpper: null, followVisible: false});
-          message.success(res.msg)
-          this.getOrderInfo();
-        } else {
-          message.error(res.msg);
+          message.success(msg);
         }
-      })
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
     } else {
       message.warn("请先填写编辑人")
     }
@@ -194,23 +182,23 @@ class WaitPurchasing extends React.Component {
 
   render() {
     const columns = [
-      {
-        title: "操作",
-        dataIndex: "legworkId",
-        key: "legworkId",
-        width: 250,
-        render: (text, record) => (
-          <div>
-            <Button type="primary" onClick={this.editOrder.bind(this, text, record.followUper)}>编辑进度</Button>
-            <Button onClick={this.endOrder.bind(this, text, record.followUper)} style={{
-              "marginLeft": 10,
-              "backgroundColor": "#e2bc14",
-              "color": "#fff",
-              "borderColor": "transparent"
-            }}>采购结束</Button>
-          </div>
-        )
-      },
+      // {
+      //   title: "操作",
+      //   dataIndex: "legworkId",
+      //   key: "legworkId",
+      //   width: 250,
+      //   render: (text, record) => (
+      //     <div>
+      //       <Button type="primary" onClick={this.editOrder.bind(this, text, record.followUper)}>编辑进度</Button>
+      //       <Button onClick={this.endOrder.bind(this, text, record.followUper)} style={{
+      //         "marginLeft": 10,
+      //         "backgroundColor": "#e2bc14",
+      //         "color": "#fff",
+      //         "borderColor": "transparent"
+      //       }}>采购结束</Button>
+      //     </div>
+      //   )
+      // },
       {
         title: "跟进人",
         dataIndex: "followUper",
@@ -222,7 +210,7 @@ class WaitPurchasing extends React.Component {
             <span style={{"color": "#FF5406", "marginRight": 10}}>{record.followUper}</span>}
             {record.followUper === null && <span style={{"marginRight": 10}}>暂无跟进人</span>}
             <Button type="primary" onClick={() => {
-              this.setState({orderId: record.legworkId, followVisible: true, followUpper: record.followUper})
+              this.setState({orderId: record.legworkId, followVisible: true, followUper: record.followUper})
             }}>编辑</Button>
           </div>
         )
@@ -313,7 +301,7 @@ class WaitPurchasing extends React.Component {
         )
       }
     ];
-    const {dataSource, tableLoading, endVisible, pageNum, pageSize, pageSizeOptions, orderTotal, endState, noPurchased, btnLoading, followVisible, followUpper, confirmLoading} = this.state;
+    const {dataSource, tableLoading, endVisible, pageNum, pageSize, pageSizeOptions, orderTotal, endState, noPurchased, btnLoading, followVisible, followUper, confirmLoading} = this.state;
     const Search = Input.Search;
     return (
       <div className="wait-purchasing">
@@ -359,23 +347,24 @@ class WaitPurchasing extends React.Component {
 
 
         {/*结单modal*/}
-        <Modal title="请确认"
-               destroyOnClose
-               wrapClassName="globalErrandsModal"
-               visible={endVisible}
-               closable={false}
-               footer={[
-                 <Button type="primary" key="ok" loading={btnLoading} onClick={this.confirmOk.bind(this)}>确认结单</Button>,
-                 <Button key="cancel" onClick={this.endCancel.bind(this)}>取消</Button>
-               ]}
-        >
-          <Radio.Group defaultValue={1} onChange={this.statementReason.bind(this)}>
-            <Radio value={1}>本次所有商品已经采购到</Radio>
-            <Radio value={0}>本次商品未采购完，可线下申请退款</Radio>
-          </Radio.Group>
-          <Input.TextArea autosize={true} disabled={endState !== 0} placeholder="请输入未采购到的商品名称" value={noPurchased}
-                          onChange={this.getNoPurchasedInfo.bind(this)}/>
-        </Modal>
+        {/*<Modal title="请确认"*/}
+        {/*       destroyOnClose*/}
+        {/*       wrapClassName="globalErrandsModal"*/}
+        {/*       visible={endVisible}*/}
+        {/*       closable={false}*/}
+        {/*       footer={[*/}
+        {/*         <Button type="primary" key="ok" loading={btnLoading} onClick={this.confirmOk.bind(this)}>确认结单</Button>,*/}
+        {/*         <Button key="cancel" onClick={this.endCancel.bind(this)}>取消</Button>*/}
+        {/*       ]}*/}
+        {/*>*/}
+        {/*  <Radio.Group defaultValue={1} onChange={this.statementReason.bind(this)}>*/}
+        {/*    <Radio value={1}>本次所有商品已经采购到</Radio>*/}
+        {/*    <Radio value={0}>本次商品未采购完，可线下申请退款</Radio>*/}
+        {/*  </Radio.Group>*/}
+        {/*  <Input.TextArea autosize={true} disabled={endState !== 0} placeholder="请输入未采购到的商品名称" value={noPurchased}*/}
+        {/*                  onChange={this.getNoPurchasedInfo.bind(this)}/>*/}
+        {/*</Modal>*/}
+
         {/*跟进人modal*/}
         <Modal title="请确认"
                visible={followVisible}
@@ -385,11 +374,11 @@ class WaitPurchasing extends React.Component {
                wrapClassName="globalErrandsModal"
                onOk={this.editFollowUp.bind(this)}
                onCancel={() => {
-                 this.setState({orderId: null, followVisible: false, followUpper: null})
+                 this.setState({orderId: null, followVisible: false, followUper: null})
                }}
         >
-          <Input.TextArea placeholder="请填写跟进人" value={followUpper} autosize={true} maxLength={50} onChange={(e) => {
-            this.setState({followUpper: e.target.value})
+          <Input.TextArea placeholder="请填写跟进人" value={followUper} autosize={true} maxLength={50} onChange={(e) => {
+            this.setState({followUper: e.target.value})
           }}/>
         </Modal>
       </div>

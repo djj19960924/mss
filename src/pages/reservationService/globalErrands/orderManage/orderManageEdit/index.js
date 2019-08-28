@@ -233,7 +233,7 @@ class orderManageEdit extends React.Component {
     const {legworkId} = this.state;
     // 该接口权限较深, 注意处理
     const updateLegworkIsEnd = () => {
-      const data = {id: legworkId, isEnd: 0};
+      const data = {id: legworkId};
       this.ajax.post('/legwork/updateLegworkIsEnd', data).then(r => {
         const {msg, status} = r.data;
         if (status === 10000) {

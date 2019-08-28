@@ -34,24 +34,21 @@ class PurchaseTrip extends React.Component {
 
   // 获取行程列表
   getTripList() {
-    this.setState({tableLoading: true})
-    fetch(window.apiUrl + "/legworkBackend/getLegworkPurchaseAddress", {
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    }).then(r => r.json()).then(res => {
-      this.setState({tableLoading: false});
-      if (res.status === 10000) {
-        this.setState({tripList: res.data});
-        message.success(res.msg);
-      } else if (res.status === 10001) {
-        message.warn(res.msg);
+    this.setState({tableLoading: true});
+    this.ajax.post('/legworkBackend/getLegworkPurchaseAddress').then(r => {
+      const {status, data} = r.data;
+      if (status === 10000) {
+        this.setState({tripList: data});
       } else {
-        message.error(res.msg);
+        this.setState({tripList: []});
       }
+      this.setState({tableLoading: false});
+      r.showError();
     }).catch(r => {
       this.setState({tableLoading: false});
       console.error(r);
-      console.log('前端接口调取错误')
-    })
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   //获取起始时间
@@ -97,14 +94,10 @@ class PurchaseTrip extends React.Component {
           endTime: endTime
         };
         this.setState({tableLoading: true});
-        fetch(window.apiUrl + "/legworkBackend/updateLegworkPurchaseAddress", {
-          method: "post",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(data)
-        }).then(r => r.json()).then((res) => {
-          this.setState({tableLoading: false});
-          if (res.status === 10000) {
-            message.success(res.msg);
+        this.ajax.post('/legworkBackend/updateLegworkPurchaseAddress', data).then(r => {
+          const {status, msg} = r.data;
+          if (status === 10000) {
+            message.success(msg);
             this.setState({
               tripId: null,
               purchaseAddress: null,
@@ -114,16 +107,14 @@ class PurchaseTrip extends React.Component {
               deleteVisible: false
             });
             this.getTripList();
-          } else if (res.status === 10001) {
-            message.warn(res.msg)
-          } else {
-            message.error(res.msg);
           }
+          this.setState({tableLoading: false});
+          r.showError();
         }).catch(r => {
           this.setState({tableLoading: false});
           console.error(r);
-          console.log('前端接口调取错误')
-        })
+          this.ajax.isReturnLogin(r, this);
+        });
       } else {
         message.warn("请将信息填写完整");
       }
@@ -162,14 +153,11 @@ class PurchaseTrip extends React.Component {
 //确定删除
   deleteOk() {
     this.setState({tableLoading: true});
-    fetch(window.apiUrl+"/legworkBackend/setPurchaseAddressUnshow",{
-      method:'post',
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({id:this.state.tripId})
-    }).then(r=>r.json()).then(res=>{
-      this.setState({tableLoading: false});
-      if(res.status===10000){
-        message.success(res.msg);
+    const data = {id:this.state.tripId};
+    this.ajax.post('/legworkBackend/setPurchaseAddressUnshow', data).then(r => {
+      const {status, msg} = r.data;
+      if (status === 10000) {
+        message.success(msg);
         this.setState({
           tripId: null,
           purchaseAddress: null,
@@ -179,17 +167,14 @@ class PurchaseTrip extends React.Component {
           deleteVisible: false
         })
         this.getTripList();
-      }else if(res.status===10001){
-        //没有获取到tripId
-        message.error("网络错误请关闭重试")
-      }else{
-        message.error(res.msg);
-      }
+      };
+      this.setState({tableLoading: false});
+      r.showError();
     }).catch(r => {
       this.setState({tableLoading: false});
       console.error(r);
-      console.log('前端接口调取错误')
-    })
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   //取消删除

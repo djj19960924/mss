@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, Pagination, Button, Modal, Radio, message} from "antd";
+import {Table, Pagination, Button, Modal, Input, message} from "antd";
 import moment from 'moment';
 import { inject, observer } from 'mobx-react';
 import './index.less';
@@ -178,37 +178,35 @@ class orderManage extends React.Component {
     push(`/reservation-service/global-errands/order-manage/edit/?legworkId=${record.legworkId}`);
   }
 
-  // 切换标签
-  // changeIsEnd(e) {
-  //   // console.log(e.target.value)
-  //   this.setState({isEnd: e.target.value},() => {
-  //     this.getLegworkByIsEnd()
-  //   })
-  // }
-
-  // 确认尾款已收
-  // isPaid(record) {
-  //   // 该接口权限较深, 注意处理
-  //   const updateLegworkIsEnd = () => {
-  //     const data = {id: record.legworkId, isEnd: 0};
-  //     this.ajax.post('/legwork/updateLegworkIsEnd', data).then(r => {
-  //       const {msg, status} = r.data;
-  //       if (status === 10000) {
-  //         message.success(msg);
-  //         this.getLegworkByIsEnd()
-  //       }
-  //       r.showError();
-  //     }).catch(r => {
-  //       console.error(r);
-  //       this.ajax.isReturnLogin(r, this);
-  //     });
-  //   };
-  //   Modal.confirm({
-  //     title: '确认收款',
-  //     content: '是否确认已收到该商品尾款?',
-  //     onOk: updateLegworkIsEnd,
-  //   })
-  // }
+  // 编辑跟进人弹窗
+  updateFollowUper(id, followUper) {
+    const data = {id, followUper};
+    const updateFollowUper = e => {
+      // 去除自动关闭事件
+      e = () => {};
+      this.ajax.post('/legworkBackend/updateFollowUper', data).then(r => {
+        const {msg, status} = r.data;
+        if (status === 10000) {
+          message.success(msg);
+          this.getLegworkByIsEnd();
+          modal.destroy();
+        };
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    };
+    const modal = Modal.confirm({
+      title: '编辑跟进人',
+      content: <div>
+        <Input defaultValue={followUper ? followUper : ''}
+               onChange={e => data.followUper = e.target.value}
+        />
+      </div>,
+      onOk: updateFollowUper
+    })
+  }
 
   // 换页
   changePage(pageNum, pageSize) {
@@ -223,14 +221,11 @@ class orderManage extends React.Component {
   }
 
   render() {
-    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, isEnd, tableLoading} = this.state;
+    const {tableDataList, pageTotal, pageSize, pageNum, pageSizeOptions, tableLoading} = this.state;
     const ellipsis = {textOverflow:'ellipsis',overflow: 'hidden',whiteSpace: 'nowrap'};
+    const hidden = {overflow: 'hidden'};
+    const remarks = {lineHeight: '16px', padding: '8px 0',whiteSpace: 'pre-wrap'};
     const columns = [
-      // {title: '更新时间', dataIndex: 'updateTime', key: 'updateTime', width: 160,
-      //   render: timeStamp => (
-      //     <div>{timeStamp ? moment(timeStamp).format(`YYYY-MM-DD HH:mm:ss`) : '无'}</div>
-      //   )
-      // },
       {title: '预定时间', dataIndex: 'createTime', key: 'createTime', width: 160,
         render: timeStamp => (
           <div>{timeStamp ? moment(timeStamp).format(`YYYY-MM-DD HH:mm:ss`) : '无'}</div>
@@ -242,17 +237,26 @@ class orderManage extends React.Component {
         )
       },
       {title: '跟进人', dataIndex: 'followUper', key: 'followUper', width: 160,
-        render: followUper => (
-          <div style={Object.assign({width: 139}, ellipsis)}>{followUper ? followUper : '无'}</div>
+        render: (followUper,record) => (
+          <div  style={hidden}>
+            <table>
+              <tbody>
+              <tr>
+                <td style={{padding: 0,width: 'calc(100% - 32px)'}}><div style={remarks}>{followUper ? followUper : '暂无'}</div></td>
+                <td style={{padding: 0,width: '32px'}}>
+                  <Button type="link"
+                          icon="form"
+                          style={{padding: 0}}
+                          onClick={this.updateFollowUper.bind(this, record.legworkId, followUper)}
+                          disabled={!this.allow(137)}
+                          title={!this.allow(137) ? '没有该操作权限' : null}
+                  /></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         )
       },
-      // {title: '最新进度', dataIndex: 'scheduleInfo', key: 'scheduleInfo', width: 180,
-      //   render: scheduleInfo => (
-      //     <div style={Object.assign({width: 159}, ellipsis)}
-      //          title={scheduleInfo ? scheduleInfo : '无'}
-      //     >{scheduleInfo ? scheduleInfo : '无'}</div>
-      //   )
-      // },
       {title: '商品信息', dataIndex: 'productDetail', key: 'productDetail', width: 240,
         render: productName => (
           <div style={Object.assign({width: 219}, ellipsis)}
@@ -266,14 +270,10 @@ class orderManage extends React.Component {
             <Button type="primary"
                     onClick={this.showDetails.bind(this, record)}
             >查看</Button>
-            {isEnd === -2 && <Button type="primary"
+            <Button type="primary"
                     style={{marginLeft: 10}}
                     onClick={this.editDetail.bind(this, record)}
-            >编辑</Button>}
-            {/*{isEnd === -1 && <Button type="primary"*/}
-            {/*                         style={{marginLeft: 10}}*/}
-            {/*                         onClick={this.isPaid.bind(this, record)}*/}
-            {/*>收款</Button>}*/}
+            >编辑</Button>
           </div>
       },
     ];
@@ -283,16 +283,6 @@ class orderManage extends React.Component {
           <div className="titleMain">原始订单</div>
           <div className="titleLine" />
         </div>
-
-        {/*<div className="btnLine">*/}
-        {/*  <Radio.Group buttonStyle="solid"*/}
-        {/*               value={isEnd}*/}
-        {/*               onChange={this.changeIsEnd.bind(this)}*/}
-        {/*  >*/}
-        {/*    <Radio.Button value={-2}>商品编辑</Radio.Button>*/}
-        {/*    <Radio.Button value={-1}>确认尾款</Radio.Button>*/}
-        {/*  </Radio.Group>*/}
-        {/*</div>*/}
 
         <div className="tableMain"
              style={{maxWidth: 920}}

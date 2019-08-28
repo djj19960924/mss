@@ -11,7 +11,7 @@ class EndOfOrder extends React.Component {
       orderNum: 0,
       pageNum: 1,
       pageSize: 50,
-      pageSizeOptions:["50","100","500","1000"],
+      pageSizeOptions:["50","100","200","300"],
       dataSource: [],
       tableLoading: false
     };
@@ -31,33 +31,24 @@ class EndOfOrder extends React.Component {
       searchParm: searchParm
     };
     this.setState({tableLoading: true});
-    fetch(window.apiUrl + "/legworkBackend/getLegworkByIsEnd", {
-      method: "post",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(data)
-    }).then(r => r.json()).then(res => {
-        this.setState({tableLoading: false});
-        if (res.status === 10000) {
-          message.success(res.msg);
-          this.setState({dataSource: res.data.list, orderNum: res.data.total})
-          if (res.data.total > this.state.pageSizeOptions[this.state.pageSizeOptions.length-1]) {
-            let pageSizeOptions=this.state.pageSizeOptions;
-            pageSizeOptions.push([res.data.total].toString());
-            this.setState({pageSizeOptions:pageSizeOptions})
-          }
-        } else if (res.status < 10000) {
-          message.warn(res.msg);
-          this.setState({dataSource: [],orderTotal:0});
-        } else {
-          message.error(res.msg);
-          this.setState({dataSource: [],orderTotal:0});
-        }
+    this.ajax.post('/legworkBackend/getLegworkByIsEnd', data).then(r => {
+      const {status, data, msg} = r.data;
+      if (status === 10000) {
+        this.setState({
+          dataSource: data.list,
+          orderTotal: data.total,
+          pageSizeOptions: ["50", "100", "200", `${data.total > 300 ? data.total : 300}`],
+        });
+      } else if (status < 10000) {
+        this.setState({dataSource: [], orderTotal: 0});
       }
-    ).catch(r => {
+      this.setState({tableLoading: false});
+      r.showError();
+    }).catch(r => {
       this.setState({tableLoading: false});
       console.error(r);
-      console.log('前端接口调取错误')
-    })
+      this.ajax.isReturnLogin(r, this);
+    });
   }
 
   addTrackNo(id) {
@@ -128,6 +119,15 @@ class EndOfOrder extends React.Component {
         )
       },
       {
+        title: "接单买手",
+        dataIndex: "userName",
+        key: "userName",
+        width: 150,
+        render: text => (
+          <div>{text ? text : "暂未被买手接单"}</div>
+        )
+      },
+      {
         title: "最近进度更新时间",
         dataIndex: "updateTime",
         key: "updateTime",
@@ -136,20 +136,20 @@ class EndOfOrder extends React.Component {
           <div>{record.updateTime ? moment(record.updateTime).format("YYYY-MM-DD HH:mm:ss") : "暂无更新时间"}</div>
         )
       },
-      {
-        title: "预订时间",
-        dataIndex: "createTime",
-        key: "createTime",
-        width: 150,
-        render: (text, record) => (
-          <div>{record.createTime ? moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") : ""}</div>
-        )
-      },
+      // {
+      //   title: "预订时间",
+      //   dataIndex: "createTime",
+      //   key: "createTime",
+      //   width: 150,
+      //   render: (text, record) => (
+      //     <div>{record.createTime ? moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") : ""}</div>
+      //   )
+      // },
       {
         title: "跟进人",
         dataIndex: "followUper",
         key: "followUper",
-        width: 300,
+        width: 220,
         render: (text, record) => (
           <div>
             {record.followUper !== null &&
