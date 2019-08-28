@@ -149,7 +149,7 @@ class EndOfOrder extends React.Component {
         title: "跟进人",
         dataIndex: "followUper",
         key: "followUper",
-        width: 220,
+        width: 200,
         render: (text, record) => (
           <div>
             {record.followUper !== null &&

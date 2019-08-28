@@ -153,28 +153,27 @@ class WaitPurchasing extends React.Component {
     XLSX.writeFile(wb, `采购信息 ${moment(new Date()).format('YYYY-MM-DD_HH.mm.ss')}.xlsx`);
   }
 
-//显示跟进人modal
-  editFollowUp() {
-    const {followUper, orderId} = this.state;
-    const data = {id: orderId, followUper};
-    if (followUper) {
-      this.setState({confirmLoading: true});
-      this.ajax.post('/legworkBackend/updateFollowUper', data).then(r => {
-        const {status, msg} = r.data;
-        if (status === 10000) {
-          this.setState({orderId: null, followUpper: null, followVisible: false});
-          message.success(msg);
-        }
-        r.showError();
-      }).catch(r => {
-        console.error(r);
-        this.ajax.isReturnLogin(r, this);
-      });
-    } else {
-      message.warn("请先填写编辑人")
-    }
-
-  }
+// 显示跟进人modal
+//   editFollowUp() {
+//     const {followUper, orderId} = this.state;
+//     const data = {id: orderId, followUper};
+//     if (followUper) {
+//       this.setState({confirmLoading: true});
+//       this.ajax.post('/legworkBackend/updateFollowUper', data).then(r => {
+//         const {status, msg} = r.data;
+//         if (status === 10000) {
+//           this.setState({orderId: null, followUpper: null, followVisible: false});
+//           message.success(msg);
+//         }
+//         r.showError();
+//       }).catch(r => {
+//         console.error(r);
+//         this.ajax.isReturnLogin(r, this);
+//       });
+//     } else {
+//       message.warn("请先填写编辑人")
+//     }
+//   }
 
   componentWillUnmount() {
     this.setState = () => null
@@ -203,18 +202,31 @@ class WaitPurchasing extends React.Component {
         title: "跟进人",
         dataIndex: "followUper",
         key: "followUper",
-        width: 250,
+        width: 200,
         render: (text, record) => (
-          <div style={{"display": "flex", "justifyContent": "space-between"}}>
+          <div>
             {record.followUper !== null &&
             <span style={{"color": "#FF5406", "marginRight": 10}}>{record.followUper}</span>}
             {record.followUper === null && <span style={{"marginRight": 10}}>暂无跟进人</span>}
-            <Button type="primary" onClick={() => {
-              this.setState({orderId: record.legworkId, followVisible: true, followUper: record.followUper})
-            }}>编辑</Button>
           </div>
         )
       },
+      // {
+      //   title: "跟进人",
+      //   dataIndex: "followUper",
+      //   key: "followUper",
+      //   width: 250,
+      //   render: (text, record) => (
+      //     <div style={{"display": "flex", "justifyContent": "space-between"}}>
+      //       {record.followUper !== null &&
+      //       <span style={{"color": "#FF5406", "marginRight": 10}}>{record.followUper}</span>}
+      //       {record.followUper === null && <span style={{"marginRight": 10}}>暂无跟进人</span>}
+      //       <Button type="primary" onClick={() => {
+      //         this.setState({orderId: record.legworkId, followVisible: true, followUper: record.followUper})
+      //       }}>编辑</Button>
+      //     </div>
+      //   )
+      // },
       {
         title: "接单买手",
         dataIndex: "userName",
@@ -366,21 +378,21 @@ class WaitPurchasing extends React.Component {
         {/*</Modal>*/}
 
         {/*跟进人modal*/}
-        <Modal title="请确认"
-               visible={followVisible}
-               destroyOnClose
-               closable={false}
-               confirmLoading={confirmLoading}
-               wrapClassName="globalErrandsModal"
-               onOk={this.editFollowUp.bind(this)}
-               onCancel={() => {
-                 this.setState({orderId: null, followVisible: false, followUper: null})
-               }}
-        >
-          <Input.TextArea placeholder="请填写跟进人" value={followUper} autosize={true} maxLength={50} onChange={(e) => {
-            this.setState({followUper: e.target.value})
-          }}/>
-        </Modal>
+        {/*<Modal title="请确认"*/}
+        {/*       visible={followVisible}*/}
+        {/*       destroyOnClose*/}
+        {/*       closable={false}*/}
+        {/*       confirmLoading={confirmLoading}*/}
+        {/*       wrapClassName="globalErrandsModal"*/}
+        {/*       onOk={this.editFollowUp.bind(this)}*/}
+        {/*       onCancel={() => {*/}
+        {/*         this.setState({orderId: null, followVisible: false, followUper: null})*/}
+        {/*       }}*/}
+        {/*>*/}
+        {/*  <Input.TextArea placeholder="请填写跟进人" value={followUper} autosize={true} maxLength={50} onChange={(e) => {*/}
+        {/*    this.setState({followUper: e.target.value})*/}
+        {/*  }}/>*/}
+        {/*</Modal>*/}
       </div>
     );
   }

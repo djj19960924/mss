@@ -273,6 +273,8 @@ class orderManage extends React.Component {
             <Button type="primary"
                     style={{marginLeft: 10}}
                     onClick={this.editDetail.bind(this, record)}
+                    disabled={!record.followUper}
+                    title={!record.followUper ? '请先编辑跟进人' : null}
             >编辑</Button>
           </div>
       },

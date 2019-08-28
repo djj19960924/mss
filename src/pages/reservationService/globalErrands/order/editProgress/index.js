@@ -50,7 +50,7 @@ class EditProgress extends React.Component {
   getOrderProgressDetail() {
     const data = {id: window.getQueryString("id")};
     this.ajax.post('/legworkBackend/getProductDetailAndSchedule', data).then(r => {
-      const {status, msg} = r.data;
+      const {status, msg, data} = r.data;
       if (status <= 10000) {
         this.setState({
           bookingTime: data.createTime,
@@ -204,7 +204,7 @@ class EditProgress extends React.Component {
         />}
         <p className="schedules">采购进度</p>
         {
-          schedules && schedules.map(
+          !!schedules && schedules.map(
             (item, index) => {
               return (
                 <div key={index} className="schedules-info">
