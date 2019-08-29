@@ -168,10 +168,25 @@ class EndOfOrder extends React.Component {
       },
       {
         title: "商品内容",
-        dataIndex: "productDetail",
-        key: "productDetail",
-        width: 150
+        dataIndex: "legworkProductVos",
+        key: "legworkProductVos",
+        width: 150,
+        render: legworkProductVos => (
+          <div>
+            {!!legworkProductVos && legworkProductVos.map((obj, index) => (
+              <div key={index} style={{marginTop: index !== 0 ? 5 : 0}}>
+                商品名{index + 1}:{obj.productName} 数量:{obj.productNum}{`\n`}
+              </div>
+            ))}
+          </div>
+        )
       },
+      // {
+      //   title: "商品内容",
+      //   dataIndex: "productDetail",
+      //   key: "productDetail",
+      //   width: 150
+      // },
       // {
       //   title: "订单状态",
       //   dataIndex: "choice",

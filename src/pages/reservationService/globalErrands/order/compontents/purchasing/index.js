@@ -120,11 +120,26 @@ class WaitPurchasing extends React.Component {
           <div>{record.createTime ? moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") : ""}</div>
         )
       },
+      // {
+      //   title: "商品内容",
+      //   dataIndex: "productDetail",
+      //   key: "productDetail"
+      // }
       {
         title: "商品内容",
-        dataIndex: "productDetail",
-        key: "productDetail"
-      }
+        dataIndex: "legworkProductVos",
+        key: "legworkProductVos",
+        width: 150,
+        render: legworkProductVos => (
+          <div>
+            {!!legworkProductVos && legworkProductVos.map((obj, index) => (
+              <div key={index} style={{marginTop: index !== 0 ? 5 : 0}}>
+                商品名{index + 1}:{obj.productName} 数量:{obj.productNum}
+              </div>
+            ))}
+          </div>
+        )
+      },
     ];
     const exportColumns = [
       {
@@ -142,11 +157,26 @@ class WaitPurchasing extends React.Component {
         key: "wechatNo",
         width: 150
       },
+      // {
+      //   title: "商品内容",
+      //   dataIndex: "productDetail",
+      //   key: "productDetail",
+      //   width: 150
+      // },
       {
         title: "商品内容",
-        dataIndex: "productDetail",
-        key: "productDetail",
-        width: 150
+        dataIndex: "legworkProductVos",
+        key: "legworkProductVos",
+        width: 150,
+        render: legworkProductVos => (
+          <div>
+            {!!legworkProductVos && legworkProductVos.map((obj, index) => (
+              <div key={index} style={{marginTop: index !== 0 ? 5 : 0}}>
+                商品名{index + 1}:{obj.productName} 数量:{obj.productNum}{`\n`}
+              </div>
+            ))}
+          </div>
+        )
       },
       {
         title: "跟进人",
@@ -154,15 +184,15 @@ class WaitPurchasing extends React.Component {
         key: "followUper",
         width: 250,
       },
-      {
-        title: "最新更新进度",
-        dataIndex: "scheduleInfo",
-        key: "scheduleInfo",
-        width: 150,
-        render: (text, record) => (
-          <div>{record.scheduleInfo ? record.scheduleInfo : "暂无进度"}</div>
-        )
-      }
+      // {
+      //   title: "最新更新进度",
+      //   dataIndex: "scheduleInfo",
+      //   key: "scheduleInfo",
+      //   width: 150,
+      //   render: (text, record) => (
+      //     <div>{record.scheduleInfo ? record.scheduleInfo : "暂无进度"}</div>
+      //   )
+      // }
     ];
     const {dataSource, tableLoading, pageNum, pageSize, pageSizeOptions, orderTotal} = this.state;
     const Search = Input.Search;
@@ -193,7 +223,7 @@ class WaitPurchasing extends React.Component {
                  pagination={false}
                  loading={tableLoading}
                  rowKey={(record, index) => `${record.legworkId}`}
-                 scroll={{x: 960, y: 600}}
+                 scroll={{x: 960, y: 500}}
           />
           <Pagination className="tablePagination"
                       current={pageNum}
