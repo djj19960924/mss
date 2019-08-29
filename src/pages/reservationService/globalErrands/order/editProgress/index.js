@@ -1,9 +1,11 @@
 import React from "react";
-import "./index.less";
 import moment from "moment";
 import ImageViewer from '@components/imageViewer/main';
 import {Button, Modal, Input, message} from "antd";
+import {withRouter} from 'react-router-dom';
+import "./index.less";
 
+@withRouter
 class EditProgress extends React.Component {
   constructor(props) {
     super(props);

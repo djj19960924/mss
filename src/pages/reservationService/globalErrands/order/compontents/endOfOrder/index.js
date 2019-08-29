@@ -1,8 +1,10 @@
 import React from "react";
 import moment from "moment";
-import {Table, message, Pagination,Input,Button,Modal} from "antd";
+import {Table, message, Pagination, Input, Button, Modal} from "antd";
+import {withRouter} from 'react-router-dom';
 import "./index.less";
 
+@withRouter
 class EndOfOrder extends React.Component {
   constructor(props) {
     super(props);

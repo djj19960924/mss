@@ -1,8 +1,10 @@
 import React from "react";
 import {Table, Button, Modal, message, Input, DatePicker} from "antd";
 import moment from "moment";
+import {withRouter} from 'react-router-dom';
 import "./index.less";
 
+@withRouter
 class PurchaseTrip extends React.Component {
   constructor(props) {
     super(props);
