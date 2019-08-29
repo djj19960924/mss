@@ -12,7 +12,6 @@ class rebateCountryInfo extends React.Component {
       copyInfo: '',
       allLoading: false,
     }
-    window.test = this;
   }
 
   allow = this.props.appStore.getAllow.bind(this);

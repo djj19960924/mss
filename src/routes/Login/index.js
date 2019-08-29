@@ -14,7 +14,7 @@ class Login extends React.Component {
     this.state = {
       loading: false
     };
-    window.Login = this;
+    // window.Login = this;
   };
   componentDidMount() {
     this.initBG();

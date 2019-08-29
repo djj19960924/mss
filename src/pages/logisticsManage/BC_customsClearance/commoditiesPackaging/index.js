@@ -38,7 +38,6 @@ class commoditiesPackaging extends React.Component{
       offLinePayLoading: false,
       proprietaryLoading: false
     };
-    window.test = this;
   }
   allow = this.props.appStore.getAllow.bind(this);
 
