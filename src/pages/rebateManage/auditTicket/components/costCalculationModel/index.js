@@ -1,6 +1,7 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom';
-import {Form, Select, Input, InputNumber, Button, message, DatePicker, Icon} from 'antd';
+import {Form, Select, Input, InputNumber, Button, Spin, Icon, message} from 'antd';
+import debounce from 'lodash/debounce';
 import {inject, observer} from 'mobx-react/index';
 import './index.less';
 
@@ -29,9 +30,13 @@ class costCalculationModel extends React.Component {
           // 商品数量
           number: undefined,
           // 成本
-          cost: undefined
+          cost: undefined,
+          // 商品id
+          productId: undefined
         }
       ],
+      // 商品搜索下拉框 options 存放
+      productInfoList: [],
       // 当日韩汇率
       koreaRate: undefined,
       // 当日美汇率
@@ -61,7 +66,10 @@ class costCalculationModel extends React.Component {
       // 商品数量
       number: undefined,
       // 成本
-      cost: undefined});
+      cost: undefined,
+      // 商品id
+      productId: undefined
+    });
     this.setState({});
   }
 
@@ -113,10 +121,87 @@ class costCalculationModel extends React.Component {
     });
   }
 
+  // 搜索商品依赖
+  lastPostId = 0;
+  // 防抖插件
+  ajaxPost = debounce(this.getProductList, 800);
+
+  // 模糊查询商品
+  getProductList(index, name) {
+    // console.log(index, name)
+    const {Option} = Select;
+    const {productInfoList} = this.state;
+    name = name.trim();
+    if (!!name) {
+      const data = {name};
+      this.lastPostId += 1;
+      const postId = this.lastPostId;
+      productInfoList[index] = {options: [], optionsOrigin: [], loading: true};
+      this.setState({});
+      this.ajax.post('/backend/productCost/getProductList', data).then(r => {
+        const {status, data} = r.data;
+        if (status === 10000) {
+          if (postId !== this.lastPostId) {
+            // for fetch callback order
+            return;
+          }
+          const objectData = {options: [], optionsOrigin: [], loading: true};
+          if (data.length > 0) {
+            objectData.optionsOrigin = data;
+            if (data.length < 100) {
+              for (let obj of data) {
+                objectData.options.push(
+                  <Option key={obj.id} value={obj.name} id={obj.id} name={obj.name}>
+                    {obj.name}
+                  </Option>
+                );
+              }
+            } else {
+              console.log(data.length);
+              message.warn('商品搜索结果过多, 请精确搜索')
+            }
+            productInfoList[index] = objectData;
+            this.setState({})
+          }
+        }
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    }
+  }
+
+  // 改变商品选择时触发
+  changeProduct(index, name, option) {
+    const {productCosts} = this.state;
+    productCosts[index].productName = name;
+    productCosts[index].productId = option.props.id;
+    this.setState({})
+  }
+
+  // 展示搜索框空闲状态
+  isLoading(index) {
+    const {productInfoList} = this.state;
+    if (!productInfoList[index]) {
+      return '尚未搜索商品'
+    } else {
+      if (productInfoList[index].loading) {
+        return <div><Spin /> 正在搜索中...</div>
+      } else {
+        if (productInfoList[index].optionsOrigin.length > 0) {
+          return '当前搜索结果过多, 请输入具体名称'
+        } else {
+          return '未找到符合的商品'
+        }
+      }
+    }
+  }
+
   componentWillUnmount() {this.setState = () => null}
   render() {
     const FormItem = Form.Item;
-    const {checkChoice, receiptTotal, productCosts, koreaRate, americaRate, country} = this.state;
+    const {checkChoice, receiptTotal, productCosts, koreaRate, americaRate, country, productInfoList} = this.state;
     return (
       <div className="costCalculationModel">
         {/* 1.满足自营小票 2.满足存在剩余小票 */}
@@ -130,7 +215,6 @@ class costCalculationModel extends React.Component {
               >
                 <InputNumber value={koreaRate}
                              onChange={value => this.setState({koreaRate: value})}
-                             onPressEnter={()=>document.activeElement.blur()}
                 />
               </FormItem>
               <FormItem label="当日美元汇率"
@@ -139,21 +223,44 @@ class costCalculationModel extends React.Component {
               >
                 <InputNumber value={americaRate}
                              onChange={value => this.setState({americaRate: value})}
-                             onPressEnter={()=>document.activeElement.blur()}
                 />
               </FormItem>
               {productCosts.map((item,index) => {
                 return <div key={index}>
                   <div className="productTitle">-- 商品{index + 1} --</div>
+                  <FormItem label="商品选择">
+                    <Select placeholder="输入商品名称搜索商品"
+                            style={{width: 200}}
+                            // value={}
+                            dropdownMatchSelectWidth={false}
+                            // 数据为空时显示
+                            notFoundContent={this.isLoading(index)}
+                            // 下拉箭头
+                            showArrow={false}
+                            // 筛选结果
+                            filterOption={false}
+                            // 搜索
+                            showSearch
+                            onSearch={this.ajaxPost.bind(this, index)}
+                            onChange={this.changeProduct.bind(this, index)}
+                    >
+                      {productInfoList[index] ? productInfoList[index].options : []}
+                    </Select>
+                  </FormItem>
                   <FormItem label="商品名称"
                             validateStatus={!!productCosts[index].productName ? '' : 'error'}
                             required
                   >
                     <Input value={productCosts[index].productName}
-                           onChange={e => {
-                             this.changeProductCosts(e, index, 'productName', false)
-                           }}
-                           onPressEnter={()=>document.activeElement.blur()}
+                           disabled
+                    />
+                  </FormItem>
+                  <FormItem label="商品id"
+                            validateStatus={!!productCosts[index].productId ? '' : 'error'}
+                            required
+                  >
+                    <Input value={productCosts[index].productId}
+                           disabled
                     />
                   </FormItem>
                   <FormItem label="单价"
@@ -167,7 +274,6 @@ class costCalculationModel extends React.Component {
                                  onChange={e => {
                                    this.changeProductCosts(e, index, 'unitPrice', true)
                                  }}
-                                 onPressEnter={()=>document.activeElement.blur()}
                     />
                   </FormItem>
                   <FormItem label="数量"
@@ -181,7 +287,6 @@ class costCalculationModel extends React.Component {
                                  onChange={e => {
                                    this.changeProductCosts(e, index, 'number', true)
                                  }}
-                                 onPressEnter={()=>document.activeElement.blur()}
                     />
                   </FormItem>
                   <FormItem label="成本"

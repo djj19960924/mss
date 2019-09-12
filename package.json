@@ -40,6 +40,7 @@
     "jszip": "^3.2.1",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
+    "lodash": "^4.17.15",
     "mini-css-extract-plugin": "0.4.3",
     "mobx": "^5.7.0",
     "mobx-react": "^5.4.2",
@@ -130,7 +131,8 @@
           "legacy": true
         }
       ],
-      ["import",
+      [
+        "import",
         {
           "libraryName": "antd",
           "style": true

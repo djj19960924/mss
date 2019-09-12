@@ -148,9 +148,12 @@ class auditTicket extends React.Component {
               // 商品数量
               number: undefined,
               // 成本
-              cost: undefined
+              cost: undefined,
+              // 商品id
+              productId: undefined
             }];
-            this.CostCalculationModelRef.setState({productCosts});
+            const productInfoList = [];
+            this.CostCalculationModelRef.setState({productCosts, productInfoList});
           }
         }
         r.showError();
