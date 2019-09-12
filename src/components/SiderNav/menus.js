@@ -299,7 +299,7 @@ const menus = [
         id: 48,
         icon: 'file-unknown',
         key: '/rebate-manage/audit-ticket',
-        testType: 'localTest',
+        testType: 'serverTest',
         components: [
           {name: 'auditTicket', path: '/rebate-manage/audit-ticket'}
         ]
