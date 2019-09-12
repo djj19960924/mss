@@ -75,27 +75,31 @@ class auditTicket extends React.Component {
       height: '30px',
       lineHeight: '30px',
     };
-    let RadioGroupValue = 0, other = '';
+    let RadioGroupValue = undefined, other = '';
     const checkReciptRejected = e => {
       // 去除自动关闭事件
       e = () => {};
       const {reciptId} = receiptList[currentReceiptNo];
       const data = {reciptId, note: RadioGroupValue === 3 ? `3${other}` : RadioGroupValue};
-      if (RadioGroupValue === 3 && !other) {
-        message.error('其他原因不能为空')
+      if (!RadioGroupValue) {
+        message.error('请选择驳回原因')
       } else {
-        this.ajax.post('/recipt/checkReciptRejected', data).then(r => {
-          const {status, msg} = r.data;
-          if (status === 10000) {
-            message.success(msg);
-            this.checkRecipt();
-            modal.destroy();
-          }
-          r.showError();
-        }).catch(r => {
-          console.error(r);
-          this.ajax.isReturnLogin(r, this);
-        });
+        if (RadioGroupValue === 3 && !other) {
+          message.error('其他原因不能为空')
+        } else {
+          this.ajax.post('/recipt/checkReciptRejected', data).then(r => {
+            const {status, msg} = r.data;
+            if (status === 10000) {
+              message.success(msg);
+              this.checkRecipt();
+              modal.destroy();
+            }
+            r.showError();
+          }).catch(r => {
+            console.error(r);
+            this.ajax.isReturnLogin(r, this);
+          });
+        }
       }
     };
     const modal = Modal.confirm({
