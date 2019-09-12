@@ -42,9 +42,11 @@ class costCalculationModel extends React.Component {
       // 当日美汇率
       americaRate: undefined,
       // 默认为韩国, 仅用于展示成本计算模块
-      country: '韩国'
+      country: '韩国',
+      // 新增商品输入字段
+      name: '',
+      addNameLoading: false
     };
-    window.test = this
   }
   // 传递成本计算值
   changeCostInfo = this.props.changeCostInfo;
@@ -198,10 +200,31 @@ class costCalculationModel extends React.Component {
     }
   }
 
+  // 快捷新增商品
+  insertIncompleteProduct() {
+    const {name} = this.state;
+    const showLoading = Is => this.setState({addNameLoading: Is});
+    showLoading(true);
+    const data = {name};
+    this.ajax.post('/backend/productCost/insertIncompleteProduct', data).then(r => {
+      const {status, msg} = r.data;
+      if (status === 10000) {
+        message.success(`${msg}, 商品名为: ${name}`);
+        this.setState({name: ''})
+      }
+      showLoading(false);
+      r.showError();
+    }).catch(r => {
+      showLoading(false);
+      console.error(r);
+      this.ajax.isReturnLogin(r, this);
+    });
+  }
+
   componentWillUnmount() {this.setState = () => null}
   render() {
     const FormItem = Form.Item;
-    const {checkChoice, receiptTotal, productCosts, koreaRate, americaRate, country, productInfoList} = this.state;
+    const {checkChoice, receiptTotal, productCosts, koreaRate, americaRate, country, productInfoList, name, addNameLoading} = this.state;
     return (
       <div className="costCalculationModel">
         {/* 1.满足自营小票 2.满足存在剩余小票 */}
@@ -224,6 +247,17 @@ class costCalculationModel extends React.Component {
                 <InputNumber value={americaRate}
                              onChange={value => this.setState({americaRate: value})}
                 />
+              </FormItem>
+              <FormItem label="快捷新增商品">
+                <Input style={{width: 200}}
+                       value={name}
+                       placeholder="请输入商品名称"
+                       onChange={e => this.setState({name: e.target.value})}
+                />
+                <Button style={{marginLeft: 10}}
+                        onClick={this.insertIncompleteProduct.bind(this)}
+                        loading={addNameLoading}
+                >新增</Button>
               </FormItem>
               {productCosts.map((item,index) => {
                 return <div key={index}>

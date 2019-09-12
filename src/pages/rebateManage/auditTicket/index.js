@@ -33,7 +33,6 @@ class auditTicket extends React.Component {
       // 国家
       country: ''
     };
-    window.auditTicket = this
   }
 
   // 子组件存放
