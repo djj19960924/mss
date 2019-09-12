@@ -285,13 +285,23 @@ const menus = [
           {name: 'countBillList', path: '/rebate-manage/count-bill-list'}
         ]
       },
+      // {
+      //   title: '待审核',
+      //   id: 48,
+      //   icon: 'file-unknown',
+      //   key: '/rebate-manage/awaiting-examine',
+      //   components: [
+      //     {name: 'awaitingExamine', path: '/rebate-manage/awaiting-examine'}
+      //   ]
+      // },
       {
-        title: '待审核',
+        title: '审核小票',
         id: 48,
         icon: 'file-unknown',
-        key: '/rebate-manage/awaiting-examine',
+        key: '/rebate-manage/audit-ticket',
+        testType: 'localTest',
         components: [
-          {name: 'awaitingExamine', path: '/rebate-manage/awaiting-examine'}
+          {name: 'auditTicket', path: '/rebate-manage/audit-ticket'}
         ]
       },
       {

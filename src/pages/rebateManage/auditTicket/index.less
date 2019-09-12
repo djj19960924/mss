@@ -1,0 +1,80 @@
+.auditTicket {
+  .containerMain {
+    min-width: 800px;
+    margin: 10px;
+    overflow: hidden;
+
+    .imgMain {
+      float: left;
+
+      .imgBody {
+        width: 400px;
+        height: 550px;
+        border: 1px solid rgba(0,0,0,.3);
+        box-sizing: border-box;
+        padding: 19px;
+
+        .loadingShow {
+          z-index: 998;
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          background-color: rgba(0,0,0,.5);
+          overflow: hidden;
+
+          .loadingTxt {
+            color: #fff;
+            text-align: center;
+            font-size: 36px;
+            position: relative;
+            top: 50%;
+            line-height: 42px;
+            margin: -21px 0 0 0;
+          }
+        }
+      }
+    }
+
+    .fromMain {
+      float: left;
+      padding-left: 10px;
+      width: calc(100% - 400px);
+      max-width: 500px;
+      height: 550px;
+      overflow-y: auto;
+      background-color: #e8f4fa;
+
+      .leftInfo{
+        font-size: 18px;
+        line-height: 36px;
+        margin-left: 10px;
+      }
+
+      .title {
+        font-size: 20px;
+        color: rgba(0,0,0,.7);
+        line-height: 36px;
+        font-weight: bold;
+      }
+
+      // 表单内部样式控制
+      .ant-form-item {
+        //margin-bottom: 8px;
+        margin: 0;
+        overflow: hidden;
+        .ant-form-item-label {
+          float: left;
+        }
+        .ant-form-item-control-wrapper {
+          float: left;
+        }
+      }
+
+      .subInfo {
+        color: rgba(255,0,0,.5)
+      }
+    }
+  }
+}

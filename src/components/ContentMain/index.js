@@ -100,7 +100,9 @@ import logs from '@pages/system/logs/';
   // 更新二维码
   import updateQRCode from '@pages/rebateManage/updateQRCode/';
   // 审核小票
-  import awaitingExamine from '@pages/rebateManage/awaitingExamine/';
+  // import awaitingExamine from '@pages/rebateManage/awaitingExamine/';
+  // new审核小票
+  import auditTicket from '@pages/rebateManage/auditTicket/';
   // 设置返点
   import setRebate from '@pages/rebateManage/setRebate/';
   // 对账
@@ -148,7 +150,7 @@ const componentsList = {
   adoptExamineUnpaid,
   rejectExamine,
   updateQRCode,
-  awaitingExamine,
+  // awaitingExamine,
   setRebate,
   countBillList,
   appointmentTeamManage,
@@ -164,7 +166,8 @@ const componentsList = {
   rebateCountryInfo,
   rebateUser,
   logs,
-  test
+  test,
+  auditTicket
 };
 
 @withRouter
