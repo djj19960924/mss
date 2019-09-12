@@ -9,7 +9,7 @@
     const {status} = r.data;
     if (status === 10000) {
       // 处理成功
-    };
+    }
     r.showError();
   }).catch(r => {
     console.error(r);
