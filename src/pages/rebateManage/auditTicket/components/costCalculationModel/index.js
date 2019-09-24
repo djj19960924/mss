@@ -232,22 +232,24 @@ class costCalculationModel extends React.Component {
           <div>
             <div className="title">-- 成本计算模块 --</div>
             <Form>
-              <FormItem label="当日韩元汇率"
-                        validateStatus={!!koreaRate ? '' : 'error'}
-                        required
-              >
-                <InputNumber value={koreaRate}
-                             onChange={value => this.setState({koreaRate: value})}
-                />
-              </FormItem>
-              <FormItem label="当日美元汇率"
-                        validateStatus={!!americaRate ? '' : 'error'}
-                        required
-              >
-                <InputNumber value={americaRate}
-                             onChange={value => this.setState({americaRate: value})}
-                />
-              </FormItem>
+              {
+                // <FormItem label="当日韩元汇率"
+                //         validateStatus={!!koreaRate ? '' : 'error'}
+                //         required
+                // >
+                //   <InputNumber value={koreaRate}
+                //               onChange={value => this.setState({koreaRate: value})}
+                //   />
+                // </FormItem>
+                // <FormItem label="当日美元汇率"
+                //           validateStatus={!!americaRate ? '' : 'error'}
+                //           required
+                // >
+                //   <InputNumber value={americaRate}
+                //               onChange={value => this.setState({americaRate: value})}
+                //   />
+                // </FormItem>
+              }
               <FormItem label="快捷新增商品">
                 <Input style={{width: 200}}
                        value={name}

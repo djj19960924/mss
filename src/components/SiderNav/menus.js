@@ -358,8 +358,36 @@ const menus = [
         components: [
           {name: 'rebateUser', path: '/rebate-manage/rebate-user'}
         ]
+      },
+      {
+        title: '返点明细表',
+        id: 141,
+        icon: 'percentage',
+        // testType: 'localTest',
+        key: '/rebate-manage/rebate-detail',
+        components: [
+          {name: 'rebateDetail', path: '/rebate-manage/rebate-detail'}
+        ]
       }
+
     ]
+  },
+  {
+    title: '成本管理',
+    id: 139,
+    icon: 'pound',
+    key: '/cost-manage',
+    subs: [
+      {
+        title:'采购成本表',
+        id:140,
+        icon:'table',
+        key:'/cost-manage/purchase-cost',
+        components: [
+          {name: 'purchaseCost', path: '/cost-manage/purchase-cost'}
+        ]
+      } 
+   ]
   },
   {
     title: '服务预定管理',

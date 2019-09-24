@@ -114,11 +114,18 @@ import logs from '@pages/system/logs/';
   //返点用户表
   import rebateUser from '@pages/rebateManage/rebateUser/'
 
+  //返点明细表
+  import rebateDetail from '@pages/rebateManage/rebateDetail/'
+
 // 商品管理
   // 商品数据库
   import commoditiesDataBase from '@pages/commoditiesManage/commoditiesDatabase/';
   import commoditiesCreateAndEdit from '@pages/commoditiesManage/commoditiesDatabase/commoditiesCreateAndEdit/';
   import commoditiesImgList from '@pages/commoditiesManage/commoditiesDatabase/commoditiesImgList/';
+
+//成本管理
+  //采购成本表
+  import purchaseCost from '@pages/costManage/purchaseCost/';
 
 import menus from "../SiderNav/menus";
 
@@ -167,7 +174,10 @@ const componentsList = {
   rebateUser,
   logs,
   test,
-  auditTicket
+  auditTicket,
+
+  purchaseCost,
+  rebateDetail
 };
 
 @withRouter

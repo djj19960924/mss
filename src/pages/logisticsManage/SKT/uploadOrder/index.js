@@ -38,6 +38,7 @@ class SKTUploadOrder extends React.Component {
     this.setState({newModal: false});
     this.setParcelProductIsBC();
   }
+  
 
   // 推单到BC,导出excel时将商品状态置为已推单
   setParcelProductIsBC() {

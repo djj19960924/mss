@@ -24,6 +24,7 @@ class customerInfo extends React.Component {
       saleNote: '',
       manager: '',
       wechatNo: ''
+      
     };
   }
   allow = this.props.appStore.getAllow.bind(this);
