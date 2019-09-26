@@ -54,7 +54,11 @@ class RebateDetail extends React.Component {
         {title: '原价美金', dataIndex: 'originalPrice', key: 'originalPrice', width: 80},
         {title: '实付美金', dataIndex: 'consumeMoney', key: 'consumeMoney',width: 80},
         {title: '返点美金', dataIndex: 'reciptDollar', key: 'reciptDollar', width: 100},
-        {title: '返点韩币', dataIndex: 'reciptKorean', key: 'reciptKorean', width: 100},
+        {title: '返点韩币', dataIndex: 'reciptKorean', key: 'reciptKorean', width: 100,
+            render(val){
+                return <span>{val ? val:0}</span>
+            }
+        },
         {title: '返点人民币', dataIndex: 'reciptMoney', key: 'reciptMoney', width: 100},
         {title: '护照', dataIndex: 'passportName', key: 'passportName', width: 120},
     ];
@@ -91,6 +95,7 @@ class RebateDetail extends React.Component {
             passportName:passportName,
         }
         this.ajax.post('/backend/productCost/selectReciptByCondition',dataObj).then(r =>{
+            console.log('r:',r)
             if(r.data.status === 9999){
                 message.error('当前未查询到数据');
                 this.setState({

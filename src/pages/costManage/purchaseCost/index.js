@@ -73,6 +73,21 @@ class PurchaseCost extends React.Component {
         {title: '微信名', dataIndex: 'wechatName', key: 'wechatName', width: 100}
     ];
 
+    columnsExport = [
+        {title: '商品条码',dataIndex: 'barCode', key: 'barCode'},
+        {title: '商品编号',dataIndex: 'productId', key: 'productId'},
+        {title: '商品名称',dataIndex: 'productName', key: 'productName',},
+        {title: '数量', dataIndex: 'number', key: 'number'},
+        {title: '单价(美元)', dataIndex: 'unitPrice', key: 'unitPrice',},
+        {title: '折扣(0.9为9折)', dataIndex: 'discountRate', key: 'discountRate',
+            render(val){
+                return <span>{ val ? val/100 : 0 }</span>
+            }
+        },
+        {title: '税率'},
+        {title: '备注'},
+    ]
+
     allow = this.props.appStore.getAllow.bind(this);
 
     componentDidMount(){
@@ -188,6 +203,7 @@ class PurchaseCost extends React.Component {
             currentPrice,
             currentCost
         } = this.state;
+        
         return (
             <div className="purchaseCost contentMain">
                 <div className="title">
@@ -242,7 +258,6 @@ class PurchaseCost extends React.Component {
                 <div className="tableMain"
                     style={{maxWidth: 1350}}>
                     <Table className="tableList"
-                        id="tableList" 
                         dataSource={tableDataList}
                         columns={this.columns}
                         bordered
@@ -262,6 +277,16 @@ class PurchaseCost extends React.Component {
                         showSizeChanger
                         pageSizeOptions={pageSizeOptions}
                         onShowSizeChange={this.changePage.bind(this)}
+                    />
+
+                    {/*导出用表单 NEW*/}
+                    <Table  
+                        id="tableList" 
+                        dataSource={tableDataList}
+                        columns={this.columnsExport}
+                        style={{display: 'none'}}
+                        rowKey={(record, index) => `id_${index}`}
+                        pagination={false}
                     />
                 </div>
             </div>

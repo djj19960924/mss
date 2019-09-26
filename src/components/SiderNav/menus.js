@@ -304,6 +304,7 @@ const menus = [
           {name: 'auditTicket', path: '/rebate-manage/audit-ticket'}
         ]
       },
+      
       {
         title: '待返款',
         id: 49,
@@ -362,7 +363,7 @@ const menus = [
       {
         title: '返点明细表',
         id: 141,
-        icon: 'percentage',
+        icon: 'redo',
         // testType: 'localTest',
         key: '/rebate-manage/rebate-detail',
         components: [
@@ -386,7 +387,17 @@ const menus = [
         components: [
           {name: 'purchaseCost', path: '/cost-manage/purchase-cost'}
         ]
-      } 
+      },
+      {
+        title: '小票成本表',
+        id: 143,
+        icon: 'account-book',
+        key: '/rebate-manage/ticket-cost',
+        testType: 'serverTest',
+        components: [
+          {name: 'ticketCost', path: '/rebate-manage/ticket-cost'}
+        ]
+      }, 
    ]
   },
   {

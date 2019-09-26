@@ -126,6 +126,8 @@ import logs from '@pages/system/logs/';
 //成本管理
   //采购成本表
   import purchaseCost from '@pages/costManage/purchaseCost/';
+  //小票成本表
+  import ticketCost from '@pages/rebateManage/ticketCost/';
 
 import menus from "../SiderNav/menus";
 
@@ -177,7 +179,8 @@ const componentsList = {
   auditTicket,
 
   purchaseCost,
-  rebateDetail
+  rebateDetail,
+  ticketCost
 };
 
 @withRouter
