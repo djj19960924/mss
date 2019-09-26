@@ -364,7 +364,7 @@ const menus = [
         title: '返点明细表',
         id: 141,
         icon: 'redo',
-        // testType: 'localTest',
+        testType: 'serverTest',
         key: '/rebate-manage/rebate-detail',
         components: [
           {name: 'rebateDetail', path: '/rebate-manage/rebate-detail'}
@@ -383,6 +383,7 @@ const menus = [
         title:'采购成本表',
         id:140,
         icon:'table',
+        testType: 'serverTest',
         key:'/cost-manage/purchase-cost',
         components: [
           {name: 'purchaseCost', path: '/cost-manage/purchase-cost'}
