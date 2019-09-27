@@ -127,7 +127,7 @@ import logs from '@pages/system/logs/';
   //采购成本表
   import purchaseCost from '@pages/costManage/purchaseCost/';
   //小票成本表
-  import ticketCost from '@pages/rebateManage/ticketCost/';
+  import ticketCost from '@pages/costManage/ticketCost/';
 
 import menus from "../SiderNav/menus";
 

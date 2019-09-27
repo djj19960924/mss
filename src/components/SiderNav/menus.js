@@ -393,10 +393,10 @@ const menus = [
         title: '小票成本表',
         id: 143,
         icon: 'account-book',
-        key: '/rebate-manage/ticket-cost',
+        key: '/cost-manage/ticket-cost',
         testType: 'serverTest',
         components: [
-          {name: 'ticketCost', path: '/rebate-manage/ticket-cost'}
+          {name: 'ticketCost', path: '/cost-manage/ticket-cost'}
         ]
       }, 
    ]

@@ -30,6 +30,7 @@ class PurchaseCost extends React.Component {
             tableIsLoading:false
         }
     }
+    
 
     // 导出推单模板excel
     exportExcel () {

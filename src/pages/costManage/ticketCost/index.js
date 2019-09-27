@@ -1,8 +1,11 @@
 import React from "react";
-import {Table, Button,DatePicker,message } from "antd";
+import {Table, Button,DatePicker,message,Modal } from "antd";
 import './index.less';
 import moment from 'moment';
+import XLSX from 'xlsx';
+import { inject, observer } from 'mobx-react';
 
+@inject('appStore') @observer
 class TicketCost extends React.Component {
     constructor(props){
         super(props);
@@ -16,9 +19,20 @@ class TicketCost extends React.Component {
         }
     }
 
+    componentDidMount(){
+        this.getTicketCostList()
+    }
+
+    // 导出推单模板excel
+    exportExcel () {
+        const elt = document.getElementById('tableList');
+        const wb = XLSX.utils.table_to_book(elt, {raw: true, sheet: "Sheet JS"});
+        XLSX.writeFile(wb, `采购成本表 ${moment(new Date()).format('YYYYMMDD-HHmmss')}.xlsx`);
+    }
+
     columns = [
         {title: '属性', dataIndex: 'reciptAttribute', key: 'reciptAttribute', width: 40},
-        {title: '实际总价(美元)', dataIndex: 'attribute', key: 'attribute', width: 60,
+        {title: '实际总价(美元)', dataIndex: 'consumeMoneySum', key: 'consumeMoneySum', width: 60,
             render(val){
                 return <span>{val ? val : 0 }</span>;
             }
@@ -28,11 +42,10 @@ class TicketCost extends React.Component {
         {title: '返点韩币总额',dataIndex: 'reciptKoreanSum', key: 'reciptKoreanSum', width: 60}
     ];
 
+    allow = this.props.appStore.getAllow.bind(this);
     
 
-    componentDidMount(){
-        this.getTicketCostList()
-    }
+    
 
     //获取小票成本数据
     getTicketCostList(){
@@ -86,6 +99,17 @@ class TicketCost extends React.Component {
         });
     }
 
+    handleExport(){
+        Modal.confirm({
+            title: "是否确定导出小票成本表？",
+            okText: "确定",
+            cancelText: "取消",
+            onOk:()=>{
+                this.exportExcel()
+            }
+        })
+    }
+
     render(){
         const {
             startTime,
@@ -118,6 +142,15 @@ class TicketCost extends React.Component {
                             onClick={this.getTicketCostList.bind(this)}
                     >查询</Button>
                 </div>
+
+                <div className="btnLine">
+                    <Button type="primary"
+                            onClick={this.handleExport.bind(this)}
+                            disabled={!this.allow(87)}
+                            title={!this.allow(87) ? '没有该操作权限' : null}
+                    >导出excel</Button>
+                </div>
+
                 <div className="tableMain"
                     style={{maxWidth: 900}}>
                     <Table className="tableList"
