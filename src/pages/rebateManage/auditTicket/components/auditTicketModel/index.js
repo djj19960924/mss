@@ -162,7 +162,7 @@ class AuditTicketModel extends React.Component {
     }
     const showLoading = Is => this.setState({rateLoading: Is});
     const data = {currency:currencyDiff,rateCurrency: '人民币'};
-    const dataRate = {currency: '人民币',rateCurrency:(country==='韩国'?'韩元':currencyDiff)};
+    const dataRate = {currency: '人民币',rateCurrency:(country==='韩国'?'韩币':currencyDiff)};
     if (currencyDiff === '人民币') {
       this.props.form.setFieldsValue({
         exchangeRate: 1
@@ -185,18 +185,18 @@ class AuditTicketModel extends React.Component {
         this.ajax.isReturnLogin(r, this);
       });
 
-      // this.ajax.post('/rate/getRateByCurrency', dataRate).then(r => {
-      //   const {status, data} = r.data;
-      //   if (status === 10000) {
-      //     localStorage.setItem('rate',data.rate)
-      //   }
-      //   showLoading(false);
-      //   r.showError();
-      // }).catch(r => {
-      //   console.error(r);
-      //   showLoading(false);
-      //   this.ajax.isReturnLogin(r, this);
-      // });
+      this.ajax.post('/rate/getRateByCurrency', dataRate).then(r => {
+        const {status, data} = r.data;
+        if (status === 10000) {
+          localStorage.setItem('rate',data.rate)
+        }
+        showLoading(false);
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        showLoading(false);
+        this.ajax.isReturnLogin(r, this);
+      });
     }
   }
 

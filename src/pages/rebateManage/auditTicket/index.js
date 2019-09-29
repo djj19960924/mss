@@ -168,7 +168,6 @@ class auditTicket extends React.Component {
       // 去除自动关闭事件
       e = () => {};
       const {checkChoice,country} = this.state;
-      console.log('country:',country)
       const {receiptList, currentReceiptNo} = this.AuditTicketModelRef.state;
       // 从审核小票模块获取 unionId reciptId
       const {unionId, reciptId} = receiptList[currentReceiptNo];
@@ -208,21 +207,22 @@ class auditTicket extends React.Component {
               } else {
                 // 自营通过验证
                 // 基础 data 已包含折扣率
-                console.log('data11:',data)
                 var rate = localStorage.getItem("rate")
                 Object.assign(data,{productCosts, rate});
-                
                 // debugger
+                console.log('data1:',data)
                 ajaxPost(data);
               }
             } else {
               var rate = localStorage.getItem("rate")
               Object.assign(data,{rate}); 
+              console.log('data2:',data)
               ajaxPost(data);
             }
           } else {
             var rate = localStorage.getItem("rate")
             Object.assign(data,{rate});
+            console.log('data3:',data)
             // 客户小票
             ajaxPost(data);
           }
