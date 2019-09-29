@@ -60,7 +60,17 @@ class TicketCost extends React.Component {
                 })
             }
             if(r.data.status === 10000){
-                const { data } = r.data;           
+                const { data } = r.data;
+                if(data.length){
+                    for(let obj of data){
+                        if(!!obj.reciptDollarSum&&parseInt(obj.reciptDollarSum)!==obj.reciptDollarSum){
+                            obj.reciptDollarSum = obj.reciptDollarSum.toFixed(2)
+                        }
+                        if(!!obj.reciptKoreanSum&&parseInt(obj.reciptKoreanSum)!==obj.reciptKoreanSum){
+                            obj.reciptKoreanSum = obj.reciptKoreanSum.toFixed(2)
+                        }
+                    }
+                }    
                 this.setState({
                     tableIsLoading: false,
                     tableDataList: data

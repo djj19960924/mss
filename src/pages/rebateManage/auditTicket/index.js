@@ -186,7 +186,7 @@ class auditTicket extends React.Component {
             data.status = null
           }
           data.checkChoice = checkChoice;
-      
+          var rate = window.getCookie('rate');
           // 判断自营小票
           if (checkChoice === 1) {
             if (country==="韩国") {
@@ -207,22 +207,16 @@ class auditTicket extends React.Component {
               } else {
                 // 自营通过验证
                 // 基础 data 已包含折扣率
-                var rate = window.getCookie('rate');
                 Object.assign(data,{productCosts, rate});
-                // debugger
-                ajaxPost(data);
               }
             } else {
-              var rate = window.getCookie('rate');
               Object.assign(data,{rate});
-              ajaxPost(data);
             }
           } else {
-            var rate = window.getCookie('rate');
             Object.assign(data,{rate});
             // 客户小票
-            ajaxPost(data);
           }
+          ajaxPost(data);
         } else {
           message.error('小票审核模块有数据数据尚未填写');
         }
