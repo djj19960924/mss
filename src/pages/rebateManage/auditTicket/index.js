@@ -207,18 +207,18 @@ class auditTicket extends React.Component {
               } else {
                 // 自营通过验证
                 // 基础 data 已包含折扣率
-                var rate = localStorage.getItem("rate")
+                var rate = window.getCookie('rate');
                 Object.assign(data,{productCosts, rate});
                 // debugger
                 ajaxPost(data);
               }
             } else {
-              var rate = localStorage.getItem("rate")
-              Object.assign(data,{rate}); 
+              var rate = window.getCookie('rate');
+              Object.assign(data,{rate});
               ajaxPost(data);
             }
           } else {
-            var rate = localStorage.getItem("rate")
+            var rate = window.getCookie('rate');
             Object.assign(data,{rate});
             // 客户小票
             ajaxPost(data);

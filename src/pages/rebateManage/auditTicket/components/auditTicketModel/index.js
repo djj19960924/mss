@@ -187,7 +187,7 @@ class AuditTicketModel extends React.Component {
       this.ajax.post('/rate/getRateByCurrency', dataRate).then(r => {
         const {status, data} = r.data;
         if (status === 10000) {
-          localStorage.setItem('rate',data.rate)
+          window.setCookie('rate',data.rate,7200);
         }
         showLoading(false);
         r.showError();
