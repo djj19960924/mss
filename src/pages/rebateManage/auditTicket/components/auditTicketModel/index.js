@@ -221,14 +221,14 @@ class AuditTicketModel extends React.Component {
         for (let obj of data) {
           list.push(<Option name={obj.brandName} key={obj.brandId}
                             style={{textAlign: `center`}} title={obj.brandName}
-                            value={obj.brandId + obj.brandName}>{obj.brandName}</Option>)
+                            value={obj.brandName}>{obj.brandName}</Option>)
         };
         this.setState({
           brandListOrigin: data,
           brandList: list
         },()=>{
           // 选择商场以后, 默认选取第一个品牌, 并获取该品牌当日返点率
-          setFieldsValue({brandName: `${data[0].brandId}${data[0].brandName}`});
+          setFieldsValue({brandName: `${data[0].brandName}`});
           this.getRebateByDate(data[0].brandName);
         });
       }
