@@ -72,7 +72,7 @@ class AuditTicketModel extends React.Component {
           dataList.push(<Option key={i.mallName} reciptattribute={judgeStatus(i)}
                                 country={i.nationName} status={i.status}
                                 value={`${i.nationName}${i.mallName}`}
-          >{i.nationName}{judgeStatus(i, true)} - {i.mallId} - {i.mallName}</Option>);
+          >{i.nationName}{judgeStatus(i, true)} - {i.mallName}</Option>);
         }
         this.setState({shopList: dataList});
       } else if (status < 10000) {
@@ -171,7 +171,6 @@ class AuditTicketModel extends React.Component {
       showLoading(true);
       this.ajax.post('/rate/getRateByCurrency', data).then(r => {
         const {status, data} = r.data;
-        console.log('currencyDiff:',data.rate)
         if (status === 10000) {
           this.props.form.setFieldsValue({
             exchangeRate: data.rate,

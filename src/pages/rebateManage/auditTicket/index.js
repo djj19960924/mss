@@ -186,7 +186,7 @@ class auditTicket extends React.Component {
             data.status = null
           }
           data.checkChoice = checkChoice;
-          console.log('data11',data);
+      
           // 判断自营小票
           if (checkChoice === 1) {
             if (country==="韩国") {
@@ -210,19 +210,16 @@ class auditTicket extends React.Component {
                 var rate = localStorage.getItem("rate")
                 Object.assign(data,{productCosts, rate});
                 // debugger
-                console.log('data1:',data)
                 ajaxPost(data);
               }
             } else {
               var rate = localStorage.getItem("rate")
               Object.assign(data,{rate}); 
-              console.log('data2:',data)
               ajaxPost(data);
             }
           } else {
             var rate = localStorage.getItem("rate")
             Object.assign(data,{rate});
-            console.log('data3:',data)
             // 客户小票
             ajaxPost(data);
           }
