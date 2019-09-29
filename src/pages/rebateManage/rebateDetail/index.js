@@ -25,7 +25,7 @@ class RebateDetail extends React.Component {
             pageSizeOptions: ['50','100','200','500'],
             tableDataList:[],
             pageTotal:0,
-            attribute:null,
+            reciptAttribute:null,
             currentDollar:0,
             checkChoice:null
         }
@@ -43,14 +43,14 @@ class RebateDetail extends React.Component {
                 return <span>{val ? val :'无' }</span>;
             }
         },
-        {title: '类别', dataIndex: 'attribute', key: 'attribute', width: 100,
+        {title: '类别', dataIndex: 'reciptAttribute', key: 'reciptAttribute', width: 100,
             render(val){
-                return <span>{val===1?'MG':(val===0?'SG':'无')}</span>
+                return <span>{val?val:'无'}</span>
             }
             
         },
         {title: '商场',dataIndex: 'mallName', key: 'mallName', width: 120},
-        {title: '小票ID',dataIndex: 'receiptId', key: 'receiptId',width: 80 },
+        {title: '小票ID',dataIndex: 'reciptId', key: 'reciptId',width: 80 },
         {title: '品牌',dataIndex: 'brandName', key: 'brandName', width: 120},
         {title: '返点率', dataIndex: 'rebateRate', key: 'rebateRate', width: 60},
         {title: '原价美金', dataIndex: 'originalPrice', key: 'originalPrice', width: 80},
@@ -91,14 +91,14 @@ class RebateDetail extends React.Component {
     }
     //获取返点明细数据
     getRebateDetailList(){
-        const {pageNum, pageSize,attribute,startTime,endTime,passportName,checkChoice} = this.state;
+        const {pageNum, pageSize,reciptAttribute,startTime,endTime,passportName,checkChoice} = this.state;
         this.setState({tableIsLoading: true});
         const dataObj = {
             pageNum: pageNum,
             pageSize: pageSize,
             startTime: startTime ? `${moment(startTime).format('YYYY-MM-DD')} 00:00:00` : null,
             endTime: endTime ? `${moment(endTime).format('YYYY-MM-DD')} 23:59:59` : null,
-            attribute:attribute,
+            reciptAttribute:reciptAttribute,
             passportName:passportName,
             checkChoice:checkChoice
         }
@@ -138,7 +138,7 @@ class RebateDetail extends React.Component {
 
     changeAttribute(value){
         this.setState({
-            attribute:value
+            reciptAttribute:value
         })
     }
 
