@@ -122,7 +122,7 @@ class PurchaseCost extends React.Component {
         }
         this.ajax.post('/backend/productCost/selectProductCostByCondition',dataObj).then(r => {
             if(r.data.status === 9999){
-                message.error('当前未查询到数据');
+                message.warning('当前未查询到数据');
                 this.setState({
                     tableDataList:[],
                     currentPrice:0,

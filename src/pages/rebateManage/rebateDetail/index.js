@@ -26,7 +26,8 @@ class RebateDetail extends React.Component {
             tableDataList:[],
             pageTotal:0,
             attribute:null,
-            currentDollar:0
+            currentDollar:0,
+            checkChoice:null
         }
     }
     // 导出推单模板excel
@@ -46,6 +47,7 @@ class RebateDetail extends React.Component {
             render(val){
                 return <span>{val===1?'MG':(val===0?'SG':'无')}</span>
             }
+            
         },
         {title: '商场',dataIndex: 'mallName', key: 'mallName', width: 120},
         {title: '小票ID',dataIndex: 'receiptId', key: 'receiptId',width: 80 },
@@ -61,6 +63,11 @@ class RebateDetail extends React.Component {
         },
         {title: '返点人民币', dataIndex: 'reciptMoney', key: 'reciptMoney', width: 100},
         {title: '护照', dataIndex: 'passportName', key: 'passportName', width: 120},
+        {title: '审核类型', dataIndex: 'checkChoice', key: 'checkChoice', width: 100,
+            render(val){
+                return <span>{val===0 ? '客户小票':(val===1 ?'自营小票':'无')}</span>
+            }
+        },
     ];
 
     allow = this.props.appStore.getAllow.bind(this);
@@ -84,7 +91,7 @@ class RebateDetail extends React.Component {
     }
     //获取返点明细数据
     getRebateDetailList(){
-        const {pageNum, pageSize,attribute,startTime,endTime,passportName,currentDollar} = this.state;
+        const {pageNum, pageSize,attribute,startTime,endTime,passportName,checkChoice} = this.state;
         this.setState({tableIsLoading: true});
         const dataObj = {
             pageNum: pageNum,
@@ -93,11 +100,12 @@ class RebateDetail extends React.Component {
             endTime: endTime ? `${moment(endTime).format('YYYY-MM-DD')} 23:59:59` : null,
             attribute:attribute,
             passportName:passportName,
+            checkChoice:checkChoice
         }
         this.ajax.post('/backend/productCost/selectReciptByCondition',dataObj).then(r =>{
             console.log('r:',r)
             if(r.data.status === 9999){
-                message.error('当前未查询到数据');
+                message.warning('当前未查询到数据');
                 this.setState({
                     tableDataList:[],
                     currentDollar:0
@@ -128,19 +136,21 @@ class RebateDetail extends React.Component {
         });
     }
 
-    handleChange(value){
+    changeAttribute(value){
         this.setState({
             attribute:value
+        })
+    }
+
+    changeCheckChoice(value){
+        this.setState({
+            checkChoice:value
         })
     }
     changePassportName(e){
         this.setState({
             passportName:e.target.value
         })
-    }
-
-    test(){
-        
     }
 
     // 翻页事件
@@ -199,15 +209,25 @@ class RebateDetail extends React.Component {
                         className="shopName"
                         value={passportName} 
                         onChange={this.changePassportName.bind(this)}/>
-                    <span>类型:</span>
+                    <span>返点属性:</span>
                     <Select 
                         placeholder="请选择类型" 
-                        onChange={this.handleChange.bind(this)} 
-                        style={{marginLeft: 10,width: 120}}
+                        onChange={this.changeAttribute.bind(this)} 
+                        style={{marginLeft: 10,marginRight:10,width: 120}}
                     >
                         <Option value="">全部</Option>
                         <Option value="0">SG</Option>
                         <Option value="1">MG</Option>
+                    </Select>
+                    <span>审核类型:</span>
+                    <Select 
+                        placeholder="请选择类型" 
+                        onChange={this.changeCheckChoice.bind(this)} 
+                        style={{marginLeft: 10,width: 120}}
+                    >
+                        <Option value="">全部</Option>
+                        <Option value="0">客户小票</Option>
+                        <Option value="1">自营小票</Option>
                     </Select>
                     <Button type="primary"
                             style={{marginLeft: 10}}

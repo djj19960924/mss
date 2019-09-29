@@ -31,7 +31,9 @@ class auditTicket extends React.Component {
       // 返点率
       rebateRate: 0,
       // 国家
-      country: ''
+      country: '',
+      koreaRate:0,
+      americaRate:0,
     };
   }
 
@@ -129,7 +131,6 @@ class auditTicket extends React.Component {
       </div>
     })
   }
-
   // 通过小票
   reciptAllow() {
     // OK事件
@@ -166,7 +167,8 @@ class auditTicket extends React.Component {
       });
       // 去除自动关闭事件
       e = () => {};
-      const {checkChoice} = this.state;
+      const {checkChoice,country} = this.state;
+      console.log('country:',country)
       const {receiptList, currentReceiptNo} = this.AuditTicketModelRef.state;
       // 从审核小票模块获取 unionId reciptId
       const {unionId, reciptId} = receiptList[currentReceiptNo];
@@ -181,37 +183,46 @@ class auditTicket extends React.Component {
             data.status = 0
           } else if (val.reciptAttribute === 'MG') {
             data.status = 1
+          }else{
+            data.status = null
           }
           data.checkChoice = checkChoice;
-          // console.log(data);
-
+          console.log('data11',data);
           // 判断自营小票
           if (checkChoice === 1) {
-            // 自营小票
-            const {productCosts, koreaRate, americaRate} = this.CostCalculationModelRef.state;
-            // 判断成本计算模块填写情况
-            let costValidateState = false, totalPrice = 0;
-            for (let obj of productCosts) {
-              totalPrice += (obj.unitPrice * obj.number);
-              for (let name in obj) {
-                if (!obj[name]) costValidateState = true;
+            if (country==="韩国") {
+              // 自营小票
+              const {productCosts} = this.CostCalculationModelRef.state;
+              // 判断成本计算模块填写情况
+              let costValidateState = false, totalPrice = 0;
+              for (let obj of productCosts) {
+                totalPrice += (obj.unitPrice * obj.number);
+                for (let name in obj) {
+                  if (!obj[name]) costValidateState = true;
+                }
               }
-            }
-            if(!koreaRate || !americaRate) {
-              message.error('成本计算模块有汇率尚未填写')
-            } else if (costValidateState) {
-              message.error('成本计算模块有商品数据尚未填写')
-            } else if(totalPrice !== data.originalPrice) {
-              message.error('商品价格总和与原价美金不相等')
+              if (costValidateState) {
+                message.error('成本计算模块有商品数据尚未填写')
+              } else if(totalPrice !== data.originalPrice) {
+                message.error('商品价格总和与原价美金不相等')
+              } else {
+                // 自营通过验证
+                // 基础 data 已包含折扣率
+                console.log('data11:',data)
+                var rate = localStorage.getItem("rate")
+                Object.assign(data,{productCosts, rate});
+                
+                // debugger
+                ajaxPost(data);
+              }
             } else {
-              // 自营通过验证
-              // 基础 data 已包含折扣率
-              Object.assign(data,{productCosts, koreaRate, americaRate});
-              // console.log(data);
-              // debugger
+              var rate = localStorage.getItem("rate")
+              Object.assign(data,{rate}); 
               ajaxPost(data);
             }
           } else {
+            var rate = localStorage.getItem("rate")
+            Object.assign(data,{rate});
             // 客户小票
             ajaxPost(data);
           }

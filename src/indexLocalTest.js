@@ -27,7 +27,7 @@ const testapi = 'http://testapi.maishoumiji.com';
 // 线上测试
 window.ajaxUrl = '//47.98.221.129:8001';
 // xf本地
-// window.ajaxUrl = '//192.168.31.60:8001';
+//window.ajaxUrl = '//192.168.31.60:8001';
 // zw本地
 //window.ajaxUrl = '//192.168.31.211:8000';
 

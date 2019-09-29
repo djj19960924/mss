@@ -299,7 +299,7 @@ class costCalculationModel extends React.Component {
                            disabled
                     />
                   </FormItem>
-                  <FormItem label="单价"
+                  <FormItem label="单价(美元)"
                             validateStatus={!!productCosts[index].unitPrice ? '' : 'error'}
                             required
                   >
@@ -325,7 +325,7 @@ class costCalculationModel extends React.Component {
                                  }}
                     />
                   </FormItem>
-                  <FormItem label="成本"
+                  <FormItem label="成本(美元))"
                             validateStatus={!!productCosts[index].cost ? '' : 'error'}
                             required
                   >

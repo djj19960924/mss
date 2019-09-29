@@ -28,6 +28,8 @@ class AuditTicketModel extends React.Component {
       receiptTotal: 0,
       // 读取小票loading
       receiptLoading: false,
+      koreaRate:0,
+      americaRate:0,
     };
   }
 
@@ -58,7 +60,7 @@ class AuditTicketModel extends React.Component {
           if (needErr) message.error(`韩国商场 ${i.mallName} 类型错误, 请联系管理员`)
         }
       } else {
-        return null;
+        return '';
       }
     };
     this.ajax.post('/mall/getMallListByNationName', {}).then(r => {
@@ -69,7 +71,7 @@ class AuditTicketModel extends React.Component {
           // 动态生成 Option, 满足依赖
           dataList.push(<Option key={i.mallName} reciptattribute={judgeStatus(i)}
                                 country={i.nationName} status={i.status}
-                                value={`${i.mallId}${judgeStatus(i)}${i.nationName}${i.mallName}`}
+                                value={`${i.nationName}${i.mallName}`}
           >{i.nationName}{judgeStatus(i, true)} - {i.mallId} - {i.mallName}</Option>);
         }
         this.setState({shopList: dataList});
@@ -145,20 +147,23 @@ class AuditTicketModel extends React.Component {
   // 获取汇率
   getRateByCurrency() {
     const {country} = this.state;
-    let currency;
+    let currencyDiff;
     // 判断国别币种
+    let koreaDiff = "韩国"
+
     if (country === '韩国') {
-      currency = '美元';
+      currencyDiff = '美元';
     } else if (country === '日本') {
-      currency = '日元';
+      currencyDiff = '日元';
     } else if (country === '法国') {
-      currency = '欧元';
+      currencyDiff = '欧元';
     } else {
-      currency = '人民币'
+      currencyDiff = '人民币'
     }
     const showLoading = Is => this.setState({rateLoading: Is});
-    const data = {currency,rateCurrency: '人民币'};
-    if (currency === '人民币') {
+    const data = {currency:currencyDiff,rateCurrency: '人民币'};
+    const dataRate = {currency: '人民币',rateCurrency:(country==='韩国'?'韩元':currencyDiff)};
+    if (currencyDiff === '人民币') {
       this.props.form.setFieldsValue({
         exchangeRate: 1
       });
@@ -166,11 +171,11 @@ class AuditTicketModel extends React.Component {
       showLoading(true);
       this.ajax.post('/rate/getRateByCurrency', data).then(r => {
         const {status, data} = r.data;
+        console.log('currencyDiff:',data.rate)
         if (status === 10000) {
-          // console.log(r.data);
           this.props.form.setFieldsValue({
-            exchangeRate: data.rate
-          });
+            exchangeRate: data.rate,
+          })
         }
         showLoading(false);
         r.showError();
@@ -179,6 +184,19 @@ class AuditTicketModel extends React.Component {
         showLoading(false);
         this.ajax.isReturnLogin(r, this);
       });
+
+      // this.ajax.post('/rate/getRateByCurrency', dataRate).then(r => {
+      //   const {status, data} = r.data;
+      //   if (status === 10000) {
+      //     localStorage.setItem('rate',data.rate)
+      //   }
+      //   showLoading(false);
+      //   r.showError();
+      // }).catch(r => {
+      //   console.error(r);
+      //   showLoading(false);
+      //   this.ajax.isReturnLogin(r, this);
+      // });
     }
   }
 
@@ -365,7 +383,8 @@ class AuditTicketModel extends React.Component {
                   <Input disabled />
                 )}
               </FormItem>}
-              <FormItem label="请输入凭证号">
+              
+              <FormItem label="请输入凭证号" disabled >
                 {getFieldDecorator('teamNo', {
                   rules: [
                     {required: true, message: '请输入凭证号!'}
@@ -377,6 +396,7 @@ class AuditTicketModel extends React.Component {
                   />
                 )}
               </FormItem>
+
               <FormItem label="小票购买时间">
                 {getFieldDecorator('consumeDate', {
                   rules: [{required: true}],

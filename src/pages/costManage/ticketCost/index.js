@@ -44,9 +44,6 @@ class TicketCost extends React.Component {
 
     allow = this.props.appStore.getAllow.bind(this);
     
-
-    
-
     //获取小票成本数据
     getTicketCostList(){
         const {startTime,endTime} = this.state;
@@ -57,7 +54,7 @@ class TicketCost extends React.Component {
         }
         this.ajax.post('/recipt/selectReciptAmountByTime',dataObj).then(r => {
             if(r.data.status === 9999){
-                message.error('当前未查询到数据');
+                message.warning('当前未查询到数据');
                 this.setState({
                     tableDataList:[],
                 })
