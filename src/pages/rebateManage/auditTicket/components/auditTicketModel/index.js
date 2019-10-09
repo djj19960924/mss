@@ -71,7 +71,7 @@ class AuditTicketModel extends React.Component {
           // 动态生成 Option, 满足依赖
           dataList.push(<Option key={i.mallName} reciptattribute={judgeStatus(i)}
                                 country={i.nationName} status={i.status}
-                                value={`${i.nationName}${i.mallName}`}
+                                value={`${i.nationName}${judgeStatus(i, true)}${i.mallName}`}
           >{i.nationName}{judgeStatus(i, true)} - {i.mallName}</Option>);
         }
         this.setState({shopList: dataList});

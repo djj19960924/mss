@@ -176,6 +176,7 @@ class auditTicket extends React.Component {
         if (!err) {
           const data = {unionId, reciptId};
           Object.assign(data, val);
+          data.mallName = this.AuditTicketModelRef.state.mallName;
           // 处理 日期, 小票状态, 审核选择(是否自营)
           data.consumeDate = moment(val.consumeDate).format('YYYY-MM-DD');
           if (val.reciptAttribute === 'SG') {
