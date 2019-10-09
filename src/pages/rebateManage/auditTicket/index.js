@@ -83,7 +83,7 @@ class auditTicket extends React.Component {
       e = () => {};
       const {reciptId} = receiptList[currentReceiptNo];
       const data = {reciptId, note: RadioGroupValue === 3 ? `3${other}` : RadioGroupValue};
-      if (!RadioGroupValue) {
+      if (RadioGroupValue === undefined) {
         message.error('请选择驳回原因')
       } else {
         if (RadioGroupValue === 3 && !other) {
@@ -232,7 +232,8 @@ class auditTicket extends React.Component {
 
   // 成功处理一张小票
   checkRecipt() {
-    const {receiptList, currentReceiptNo, receiptTotal} = this.AuditTicketModelRef.state;
+    const {receiptList, currentReceiptNo} = this.AuditTicketModelRef.state;
+    const {receiptTotal} = this.state;
     if (currentReceiptNo === (receiptList.length - 1)) {
       // 获取新的小票
       this.AuditTicketModelRef.getReciptByMallName();

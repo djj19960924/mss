@@ -267,7 +267,7 @@ class costCalculationModel extends React.Component {
                   <FormItem label="商品选择">
                     <Select placeholder="输入商品名称搜索商品"
                             style={{width: 200}}
-                            // value={}
+                            value={productCosts[index].productName}
                             dropdownMatchSelectWidth={false}
                             // 数据为空时显示
                             notFoundContent={this.isLoading(index)}
