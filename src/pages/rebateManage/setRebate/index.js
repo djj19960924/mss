@@ -59,20 +59,22 @@ class setRebate extends React.Component{
       isImportOver: false,
       // 自增常量
       Num: 0,
+      exportDataList:[]
     };
   }
   allow = this.props.appStore.getAllow.bind(this);
+  
   componentDidMount() {
     let countries = [];
     for (let i of countryList) countries.push(<Option key={i.id} value={i.nationName}>{i.nationName}</Option>);
     this.setState({countries: countries})
-
     //生成导入用excel
     let input = document.createElement(`input`);
     input.type = `file`;
     input.className = "inputImport";
     input.onchange = this.loadFile.bind(this);
     this.setState({input: input});
+    this.getExportDataList();
   }
 
   // 导入
@@ -369,6 +371,35 @@ class setRebate extends React.Component{
       this.ajax.isReturnLogin(r, this);
     });
   }
+
+  //导出Excel模板
+  handleExport() {
+    const elt = document.getElementById('tableList');
+    const wb = XLSX.utils.table_to_book(elt, {raw: true, sheet: "Sheet JS"});
+    XLSX.writeFile(wb, `小票模板 ${moment(new Date()).format('YYYYMMDD-HHmmss')}.xlsx`);
+  }
+
+  //获取导入模板数据
+  getExportDataList() {
+    this.ajax.post('/rebate/findSgRebateToExcel').then(r=>{
+      if(r.data.status === 10000){
+        const {data} = r.data;
+        this.setState({
+          exportDataList:data
+        })
+      }
+    })
+  }
+
+  columnsExport = [
+    {title: '品牌表id',dataIndex: 'brandId', key: 'brandId'},
+    {title: '品牌名称',dataIndex: 'brandName', key: 'brandName'},
+    {title: '品牌类型',dataIndex: 'brandType', key: 'brandType',},
+    {title: '商场', dataIndex: 'mallName', key: 'mallName'},
+    {title: '返点表id', dataIndex: 'rebateId', key: 'rebateId'},
+    {title: '返点率'},
+  ]
+
   // 卸载 setState, 防止组件卸载时执行 setState 相关导致报错
   componentWillUnmount() {
     this.setState = () => null
@@ -411,7 +442,7 @@ class setRebate extends React.Component{
         ),
       }
     ];
-    const {shopList, currentShop, country, tableDataList, pageTotal, pageSize, pageSizeOptions, pageNum, deleteModalVisible, currentRecord, modalVisible, modalType, tableIsLoading,errorList,fileDate,input,importVisible,success,isImportOver,isImport} = this.state;
+    const {shopList, currentShop, country, tableDataList, pageTotal, pageSize, pageSizeOptions, pageNum, deleteModalVisible, currentRecord, modalVisible, modalType, tableIsLoading,errorList,fileDate,input,importVisible,success,isImportOver,isImport,exportDataList} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
       <div className="setRebate contentMain">
@@ -450,9 +481,10 @@ class setRebate extends React.Component{
           }
           {this.allow(74) &&
             <Button className="createNew" type="primary"
-              href="//resource.maishoumiji.com/downloads/brandUpload_Templates.xlsx"     
+            onClick={this.handleExport.bind(this)}
             >下载excel模板</Button>
           }
+
         </div>
 
         <Modal title="更新品牌返点表"
@@ -507,6 +539,16 @@ class setRebate extends React.Component{
                       showSizeChanger
                       pageSizeOptions={pageSizeOptions}
                       onShowSizeChange={this.changePage.bind(this)}
+          />
+
+          {/*导出用表单 NEW*/}
+          <Table  
+              id="tableList" 
+              dataSource={exportDataList}
+              columns={this.columnsExport}
+              style={{display: 'none'}}
+              rowKey={(record, index) => `id_${index}`}
+              pagination={false}
           />
         </div>
 
