@@ -35,7 +35,7 @@ class rebateUser extends React.Component {
             if(r.data.status === 10000){
                 this.setState({
                     tableDataList: r.data.data.list,
-                    pageTotal: r.data.data.length
+                    pageTotal: r.data.data.total
                 });
             }
             r.showError();

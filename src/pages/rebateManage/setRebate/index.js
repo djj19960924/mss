@@ -2,6 +2,7 @@ import React from 'react';
 import {Select, Button, Table, message, Pagination, Form, Modal, Input, Icon, } from 'antd';
 import moment from 'moment';
 import {inject, observer} from 'mobx-react/index';
+import XLSX from 'xlsx';
 import './index.less';
 import countryList from '@js/country';
 const FormItem = Form.Item;
@@ -50,6 +51,14 @@ class setRebate extends React.Component{
       // 删除弹框
       deleteModalVisible: false,
       tableIsLoading: false,
+      input: null,
+      fileDate: [],
+      importVisible:false,
+      success: 0,
+      errorList: [],
+      isImportOver: false,
+      // 自增常量
+      Num: 0,
     };
   }
   allow = this.props.appStore.getAllow.bind(this);
@@ -57,7 +66,106 @@ class setRebate extends React.Component{
     let countries = [];
     for (let i of countryList) countries.push(<Option key={i.id} value={i.nationName}>{i.nationName}</Option>);
     this.setState({countries: countries})
+
+    //生成导入用excel
+    let input = document.createElement(`input`);
+    input.type = `file`;
+    input.className = "inputImport";
+    input.onchange = this.loadFile.bind(this);
+    this.setState({input: input});
   }
+
+  // 导入
+  importExcel(){
+    const {isImport} =this.state;
+    if (isImport) {
+      message.warn(`请等待导入结束`)
+    } else {
+      this.setState({isImport:true});
+      this.updateRebate();
+    }
+  }
+  // 读取文件
+  loadFile(e) {
+    let item = e.target.files[0];
+    if (!!item) {
+      if (item.type === `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+        || item.type === `application/vnd.ms-excel`) {
+        // 校验文件为xls或xlsx
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          let data = e.target.result,wb;
+          wb = XLSX.read(data, {
+            type: 'binary'
+          });
+          // json
+          let fileDates = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          let fileDate = []
+          fileDates.forEach(item=>{
+            if(item['返点率']){
+              fileDate.push(item)
+            }
+          })
+          this.setState({fileDate: fileDate,importVisible:true,isImportOver:false})
+        };
+        reader.readAsBinaryString(e.target.files[0]);
+      } else {
+        message.error(`文件类型错误`);
+        e.target.value = ``
+      }
+    }
+  }
+
+  //更新返点率
+  updateRebate(){
+    const {Num, fileDate, errorList, success,input} = this.state;
+    if(Num === fileDate.length){
+      message.success(`导入结束`);
+      input.value = ""
+      this.setState({isImport:false,isImportOver:true,input:input});
+    }else{
+      const data = {
+        brandId: Number(fileDate[Num]['品牌表id']),
+        brandName: fileDate[Num]['品牌名称'],
+        brandType: Number(fileDate[Num]['品牌类型']),
+        mallName: fileDate[Num]['商场'],
+        rebateId: Number(fileDate[Num]['返点表id']),
+        rebateRate: fileDate[Num]['返点率'],
+        productCode:""
+      };
+      this.ajax.post('/rebate/insertOrUpdateRebate',data).then(r=>{
+        const {data,msg, status} = r.data;
+        if(!msg){
+          message.error(`后端数据错误, 即将退出导入功能`);
+          this.setState({importVisible: false});
+          return false;
+        }
+        if(status===10000){
+          this.setState({success: (success+1)});
+        }else{
+          errorList.push({
+            msg: msg,
+            status: status,
+            brandId: Number(fileDate[Num]['品牌表id']),
+            brandName: fileDate[Num]['品牌名称'],
+            brandType: Number(fileDate[Num]['品牌类型']),
+            mallName: fileDate[Num]['商场'],
+            rebateId: Number(fileDate[Num]['返点表id']),
+            rebateRate: fileDate[Num]['返点率']
+          })
+          this.setState({});
+        }
+        this.setState({Num:(Num+1)},()=>{
+          this.updateRebate();
+        });
+        r.showError();
+      }).catch(r => {
+        console.error(r);
+        this.ajax.isReturnLogin(r, this);
+      });
+    }
+  }
+
   // 监听选择国家事件
   selectCountry(nationName) {
     this.setState({
@@ -303,7 +411,7 @@ class setRebate extends React.Component{
         ),
       }
     ];
-    const {shopList, currentShop, country, tableDataList, pageTotal, pageSize, pageSizeOptions, pageNum, deleteModalVisible, currentRecord, modalVisible, modalType, tableIsLoading} = this.state;
+    const {shopList, currentShop, country, tableDataList, pageTotal, pageSize, pageSizeOptions, pageNum, deleteModalVisible, currentRecord, modalVisible, modalType, tableIsLoading,errorList,fileDate,input,importVisible,success,isImportOver,isImport} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
       <div className="setRebate contentMain">
@@ -335,7 +443,39 @@ class setRebate extends React.Component{
                     onClick={this.openCreate.bind(this)}
             >新增品牌</Button>
           }
+          {this.allow(74) &&
+            <Button className="createNew" type="primary"
+              onClick ={()=>{input.click()}}
+            >导入excel</Button>
+          }
+          {this.allow(74) &&
+            <Button className="createNew" type="primary"
+              href="//resource.maishoumiji.com/downloads/brandUpload_Templates.xlsx"     
+            >下载excel模板</Button>
+          }
         </div>
+
+        <Modal title="更新品牌返点表"
+               className="importModal"
+               visible={importVisible}
+               onOk={()=>{ isImportOver ? 
+                  (this.setState({importVisible:false,fileDate:[],success:0,Num:0}),
+                  this.selectAllRebateByMallName())
+                  :this.importExcel()}}
+               onCancel={()=>{
+                 isImport ? message.warn(`导入结束前请勿关闭页面`)
+                 : this.setState({importVisible:false,Num:0,fileDate:[],errorList:[],success:0,})
+               }}
+               width={650}
+        >
+          <div>更新成功数据: {success}/{fileDate.length}</div>
+          <div>更新错误数据:</div>
+          {errorList.map((item,i) => (
+            <div key={i}>{item.msg}, 错误码:{item.status}</div>
+          ))}
+          {errorList.length === 0 ? ''
+            : <div style={{color:'rgba(255,0,0,.7)'}}>请留存错误数据, 以便处理失败单号</div>}
+        </Modal>
 
         <div className="tableMain"
              style={{maxWidth: 1200}}

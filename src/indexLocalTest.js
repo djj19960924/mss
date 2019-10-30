@@ -5,7 +5,7 @@ import * as serviceWorker from './serviceWorker';
 // Hash路由
 import {BrowserRouter} from 'react-router-dom';
 // 预加载antd组件
-import { LocaleProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 // antd中文组件
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 // 自定义工具类
@@ -36,11 +36,11 @@ document.getElementsByTagName("title")[0].innerText = `后台管理系统 - 本�
 
 ReactDOM.render(
   <BrowserRouter>
-    <LocaleProvider locale={zh_CN}>
+    <ConfigProvider locale={zh_CN}>
       <Provider {...store}>
         <App/>
       </Provider>
-    </LocaleProvider>
+    </ConfigProvider>
   </BrowserRouter>,
   document.getElementById('root'));
 
