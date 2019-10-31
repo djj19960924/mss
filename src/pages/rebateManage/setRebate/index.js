@@ -74,7 +74,6 @@ class setRebate extends React.Component{
     input.className = "inputImport";
     input.onchange = this.loadFile.bind(this);
     this.setState({input: input});
-    this.getExportDataList();
   }
 
   // 导入
@@ -374,9 +373,7 @@ class setRebate extends React.Component{
 
   //导出Excel模板
   handleExport() {
-    const elt = document.getElementById('tableList');
-    const wb = XLSX.utils.table_to_book(elt, {raw: true, sheet: "Sheet JS"});
-    XLSX.writeFile(wb, `小票模板 ${moment(new Date()).format('YYYYMMDD-HHmmss')}.xlsx`);
+    this.getExportDataList();
   }
 
   //获取导入模板数据
@@ -386,8 +383,17 @@ class setRebate extends React.Component{
         const {data} = r.data;
         this.setState({
           exportDataList:data
+        },()=>{
+          const elt = document.getElementById('tableList');
+          const wb = XLSX.utils.table_to_book(elt, {raw: true, sheet: "Sheet JS"});
+          XLSX.writeFile(wb, `小票模板 ${moment(new Date()).format('YYYYMMDD-HHmmss')}.xlsx`);
         })
+      }else{
+        message.error('接口异常下载失败，请联系管理员')
       }
+    }).catch(r => {
+      message.error('接口异常下载失败，请联系管理员')
+      console.error(r);
     })
   }
 
@@ -474,16 +480,19 @@ class setRebate extends React.Component{
                     onClick={this.openCreate.bind(this)}
             >新增品牌</Button>
           }
-          {this.allow(74) &&
-            <Button className="createNew" type="primary"
-              onClick ={()=>{input.click()}}
-            >导入excel</Button>
-          }
+
           {this.allow(74) &&
             <Button className="createNew" type="primary"
             onClick={this.handleExport.bind(this)}
             >下载excel模板</Button>
           }
+
+          {this.allow(74) &&
+            <Button className="createNew" type="primary"
+              onClick ={()=>{input.click()}}
+            >导入excel</Button>
+          }
+          
 
         </div>
 

@@ -10,6 +10,7 @@ class AppStore {
 
   @observable props = null;
 
+  //action用来改变被observable修饰的这些数据
   @action saveUserData = (data) => {
     this.userData = data;
     localStorage.userData = JSON.stringify(data);

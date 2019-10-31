@@ -7,6 +7,7 @@ import './index.less';
 
 const FormItem = Form.Item;
 
+//inject把appStore注入进来 把appStore注入进来observer过来观察
 @inject('appStore') @observer @Form.create()
 class Login extends React.Component {
   constructor(props) {
