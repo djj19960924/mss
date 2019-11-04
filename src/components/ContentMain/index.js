@@ -4,16 +4,6 @@ import {Route, Switch, withRouter} from 'react-router-dom';
 // 主页
 import Home from '@pages/Home/';
 
-// 404页面
-import page404 from '@pages/system/page404/'
-
-// 开发人员专用调试
-import importExcel from '@pages/developerPages/importExcel/';
-import test from '@pages/developerPages/test';
-
-// 日志页面
-import logs from '@pages/system/logs/';
-
 // 权限管理
   // 角色管理
   import roles from '@pages/users/roles/';
@@ -22,165 +12,13 @@ import logs from '@pages/system/logs/';
   // 权限列表
   import permissions from '@pages/users/permissions/';
 
-// CRM
-  // 客户信息表
-  import customerInfo from '@pages/CRM/customerInfo/';
-
-//基础设置
-  //汇率
-  import ExchangeRate from '@pages/foundationSetup/exchangeRate/';
-
-// 物流管理
-  //线下支付
-  import OfflinePayment from "@pages/logisticsManage/offlinePayment/";
-
-  // bc清关
-    // bc商品打包
-    import commoditiesPackaging from "@pages/logisticsManage/BC_customsClearance/commoditiesPackaging/";
-    // 打包登陆用户
-    import customerLogin from "@pages/logisticsManage/BC_customsClearance/commoditiesPackaging/customerLogin/";
-    // bc清关
-    import YTO from "@pages/logisticsManage/BC_customsClearance/YTO/";
-    // bc推单
-    import BCUploadOrder from "@pages/logisticsManage/BC_customsClearance/uploadOrder/";
-
-  // ETK订单
-    // 已匹配
-    import orderMatched from '@pages/logisticsManage/ETK/matched/';
-    // 未匹配
-    import orderUnmatched from '@pages/logisticsManage/ETK/unmatched/';
-
-  // 邮政订单
-    // 已推送
-    import orderPushed from '@pages/logisticsManage/postal/pushed/';
-    // 未推送
-    import orderNotPushed from '@pages/logisticsManage/postal/notPushed/';
-
-  // 速跨通
-    // 待录入列表
-    import SKTListToBeEntered from '@pages/logisticsManage/SKT/listToBeEntered/';
-    // 扫码录入商品
-    import SKTCommoditiesInput from '@pages/logisticsManage/SKT/commoditiesInput/';
-    // BC推单
-    import SKTUploadOrder from '@pages/logisticsManage/SKT/uploadOrder/';
-    // 圆通物流
-    import SKTYto from '@pages/logisticsManage/SKT/YTO/';
-
-  // 全球运转
-    // 已收货
-    import globalTranshipmentArrived from '@pages/logisticsManage/globalTranshipment/arrived/';
-    // 未收货
-    import globalTranshipmentNotArrived from '@pages/logisticsManage/globalTranshipment/notArrived/';
-
-// 预约
-  // 预约接送机
-  import airportTransfer from '@pages/reservationService/airportTransfer/';
-  // 预约打包
-  import appointmentInfo from '@pages/reservationService/appointmentInfo/';
-
-// 全球跑腿
-  // 全球跑腿原始订单
-  import orderManage from '@pages/reservationService/globalErrands/orderManage/';
-    // 全球跑腿编辑订单详情
-    import orderManageEdit from '@pages/reservationService/globalErrands/orderManage/orderManageEdit/'
-  // 全球跑腿预订
-  import GlobalErrandsOrder from '@pages/reservationService/globalErrands/order/';
-    // 编辑进度
-    import EditProgress from '@pages/reservationService/globalErrands/order/editProgress/';
-  // 全球跑腿评价
-  import GlobalErrandsAssess from '@pages/reservationService/globalErrands/assess/';
-
-// 返点
-  // 已支付
-  import adoptExaminePaid from '@pages/rebateManage/adoptExaminePaid/';
-  // 未支付
-  import adoptExamineUnpaid from '@pages/rebateManage/adoptExamineUnpaid/';
-  // 驳回
-  import rejectExamine from '@pages/rebateManage/rejectExamine/';
-  // 更新二维码
-  import updateQRCode from '@pages/rebateManage/updateQRCode/';
-  // 审核小票
-  // import awaitingExamine from '@pages/rebateManage/awaitingExamine/';
-  // new审核小票
-  import auditTicket from '@pages/rebateManage/auditTicket/';
-  // 设置返点
-  import setRebate from '@pages/rebateManage/setRebate/';
-  // 对账
-  import countBillList from '@pages/rebateManage/countBillList/';
-  // 挂团
-  import appointmentTeamManage from '@pages/rebateManage/appointmentTeamManage/';
-  // 返点说明文案设置
-  import rebateCountryInfo from '@pages/rebateManage/rebateCountryInfo/'
-  //返点用户表
-  import rebateUser from '@pages/rebateManage/rebateUser/'
-
-  //返点明细表
-  import rebateDetail from '@pages/rebateManage/rebateDetail/'
-
-// 商品管理
-  // 商品数据库
-  import commoditiesDataBase from '@pages/commoditiesManage/commoditiesDatabase/';
-  import commoditiesCreateAndEdit from '@pages/commoditiesManage/commoditiesDatabase/commoditiesCreateAndEdit/';
-  import commoditiesImgList from '@pages/commoditiesManage/commoditiesDatabase/commoditiesImgList/';
-
-//成本管理
-  //采购成本表
-  import purchaseCost from '@pages/costManage/purchaseCost/';
-  //小票成本表
-  import ticketCost from '@pages/costManage/ticketCost/';
-
 import menus from "../SiderNav/menus";
 
 const componentsList = {
   Home,
-  importExcel,
   roles,
   accounts,
   permissions,
-  customerInfo,
-  commoditiesPackaging,
-  customerLogin,
-  YTO,
-  BCUploadOrder,
-  orderMatched,
-  orderUnmatched,
-  orderPushed,
-  orderNotPushed,
-  globalTranshipmentArrived,
-  globalTranshipmentNotArrived,
-  airportTransfer,
-  appointmentInfo,
-  orderManage,
-  GlobalErrandsOrder,
-  EditProgress,
-  GlobalErrandsAssess,
-  orderManageEdit,
-  adoptExaminePaid,
-  adoptExamineUnpaid,
-  rejectExamine,
-  updateQRCode,
-  // awaitingExamine,
-  setRebate,
-  countBillList,
-  appointmentTeamManage,
-  commoditiesDataBase,
-  commoditiesCreateAndEdit,
-  commoditiesImgList,
-  ExchangeRate,
-  OfflinePayment,
-  SKTListToBeEntered,
-  SKTCommoditiesInput,
-  SKTUploadOrder,
-  SKTYto,
-  rebateCountryInfo,
-  rebateUser,
-  logs,
-  test,
-  auditTicket,
-
-  purchaseCost,
-  rebateDetail,
-  ticketCost
 };
 
 @withRouter
@@ -263,8 +101,6 @@ class ContentMain extends React.Component {
         <Switch>
           {/*放置循环路由*/}
           {routesList}
-          {/*404*/}
-          <Route component={page404}/>
         </Switch>
         }
       </div>

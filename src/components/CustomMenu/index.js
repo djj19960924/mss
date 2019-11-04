@@ -73,7 +73,7 @@ class CustomMenu extends React.Component {
 
   renderMenuItem = ({key, icon, title, testType, id}) => {
     if (![...this.props.appStore.allowSideList].includes(id)) return false;
-    // 如果菜单内存在testType(不存在则始终显示,包括正式版)
+    // 如果菜单内存在testType(不存则始终显示,包括正式版)
     if (testType)
       // 如果全局testType不为本地测试时(如果为本地测试则始终显示所有侧边栏)
       if (window.testType !== 'localTest')
@@ -113,7 +113,7 @@ class CustomMenu extends React.Component {
     return (
       <Menu
         onOpenChange={this.onOpenChange}
-        onClick={({key}) => this.setState({selectedKeys: [key]})}
+        onClick={({key}) =>this.setState({selectedKeys: [key]})}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
         theme={this.props.theme ? this.props.theme : 'dark'}
