@@ -12,6 +12,14 @@ import Home from '@pages/Home/';
   // 权限列表
   import permissions from '@pages/users/permissions/';
 
+//客户管理
+  //客户信息管理
+  import customerInfo from '@pages/customer/customerInfo/';
+    //客户详细信息
+    import customerInfoDetail from '@pages/customer/customerInfo/detail/';
+  //客户级别管理
+  import customerLevel from '@pages/customer/customerLevel/';
+
 import menus from "../SiderNav/menus";
 
 const componentsList = {
@@ -19,6 +27,9 @@ const componentsList = {
   roles,
   accounts,
   permissions,
+  customerInfo,
+  customerLevel,
+  customerInfoDetail
 };
 
 @withRouter

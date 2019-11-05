@@ -50,6 +50,36 @@ const menus = [
       },
     ]
   },
+  {
+    title: '客户管理',
+    id: 1,
+    icon: 'user',
+    key: '/customer',
+    // testType: 'serverTest',
+    subs: [
+      {
+        title: '客户信息管理',
+        id: 15,
+        icon: 'contacts',
+        key: '/customer/customerInfo',
+        testType: 'serverTest',
+        components: [
+          {name: 'customerInfo', path: '/customer/customerInfo'},
+          {name: 'customerInfoDetail', path: '/customer/customerInfo/customerInfoDetail'},
+        ]
+      },
+      {
+        title: '客户级别管理',
+        id: 10,
+        icon: 'lock',
+        key: '/customer/customerLevel',
+        // testType: 'serverTest',
+        components: [
+          {name: 'customerLevel', path: '/customer/customerLevel'}
+        ]
+      }
+    ]
+  },
 ];
 
 export default menus;

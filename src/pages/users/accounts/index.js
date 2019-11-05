@@ -209,100 +209,103 @@ class accounts extends React.Component {
     ];
     return (
       <div className="accounts contentMain">
-        <div className="title">
-          <div className="titleMain">账户管理</div>
-          <div className="titleLine" />
-        </div>
-        <div className="btnLine">
-          {this.allow(3) && <Button type="primary"
-                  onClick={this.showDetails.bind(this,'add')}
-          >新增账户</Button>}
-        </div>
-        <Modal className="details"
-               wrapClassName="accountsDetailsModal"
-               title={detailState === 'edit' ? '修改账户' : (detailState === 'add' ? '新增账户' : '账户详情')}
-               visible={showDetails}
-               bodyStyle={{padding: 18,maxHeight: '600px',overflow: 'auto'}}
-               width={500}
-               onCancel={() => this.setState({showDetails: false})}
-               onOk={this.submitForm.bind(this)}
-               okText={detailState === 'edit' ? '修改' : (detailState === 'add' ? '新增' : '')}
-               footer={detailState === 'detail' ? null : undefined}
-        >
-          {/* 用户名称/邮箱/电话/公司/角色 */}
-          <Form className=""
-                labelCol={{span: 8}}
-                wrapperCol={{span: 16}}
-          >
-            <FormItem label="账户名称" colon >
-              {detailState !== 'detail' ?
-                getFieldDecorator('userName', {
-                  rules: [{required: true, message: '请输入账户名称!'}],
-                })( <Input placeholder="请输入账户名称" /> )
-                : <div>{currentInfo.userName}</div>
-              }
-            </FormItem>
-            <FormItem label="角色名称" colon >
-              {detailState !== 'detail' ?
-                getFieldDecorator('roleId', {
-                  rules: [{required: true, message: '请选择角色!'}]
-                })( <Select placeholder="请选择角色" >{rolesOptions}</Select> )
-                : <div>{rolesObject[currentInfo.roleId]}</div>
-              }
-            </FormItem>
-            <FormItem label="密码" colon style={detailState === 'detail' ? {display: 'none'} : {}}>
-              {getFieldDecorator('password', {
-                rules: [{required: (detailState === 'add'), message: '请输入密码!'}]
-              })( <Input placeholder={`${detailState === 'add' ? '请输入密码' : '如需修改, 请输入新密码'}`} /> )}
-            </FormItem>
-            <FormItem label="邮箱" colon >
-              {detailState !== 'detail' ?
-                getFieldDecorator('email')( <Input placeholder="请输入邮箱" /> )
-                : <div>{currentInfo.email}</div>
-              }
-            </FormItem>
-            <FormItem label="电话" colon >
-              {detailState !== 'detail' ?
-                getFieldDecorator('userPhone')( <Input placeholder="请输入电话" /> )
-                : <div>{currentInfo.userPhone}</div>
-              }
-            </FormItem>
-            <FormItem label="公司" colon >
-              {detailState !== 'detail' ?
-                getFieldDecorator('company')( <Input placeholder="请输入公司名称" /> )
-                : <div>{currentInfo.company}</div>
-              }
-            </FormItem>
-          </Form>
-        </Modal>
-        <div className="tableMain"
-             style={{maxWidth: 1000}}
-        >
-          {/*表单主体*/}
-          <Table className="tableList"
-                 id="tableList"
-                 dataSource={tableDataList}
-                 columns={columns}
-                 pagination={false}
-                 loading={tableIsLoading}
-                 bordered
-                 scroll={{ y: 550, x: 1050 }}
-                 rowKey={(record, index) => `id_${index}`}
-          />
-          {/*分页*/}
-          <Pagination className="tablePagination"
-                      total={pageTotal}
-                      pageSize={pageSize}
-                      current={pageNum}
-                      showTotal={(total, range) =>
-                        `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 ` }共 ${total} 条记录`
-                      }
-                      onChange={this.changePage.bind(this)}
-                      showSizeChanger
-                      pageSizeOptions={pageSizeOptions}
-                      onShowSizeChange={this.changePage.bind(this)}
-          />
-        </div>
+        用户管理
+        { 
+          // <div className="title">
+          //   <div className="titleMain">账户管理</div>
+          //   <div className="titleLine" />
+          // </div>
+          // <div className="btnLine">
+          //   {this.allow(3) && <Button type="primary"
+          //           onClick={this.showDetails.bind(this,'add')}
+          //   >新增账户</Button>}
+          // </div>
+          // <Modal className="details"
+          //       wrapClassName="accountsDetailsModal"
+          //       title={detailState === 'edit' ? '修改账户' : (detailState === 'add' ? '新增账户' : '账户详情')}
+          //       visible={showDetails}
+          //       bodyStyle={{padding: 18,maxHeight: '600px',overflow: 'auto'}}
+          //       width={500}
+          //       onCancel={() => this.setState({showDetails: false})}
+          //       onOk={this.submitForm.bind(this)}
+          //       okText={detailState === 'edit' ? '修改' : (detailState === 'add' ? '新增' : '')}
+          //       footer={detailState === 'detail' ? null : undefined}
+          // >
+          //   {/* 用户名称/邮箱/电话/公司/角色 */}
+          //   <Form className=""
+          //         labelCol={{span: 8}}
+          //         wrapperCol={{span: 16}}
+          //   >
+          //     <FormItem label="账户名称" colon >
+          //       {detailState !== 'detail' ?
+          //         getFieldDecorator('userName', {
+          //           rules: [{required: true, message: '请输入账户名称!'}],
+          //         })( <Input placeholder="请输入账户名称" /> )
+          //         : <div>{currentInfo.userName}</div>
+          //       }
+          //     </FormItem>
+          //     <FormItem label="角色名称" colon >
+          //       {detailState !== 'detail' ?
+          //         getFieldDecorator('roleId', {
+          //           rules: [{required: true, message: '请选择角色!'}]
+          //         })( <Select placeholder="请选择角色" >{rolesOptions}</Select> )
+          //         : <div>{rolesObject[currentInfo.roleId]}</div>
+          //       }
+          //     </FormItem>
+          //     <FormItem label="密码" colon style={detailState === 'detail' ? {display: 'none'} : {}}>
+          //       {getFieldDecorator('password', {
+          //         rules: [{required: (detailState === 'add'), message: '请输入密码!'}]
+          //       })( <Input placeholder={`${detailState === 'add' ? '请输入密码' : '如需修改, 请输入新密码'}`} /> )}
+          //     </FormItem>
+          //     <FormItem label="邮箱" colon >
+          //       {detailState !== 'detail' ?
+          //         getFieldDecorator('email')( <Input placeholder="请输入邮箱" /> )
+          //         : <div>{currentInfo.email}</div>
+          //       }
+          //     </FormItem>
+          //     <FormItem label="电话" colon >
+          //       {detailState !== 'detail' ?
+          //         getFieldDecorator('userPhone')( <Input placeholder="请输入电话" /> )
+          //         : <div>{currentInfo.userPhone}</div>
+          //       }
+          //     </FormItem>
+          //     <FormItem label="公司" colon >
+          //       {detailState !== 'detail' ?
+          //         getFieldDecorator('company')( <Input placeholder="请输入公司名称" /> )
+          //         : <div>{currentInfo.company}</div>
+          //       }
+          //     </FormItem>
+          //   </Form>
+          // </Modal>
+          // <div className="tableMain"
+          //     style={{maxWidth: 1000}}
+          // >
+          //   {/*表单主体*/}
+          //   <Table className="tableList"
+          //         id="tableList"
+          //         dataSource={tableDataList}
+          //         columns={columns}
+          //         pagination={false}
+          //         loading={tableIsLoading}
+          //         bordered
+          //         scroll={{ y: 550, x: 1050 }}
+          //         rowKey={(record, index) => `id_${index}`}
+          //   />
+          //   {/*分页*/}
+          //   <Pagination className="tablePagination"
+          //               total={pageTotal}
+          //               pageSize={pageSize}
+          //               current={pageNum}
+          //               showTotal={(total, range) =>
+          //                 `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 ` }共 ${total} 条记录`
+          //               }
+          //               onChange={this.changePage.bind(this)}
+          //               showSizeChanger
+          //               pageSizeOptions={pageSizeOptions}
+          //               onShowSizeChange={this.changePage.bind(this)}
+          //   />
+          // </div>
+        }
       </div>
     )
   }
