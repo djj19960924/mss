@@ -34,10 +34,8 @@ class CustomerInfoDetail extends Component {
     }
     
     render() { 
-        const { info } = this.state;
-        
+        const { info } = this.state; 
         if(checkData(info)){
-            console.log(info)
             var attribute = [
                 {name:"客户ID",value:info.id},
                 {name:"账号(手机号)",value:info.phone},

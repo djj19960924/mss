@@ -96,11 +96,17 @@ class CustomerLevel extends Component {
         })
     }
 
+    //级别
+    changeLevel(dataObj,type){
+        axios.post(`http://192.168.31.211:8080/customer/${type}`,dataObj).then(r=>{
+            console.log("r:",r)
+        })
+    }
+
     //提交表单
     submitForm(){
         const {validateFields} = this.props.form;
         const {detailState, currentInfo} = this.state;
-        
         const creator = document.cookie.split(";")[0].split("=")[1];
         validateFields((err,val)=>{
             if(!err){
