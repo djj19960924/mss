@@ -39,7 +39,6 @@ class CustomerLevel extends Component {
         axios.post('http://192.168.31.211:8080/customer/getLevels',dataObj).then(r=>{
             if(r.data.status===10000){
                 const { data } = r.data;
-                console.log(data)
                 this.setState({
                     tableIsLoading: false,
                     tableDataList: data.list,
@@ -76,7 +75,7 @@ class CustomerLevel extends Component {
     // 翻页事件
     changePage(pageNum,pageSize) {
         this.setState({pageNum:pageNum,pageSize:pageSize},() => {
-            this.getCustomerList();
+            this.getLevelList();
         });
     }
     // 打开弹窗
@@ -96,10 +95,20 @@ class CustomerLevel extends Component {
         })
     }
 
-    //级别
+    //对级别操作
     changeLevel(dataObj,type){
         axios.post(`http://192.168.31.211:8080/customer/${type}`,dataObj).then(r=>{
-            console.log("r:",r)
+            if(r.data.status===10000){
+                message.success(`${r.data.msg}`);
+                this.setState({showDetails: false});
+                this.getLevelList();
+            }else{
+                message.success(`${r.data.msg}`);
+                this.setState({showDetails: false});
+            }
+        }).catch(r => {
+            console.error(r);
+            this.ajax.isReturnLogin(r,this);
         })
     }
 

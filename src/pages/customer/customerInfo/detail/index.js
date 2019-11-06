@@ -37,12 +37,12 @@ class CustomerInfoDetail extends Component {
         const { info } = this.state; 
         if(checkData(info)){
             var attribute = [
-                {name:"客户ID",value:info.id},
-                {name:"账号(手机号)",value:info.phone},
-                {name:"客户备注",value:info.note},
-                {name:"客户级别",value:info.levelName},
                 {name:"头像",value:info.headImgUrl},
+                {name:"客户ID",value:info.id},
                 {name:"昵称",value:info.nickname},
+                {name:"账号(手机号)",value:info.phone},
+                {name:"客户级别",value:info.levelName},
+                {name:"客户备注",value:info.note},
                 {name:"余额",value:info.balance}
             ];
             return ( 

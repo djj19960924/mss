@@ -20,10 +20,11 @@ class CustomerInfo extends Component {
             showDetails:false,
             // 当前客户信息
             currentInfo: {},
+            levelOption:[]
         }
     }
     componentDidMount() {
-        this.getCustomerList()
+        this.getCustomerList();
     }
 
     //获取所有客户信息列表
@@ -50,7 +51,19 @@ class CustomerInfo extends Component {
     
     //获取客户所有级别
     getAllLevel(){
-        
+        const Option = Select.Option;
+        axios.get('http://192.168.31.211:8080/customer/getLevels').then(r=>{
+            if(r.data.status===10000){
+                let dataList = [];
+                for(let obj of r.data.data){
+                    dataList.push(<Option key={obj.id} value={obj.id}>{obj.levelName}</Option>)
+                    this.setState({levelOption:dataList})
+                }
+            }
+        }).catch(r => {
+            console.error(r);
+            this.ajax.isReturnLogin(r,this);
+        })
     }
 
     //跳转详情页
@@ -63,6 +76,7 @@ class CustomerInfo extends Component {
     }
     //打开弹窗
     showDetail(record){
+        this.getAllLevel();
         const { setFieldsValue, resetFields } = this.props.form;
         resetFields();
         const data = {
@@ -77,12 +91,45 @@ class CustomerInfo extends Component {
         })
     }
 
+    //提交表单
+    submitForm(){
+        const { validateFields } = this.props.form;
+        const { currentInfo } = this.state;
+        validateFields((err,val)=>{
+            if(!err){
+                const dataObj = {
+                    note: val.note,
+                    levelId: val.levelId,
+                    id: currentInfo.id
+                };
+                this.changeInfo(dataObj);
+            }
+        })
+    }
+
+    //对客户信息的编辑
+    changeInfo(dataObj){
+        axios.put('http://192.168.31.211:8080/customerManage/update',dataObj).then(r=>{
+            if(r.data.status===10000){
+                message.success(`${r.data.msg}`);
+                this.setState({showDetails: false});
+                this.getCustomerList();
+            }else{
+                message.success(`${r.data.msg}`);
+                this.setState({showDetails: false});
+            }
+        }).catch(r => {
+            console.error(r);
+            this.ajax.isReturnLogin(r,this);
+        })
+    }
+
     
     columns = [
         {title: '客户ID', dataIndex: 'id', key: 'id', width: 80},
         {title: '账号(手机号)', dataIndex: 'phone', key: 'phone', width: 120},
         {title: '客户备注', dataIndex: 'note', key: 'note'},
-        {title: '客户级别', dataIndex: 'levelId', key: 'levelId', width: 80},
+        {title: '客户级别', dataIndex: 'levelName', key: 'levelName', width: 80},
         {title: '头像', dataIndex: 'headImgUrl', key: 'headImgUrl', width: 60,
             render: text => {
                 if(text) {
@@ -125,7 +172,8 @@ class CustomerInfo extends Component {
             pageTotal,
             pageSizeOptions,
             showDetails,
-            currentInfo
+            currentInfo,
+            levelOption
         } = this.state;
         const {getFieldDecorator} = this.props.form;
         return ( 
@@ -163,7 +211,7 @@ class CustomerInfo extends Component {
                     title="编辑客户" 
                     visible={showDetails}   
                     onCancel={() => this.setState({showDetails: false})}
-                    // onOk={this.submitForm}
+                    onOk={this.submitForm.bind(this)}
                 >
                     <Form>
                         <FormItem
@@ -174,7 +222,6 @@ class CustomerInfo extends Component {
                         > 
                             <div>{currentInfo.nickname}</div>
                         </FormItem>
-
                         <FormItem
                             label="客户备注"
                             colon
@@ -195,10 +242,7 @@ class CustomerInfo extends Component {
                             rules: [{required: true, message: '请选择用户级别!'}],
                         })(
                             <Select placeholder="请选择角色">
-                                <Option value={1}>一级</Option>
-                                <Option value={2}>二级</Option>
-                                <Option value={3}>三级</Option>
-                                <Option value={4}>最高级</Option>
+                                {levelOption}
                             </Select>
                         )}
                         </FormItem>
