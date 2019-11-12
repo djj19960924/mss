@@ -207,113 +207,110 @@ class permissions extends React.Component {
 
     return (
       <div className="permissions contentMain">
-        权限管理
-        {
-          // <div className="title">
-          //   <div className="titleMain">权限管理</div>
-          //   <div className="titleLine"/>
-          // </div>
-          // <div className="btnLine">
-          //   <Button type="primary"
-          //           onClick={this.showDetails.bind(this, 'add', undefined)}
-          //   >新增权限</Button>
-          // </div>
-          // <Modal className="details"
-          //       wrapClassName="accountsDetailsModal"
-          //       title={detailState === 'edit' ? '修改权限' : (detailState === 'add' ? '新增权限' : '查看权限')}
-          //       visible={showDetails}
-          //       bodyStyle={{padding: 18, maxHeight: '600px', overflow: 'auto'}}
-          //       width={500}
-          //       onCancel={() => this.setState({showDetails: false})}
-          //       onOk={this.submitForm.bind(this)}
-          //       okText={detailState === 'edit' ? '修改' : (detailState === 'add' ? '新增' : '')}
-          //       footer={detailState === 'detail' ? null : undefined}
-          //   //  forceRender={true}
-          // >
-          //   <Form className=""
-          //         labelCol={{span: 8}}
-          //         wrapperCol={{span: 16}}
-          //   >
-          //     <FormItem label="权限名称" colon>
-          //       {detailState !== 'detail' ?
-          //         getFieldDecorator('name', {
-          //           rules: [{required: true, message: '请输入权限名称!'}],
-          //         })(<Input placeholder="请输入权限名称"/>)
-          //         : <div>{currentInfo.name}</div>
-          //       }
-          //     </FormItem>
-          //     <FormItem label="权限类型" colon>
-          //       {detailState !== 'detail' ?
-          //         getFieldDecorator('type', {
-          //           rules: [{required: true, message: '请选择角色!'}],
-          //         })(<Select placeholder="请选择角色">
-          //             <Option value={1}>菜单权限</Option>
-          //             <Option value={2}>功能权限</Option>
-          //           </Select>
-          //         ) : <div>{currentInfo.type === 1 ? "菜单权限" : "功能权限"}</div>
-          //       }
-          //     </FormItem>
-          //     {
-          //       this.props.form.getFieldValue('type') === 1 ? '' :
-          //         <FormItem label="是否必须" colon>
-          //           {detailState !== 'detail' ?
-          //             getFieldDecorator('requiredPermission', {
-          //               rules: [{required: true, message: '是否必须'}],
-          //             })(<Select placeholder="是否必须">
-          //                 <Option value={1}>是</Option>
-          //                 <Option value={2}>否</Option>
-          //               </Select>
-          //             ) :
-          //             <div>{currentInfo.type === 1 ? '菜单无此项数据' : (currentInfo.requiredPermission === 1 ? '是' : '否')}</div>
-          //           }
-          //         </FormItem>
-          //     }
+          <div className="title">
+            <div className="titleMain">权限管理</div>
+            <div className="titleLine"/>
+          </div>
+          <div className="btnLine">
+            <Button type="primary"
+                    onClick={this.showDetails.bind(this, 'add', undefined)}
+            >新增权限</Button>
+          </div>
+          <Modal className="details"
+                wrapClassName="accountsDetailsModal"
+                title={detailState === 'edit' ? '修改权限' : (detailState === 'add' ? '新增权限' : '查看权限')}
+                visible={showDetails}
+                bodyStyle={{padding: 18, maxHeight: '600px', overflow: 'auto'}}
+                width={500}
+                onCancel={() => this.setState({showDetails: false})}
+                onOk={this.submitForm.bind(this)}
+                okText={detailState === 'edit' ? '修改' : (detailState === 'add' ? '新增' : '')}
+                footer={detailState === 'detail' ? null : undefined}
+            //  forceRender={true}
+          >
+            <Form className=""
+                  labelCol={{span: 8}}
+                  wrapperCol={{span: 16}}
+            >
+              <FormItem label="权限名称" colon>
+                {detailState !== 'detail' ?
+                  getFieldDecorator('name', {
+                    rules: [{required: true, message: '请输入权限名称!'}],
+                  })(<Input placeholder="请输入权限名称"/>)
+                  : <div>{currentInfo.name}</div>
+                }
+              </FormItem>
+              <FormItem label="权限类型" colon>
+                {detailState !== 'detail' ?
+                  getFieldDecorator('type', {
+                    rules: [{required: true, message: '请选择角色!'}],
+                  })(<Select placeholder="请选择角色">
+                      <Option value={1}>菜单权限</Option>
+                      <Option value={2}>功能权限</Option>
+                    </Select>
+                  ) : <div>{currentInfo.type === 1 ? "菜单权限" : "功能权限"}</div>
+                }
+              </FormItem>
+              {
+                this.props.form.getFieldValue('type') === 1 ? '' :
+                  <FormItem label="是否必须" colon>
+                    {detailState !== 'detail' ?
+                      getFieldDecorator('requiredPermission', {
+                        rules: [{required: true, message: '是否必须'}],
+                      })(<Select placeholder="是否必须">
+                          <Option value={1}>是</Option>
+                          <Option value={2}>否</Option>
+                        </Select>
+                      ) :
+                      <div>{currentInfo.type === 1 ? '菜单无此项数据' : (currentInfo.requiredPermission === 1 ? '是' : '否')}</div>
+                    }
+                  </FormItem>
+              }
 
-          //     <FormItem label="父级权限" colon>
-          //       {detailState !== 'detail' ?
-          //         getFieldDecorator('parentId', {
-          //           rules: [{required: true, message: '请选择父级权限!'}],
-          //         })(<Select>
-          //             {parentIdList}
-          //           </Select>
-          //         ) : <div>{parentIdObject[currentInfo.parentId]}</div>
-          //       }
-          //     </FormItem>
+              <FormItem label="父级权限" colon>
+                {detailState !== 'detail' ?
+                  getFieldDecorator('parentId', {
+                    rules: [{required: true, message: '请选择父级权限!'}],
+                  })(<Select>
+                      {parentIdList}
+                    </Select>
+                  ) : <div>{parentIdObject[currentInfo.parentId]}</div>
+                }
+              </FormItem>
 
-          //     {
-          //       this.props.form.getFieldValue('type') === 1 ? '' :
-          //         (<FormItem label="权限url" colon>
-          //           {detailState !== 'detail' ?
-          //             getFieldDecorator('url', {
-          //               rules: [{required: true, message: '请输入权限url!'}],
-          //             })(<Input placeholder="请输入权限url"/>)
-          //             : <div>{!currentInfo.url ? '无' : currentInfo.url}</div>
-          //           }
-          //         </FormItem>)
-          //     }
-          //   </Form>
-          // </Modal>
+              {
+                this.props.form.getFieldValue('type') === 1 ? '' :
+                  (<FormItem label="权限url" colon>
+                    {detailState !== 'detail' ?
+                      getFieldDecorator('url', {
+                        rules: [{required: true, message: '请输入权限url!'}],
+                      })(<Input placeholder="请输入权限url"/>)
+                      : <div>{!currentInfo.url ? '无' : currentInfo.url}</div>
+                    }
+                  </FormItem>)
+              }
+            </Form>
+          </Modal>
 
-          // <div className="tableMain">
-          //   {/*表单主体*/}
-          //   <Table className="tableList"
-          //         id="tableList"
-          //         dataSource={tableDataList}
-          //         columns={columns}
-          //         pagination={{
-          //           pageSize: pageSize,
-          //           showTotal: (total, range) =>
-          //             `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 `}共 ${total} 条记录`,
-          //           showSizeChanger: true,
-          //           pageSizeOptions: pageSizeOptions,
-          //         }}
-          //         loading={tableIsLoading}
-          //         bordered
-          //         scroll={{y: 500, x: 950}}
-          //         rowKey={(record, index) => `id_${index}`}
-          //   />
-          // </div>
-        }
+          <div className="tableMain">
+            {/*表单主体*/}
+            <Table className="tableList"
+                  id="tableList"
+                  dataSource={tableDataList}
+                  columns={columns}
+                  pagination={{
+                    pageSize: pageSize,
+                    showTotal: (total, range) =>
+                      `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 `}共 ${total} 条记录`,
+                    showSizeChanger: true,
+                    pageSizeOptions: pageSizeOptions,
+                  }}
+                  loading={tableIsLoading}
+                  bordered
+                  scroll={{y: 500, x: 950}}
+                  rowKey={(record, index) => `id_${index}`}
+            />
+          </div>
       </div>
     );
   }

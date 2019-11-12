@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Input, message, Modal, Table, Icon} from 'antd';
+import {Button, Input, message, Modal, Table, Icon,Pagination} from 'antd';
 import './index.less';
 
 class roles extends React.Component {
@@ -11,6 +11,7 @@ class roles extends React.Component {
       // 表单加载状态
       tableIsLoading: false,
       // 分页相关
+      pageTotal: 0,
       pageNum: 1,
       pageSize: 100,
       pageSizeOptions: [`50`,`100`,`200`,`300`],
@@ -43,7 +44,7 @@ class roles extends React.Component {
   // 获取所有权限列表
   getPermissionList() {
     this.setState({tableIsLoading: true});
-    this.ajax.post('/permission/getPermissionList').then(r => {
+    this.ajax.get('/permission/getMenuList').then(r => {
       if (r.data.status === 10000) {
         this.setState({allPermissionsList: r.data.data});
         this.getRoleList();
@@ -57,11 +58,14 @@ class roles extends React.Component {
 
   // 获取角色列表
   getRoleList() {
+    const { pageNum, pageSize, } = this.state;
     this.setState({tableIsLoading: true});
-    this.ajax.post('/role/getRoleList').then(r => {
+    let dataObj = {pageNum:pageNum,pageSize:pageSize};
+    this.ajax.post('/role/getRoleList',dataObj).then(r => {
       if (r.data.status === 10000) {
         this.setState({
-          tableDataList: r.data.data,
+          tableDataList: r.data.data.list,
+          pageTotal: r.data.data.total
         });
       }
       r.showError();
@@ -82,7 +86,7 @@ class roles extends React.Component {
       permissionsList: allPermissionsList,
       showDetails: true,
     };
-    if (record) for (let v of record.permissions) dataList.push(v.menuId);
+    if (record) for (let v of record.permissions) dataList.push(v.id);
     if (type === 'detail') {
       // 详情
       data.permissionsList = record.permissions;
@@ -100,7 +104,7 @@ class roles extends React.Component {
 
   // 渲染 table 内部权限标签
   renderPermissions(text, record) {
-    if (record.roleId === 1) {
+    if (record.id === 1) {
       // 超级管理员显示全部
       return (
         <div className="tabsList">
@@ -111,7 +115,7 @@ class roles extends React.Component {
       // 其他角色显示相关菜单
       const dataList = [];
       // 循环处理, 菜单内部只显示最上级菜单页面
-      for (let v of record.permissions) if (v.parentId === 0) dataList.push(v.name);
+      for (let v of record.permissions) if (v.parentId === 0) dataList.push(v.menuName);
       return (
         <div className="tabsList">
           {dataList.map((item,index) =>
@@ -144,7 +148,7 @@ class roles extends React.Component {
       message.warn('权限以及角色名均未改变');
     } else {
       let dataObj = {
-        roleId: currentRecord.roleId,
+        id: currentRecord.id,
         roleName: currentRecord.roleName,
         newMenuIdList: addList,
         oldMenuIdList: delList
@@ -186,7 +190,7 @@ class roles extends React.Component {
   }
 
   // 删除角色
-  deleteRole(roleId) {
+  deleteRole(id) {
     Modal.confirm({
       title: '删除角色',
       content: '确认删除该角色',
@@ -194,7 +198,7 @@ class roles extends React.Component {
       okType: 'danger',
       maskClosable: true,
       onOk: () => {
-        this.ajax.post('/role/deleteRole', {roleId: roleId}).then(r => {
+        this.ajax.delete(`/role/deleteRole/${id}`).then(r => {
           if (r.data.status === 10000) {
             message.success(`${r.data.msg}`);
             this.getRoleList();
@@ -208,21 +212,31 @@ class roles extends React.Component {
     })
   }
 
+  // 换页刷新
+  changePage(pageNum, pageSize) {
+    this.setState({
+      pageNum: pageNum,
+      pageSize: pageSize,
+    },()=>{
+      this.getRoleList();
+    })
+  }
+
   // 卸载 setState, 防止组件卸载时执行 setState 相关导致报错
   componentWillUnmount() {
     this.setState = () => null
   }
   render() {
-    const {tableDataList, tableIsLoading, pageSize, pageSizeOptions, showDetails, detailState, currentIdList, newRoleName, permissionsList} = this.state;
+    const {tableDataList, tableIsLoading, pageSize, pageSizeOptions, showDetails, detailState, currentIdList, newRoleName, permissionsList,pageNum,pageTotal} = this.state;
     const columns = [
-      {title: 'ID', dataIndex: 'roleId', key: 'roleId', width: 80},
+      {title: 'ID', dataIndex: 'id', key: 'id', width: 80},
       {title: '角色名称', dataIndex: 'roleName', key: 'roleName', width: 140},
       {title: '权限', dataIndex: 'permissions', key: 'permissions',
         render: (text, record) => this.renderPermissions(text, record)
       },
       {title: '操作', dataIndex: '操作', key: '操作', width: 250, fixed: 'right',
         render: (text, record) => {
-          if (record.roleId === 1) {
+          if (record.id === 1) {
             return <div>
               <Button type="primary"
                       onClick={this.showDetailsModal.bind(this, record, 'detail')}
@@ -243,7 +257,7 @@ class roles extends React.Component {
               >修改</Button>
               <Button type="danger"
                       style={{marginLeft: 10}}
-                      onClick={this.deleteRole.bind(this, record.roleId)}
+                      onClick={this.deleteRole.bind(this, record.id)}
               >删除</Button>
             </div>
           }
@@ -251,144 +265,150 @@ class roles extends React.Component {
       },
     ];
     return (
-      <div className="roles contentMain">
-        角色管理
-        {
-          // <div className="title">
-          //   <div className="titleMain">角色管理</div>
-          //   <div className="titleLine" />
-          // </div>
-          // <div className="btnLine">
-          //   <Button type="primary"
-          //           onClick={this.showDetailsModal.bind(this, undefined, 'add')}
-          //   >新增角色</Button>
-          // </div>
-          // <Modal className="details"
-          //       wrapClassName="rolesDetailsModal"
-          //       title={detailState === 'edit' ? '修改角色' : (detailState === 'add' ? '新增角色' : '角色详情')}
-          //       visible={showDetails}
-          //       bodyStyle={{padding: 18,maxHeight: '600px',overflow: 'auto'}}
-          //       width={760}
-          //       onCancel={() => this.setState({showDetails: false})}
-          //       onOk={() => {
-          //         if (detailState === 'edit') this.updateRole();
-          //         if (detailState === 'add') this.addRole();
-          //       }}
-          //       okText={detailState === 'edit' ? '修改' : (detailState === 'add' ? '新增' : '')}
-          //       footer={detailState === 'detail' ? null : undefined}
-          // >
-          //   {detailState !== 'detail' &&
-          //     <div className="addRole">
-          //       <div className="addRoleTitle">{detailState === 'add' ? '新增' : '修改'}角色名:</div>
-          //       <Input className="addRoleInput"
-          //             value={newRoleName}
-          //             onChange={e => {this.setState({newRoleName: e.target.value})}}
-          //       />
-          //     </div>
-          //   }
-          //   <div className="detailsMain">
-          //     {/*渲染菜单*/}
-          //     {permissionsList.map((item1,index) => {
-          //       if (item1.parentId === 0) {
-          //         return <div key={index}
-          //                     className="menuLine"
-          //         >
-          //           <div className="menuName">
-          //             <div onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item1.menuId) : null}
-          //                 className={`menuNameTab ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item1.menuId) ? 'own' : 'not_own'}`}
-          //             >{item1.name}</div>
-          //           </div>
-          //           <div className="menuBody">{
-          //             permissionsList.map((item2,index) => {
-          //               if (item2.parentId === item1.menuId) {
-          //                 if (item2.type === 2) {
-          //                   return <div key={index}
-          //                               onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item2.menuId) : null}
-          //                               className={`apiName ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item2.menuId) ? 'own' : 'not_own'}`}
-          //                   >
-          //                     {item2.requiredPermission === 1 ?
-          //                       <Icon type="star" theme="filled" />
-          //                       : ''
-          //                     }{item2.name}</div>
-          //                 } else {
-          //                   return <div key={index}
-          //                               className="menuLine"
-          //                   >
-          //                     <div className="menuName">
-          //                       <div onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item2.menuId) : null}
-          //                           className={`menuNameTab ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item2.menuId) ? 'own' : 'not_own'}`}
-          //                       >{item2.name}</div>
-          //                     </div>
-          //                     <div className="menuBody">{
-          //                       permissionsList.map((item3,index) => {
-          //                         if (item3.parentId === item2.menuId) {
-          //                           if (item3.type === 2) {
-          //                             return <div key={index}
-          //                                         onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item3.menuId) : null}
-          //                                         className={`apiName ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item3.menuId) ? 'own' : 'not_own'}`}
-          //                             >
-          //                               {item3.requiredPermission === 1 ?
-          //                                 <Icon type="star" theme="filled" />
-          //                                 : ''
-          //                               }{item3.name}</div>
-          //                           } else {
-          //                             return <div key={index}
-          //                                         className="menuLine"
-          //                             >
-          //                               <div className="menuName">
-          //                                 <div onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item3.menuId) : null}
-          //                                     className={`menuNameTab ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item3.menuId) ? 'own' : 'not_own'}`}
-          //                                 >{item3.name}</div>
-          //                               </div>
-          //                               <div className="menuBody">{
-          //                                 permissionsList.map((item4,index) => {
-          //                                   if (item4.parentId === item3.menuId) {
-          //                                     return <div key={index}
-          //                                                 onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item4.menuId) : null}
-          //                                                 className={`apiName ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item4.menuId) ? 'own' : 'not_own'}`}
-          //                                     >
-          //                                       {item4.requiredPermission === 1
-          //                                         ? <Icon type="star" theme="filled" />
-          //                                         : ''
-          //                                       }{item4.name}</div>
-          //                                   }
-          //                                 })
-          //                               }</div>
-          //                             </div>
-          //                           }
-          //                         }
-          //                       })
-          //                     }</div>
-          //                   </div>
-          //                 }
-          //               }
-          //             })
-          //           }</div>
-          //         </div>;
-          //       }
-          //     })}
-          //   </div>
-          // </Modal>
-          // <div className="tableMain">
-          //   {/*表单主体*/}
-          //   <Table className="tableList"
-          //         id="tableList"
-          //         dataSource={tableDataList}
-          //         columns={columns}
-          //         pagination={{
-          //           pageSize: pageSize,
-          //           showTotal: (total, range) =>
-          //             `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 ` }共 ${total} 条记录`,
-          //           showSizeChanger: true,
-          //           pageSizeOptions: pageSizeOptions,
-          //         }}
-          //         loading={tableIsLoading}
-          //         bordered
-          //         scroll={{ y: 500, x: 800 }}
-          //         rowKey={(record, index) => `id_${index}`}
-          //   />
-          // </div>
-        }
+      <div className="roles contentMain">    
+          <div className="title">
+            <div className="titleMain">角色管理</div>
+            <div className="titleLine" />
+          </div>
+          <div className="btnLine">
+            <Button type="primary"
+                    onClick={this.showDetailsModal.bind(this, undefined, 'add')}
+            >新增角色</Button>
+          </div>
+          <Modal className="details"
+                wrapClassName="rolesDetailsModal"
+                title={detailState === 'edit' ? '修改角色' : (detailState === 'add' ? '新增角色' : '角色详情')}
+                visible={showDetails}
+                bodyStyle={{padding: 18,maxHeight: '600px',overflow: 'auto'}}
+                width={760}
+                onCancel={() => this.setState({showDetails: false})}
+                onOk={() => {
+                  if (detailState === 'edit') this.updateRole();
+                  if (detailState === 'add') this.addRole();
+                }}
+                okText={detailState === 'edit' ? '修改' : (detailState === 'add' ? '新增' : '')}
+                footer={detailState === 'detail' ? null : undefined}
+          >
+            {detailState !== 'detail' &&
+              <div className="addRole">
+                <div className="addRoleTitle">{detailState === 'add' ? '新增' : '修改'}角色名:</div>
+                <Input className="addRoleInput"
+                      value={newRoleName}
+                      onChange={e => {this.setState({newRoleName: e.target.value})}}
+                />
+              </div>
+            }
+            <div className="detailsMain">
+              {/*渲染菜单*/}
+              {permissionsList.map((item1,index) => {
+                if (item1.parentId === 0) {
+                  return <div key={index}
+                              className="menuLine"
+                  >
+                    <div className="menuName">
+                      <div onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item1.id) : null}
+                          className={`menuNameTab ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item1.id) ? 'own' : 'not_own'}`}
+                      >{item1.menuName}</div>
+                    </div>
+                    <div className="menuBody">{
+                      permissionsList.map((item2,index) => {
+                        if (item2.parentId === item1.id) {
+                          if (item2.type === 2) {
+                            return <div key={index}
+                                        onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item2.id) : null}
+                                        className={`apiName ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item2.id) ? 'own' : 'not_own'}`}
+                            >
+                              {item2.requiredPermission === 1 ?
+                                <Icon type="star" theme="filled" />
+                                : ''
+                              }{item2.menuName}</div>
+                          } else {
+                            return <div key={index}
+                                        className="menuLine"
+                            >
+                              <div className="menuName">
+                                <div onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item2.id) : null}
+                                    className={`menuNameTab ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item2.id) ? 'own' : 'not_own'}`}
+                                >{item2.menuName}</div>
+                              </div>
+                              <div className="menuBody">{
+                                permissionsList.map((item3,index) => {
+                                  
+                                  if (item3.parentId === item2.id) {
+                                    if (item3.type === 2) {
+                                      return <div key={index}
+                                                  onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item3.id) : null}
+                                                  className={`apiName ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item3.id) ? 'own' : 'not_own'}`}
+                                      >
+                                        {item3.requiredPermission === 1 ?
+                                          <Icon type="star" theme="filled" />
+                                          : ''
+                                        }{item3.menuName}</div>
+                                    } else {
+                                      return <div key={index}
+                                                  className="menuLine"
+                                      >
+                                        <div className="menuName">
+                                          <div onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item3.id) : null}
+                                              className={`menuNameTab ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item3.id) ? 'own' : 'not_own'}`}
+                                          >{item3.menuName}</div>
+                                        </div>
+                                        <div className="menuBody">{
+                                          permissionsList.map((item4,index) => {
+                                            if (item4.parentId === item3.id) {
+                                              return <div key={index}
+                                                          onClick={(detailState !== 'detail') ? this.changeOwn.bind(this, item4.id) : null}
+                                                          className={`apiName ${detailState === 'detail' ? '' : 'can_edit'} ${currentIdList.includes(item4.id) ? 'own' : 'not_own'}`}
+                                              >
+                                                {item4.requiredPermission === 1
+                                                  ? <Icon type="star" theme="filled" />
+                                                  : ''
+                                                }{item4.menuName}</div>
+                                            }
+                                          })
+                                        }</div>
+                                      </div>
+                                    }
+                                  }
+                                })
+                              }</div>
+                            </div>
+                          }
+                        }
+                      })
+                    }</div>
+                  </div>;
+                }
+              })}
+            </div>
+          </Modal>
+          <div className="tableMain">
+            {/*表单主体*/}
+            <Table className="tableList"
+                  id="tableList"
+                  dataSource={tableDataList}
+                  columns={columns}
+                  pagination={false}
+                  loading={tableIsLoading}
+                  bordered
+                  scroll={{ y: 500, x: 800 }}
+                  rowKey={(record, index) => `id_${index}`}
+                  
+            />
+            {/*分页*/}
+            <Pagination className="tablePagination"
+                        total={pageTotal}
+                        pageSize={pageSize}
+                        current={pageNum}
+                        showTotal={(total, range) =>
+                          `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 ` }共 ${total} 条记录`
+                        }
+                        onChange={this.changePage.bind(this)}
+                        showSizeChanger
+                        pageSizeOptions={pageSizeOptions}
+                        onShowSizeChange={this.changePage.bind(this)}
+            />
+          </div>
       </div>
     )
   }

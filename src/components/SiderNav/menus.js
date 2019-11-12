@@ -9,7 +9,7 @@ const menus = [
     ]
   },
   {
-    title: '用户管理',
+    title: '账号权限',
     id: 1,
     icon: 'usergroup-add',
     key: '/users',
@@ -17,20 +17,20 @@ const menus = [
     subs: [
       {
         title: '权限管理',
-        id: 15,
+        id: 151,
         icon: 'lock',
         key: '/users/permissions',
         // 这里请注意, 由于权限管理页面涉及系统开发内容
         // 故该页面永久设置 testType: 'serverTest', 不得更改
         // 否则造成线上错误将难以修正
-        testType: 'serverTest',
+        //testType: 'serverTest',
         components: [
           {name: 'permissions', path: '/users/permissions'}
         ]
       },
       {
         title: '角色管理',
-        id: 10,
+        id: 150,
         icon: 'solution',
         key: '/users/roles',
         // testType: 'serverTest',
@@ -40,7 +40,7 @@ const menus = [
       },
       {
         title: '账户管理',
-        id: 2,
+        id: 149,
         icon: 'team',
         key: '/users/accounts',
         // testType: 'serverTest',

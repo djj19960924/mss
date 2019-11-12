@@ -91,6 +91,17 @@ class Ajax {
     return this.promise(request);
   }
 
+  //delete方法
+  delete(path, string, headers, origin) {
+    let request = new XMLHttpRequest();
+    const queryString = string ? `?${string}` : '';
+    // 开启 request 对象, 指定 delete 方法, 输入 url
+    request.open('DELETE', `${origin ? origin : this.origin}${path}${queryString}`, true);
+    // 注入公共配置
+    this.injectMethod(request, headers, 'delete');
+    return this.promise(request);
+  }
+
   // 判断是否为 XMLHttpRequest
   isXMLHttpRequest(data) {
     return Object.prototype.toString.call(data) === '[object XMLHttpRequest]'
