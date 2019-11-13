@@ -36,7 +36,7 @@ class CustomerLevel extends Component {
             pageSize:pageSize,
             parm:{}
         }
-        axios.post('http://192.168.31.211:8080/customer/getLevels',dataObj).then(r=>{
+        this.ajax.post('/customer/getLevels',dataObj).then(r=>{
             if(r.data.status===10000){
                 const { data } = r.data;
                 this.setState({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Table, message, Modal, Input, Form, Select, } from 'antd';
+import { Button, Table, message, Modal, Input, Form, Select,Pagination } from 'antd';
 import { observer } from 'mobx-react/index';
 import './index.less';
 
@@ -13,6 +13,8 @@ class permissions extends React.Component {
       // 表单加载状态
       tableIsLoading: false,
       // 分页相关
+      pageTotal: 0,
+      pageNum: 1,
       pageSize: 30,
       pageSizeOptions: [`30`,`50`,`100`,`200`],
       // 显示弹窗
@@ -28,21 +30,44 @@ class permissions extends React.Component {
 
   componentDidMount() {
     this.getPermissionList();
+    this.getAllPermissionList();
   }
 
-  // 权限列表
+  // 权限列表分页
   getPermissionList() {
+    const { pageNum, pageSize } = this.state;
+    this.setState({tableIsLoading: true});
+    let dataObj = {pageNum: pageNum, pageSize: pageSize};
+    this.ajax.post('/permission/getPermissionList',dataObj).then(r => {
+      console.log('r:',r)
+      const {data, status} = r.data;
+      if (status === 10000) {
+        this.setState({
+          tableDataList: data.list,
+          pageTotal: data.total,
+          tableIsLoading: false
+        });
+      }
+      r.showError(message); 
+    }).catch(r => {
+      console.error(r);
+      this.setState({tableIsLoading: false});
+      this.ajax.isReturnLogin(r,this);
+    })
+  }
+
+  // 所有权限列表
+  getAllPermissionList() {
     const Option = Select.Option;
     const { parentIdObject } = this.state;
-    this.ajax.post('/permission/getPermissionList').then(r => {
+    this.ajax.get('/permission/getMenuList').then(r => {
       const {data, status} = r.data;
       if (status === 10000) {
         parentIdObject['0'] = '根目录';
-        for (let Obj of data) parentIdObject[`${Obj.menuId}`] = Obj.name;
+        for (let Obj of data) parentIdObject[`${Obj.id}`] = Obj.menuName;
         const parentIdList = [<Option key='0'>根目录</Option>];
-        for(let i of data) if(i.type === 1) parentIdList.push(<Option key={Number(i.menuId)}>{i.name}</Option>);
+        for(let i of data) if(i.type === 1) parentIdList.push(<Option key={Number(i.id)}>{i.menuName}</Option>);
         this.setState({
-          tableDataList: r.data.data,
           parentIdObject,
           parentIdList
         });
@@ -83,7 +108,7 @@ class permissions extends React.Component {
     }else{
       this.setState(data, () => {
         if(state === 'edit') setFieldsValue({
-          name: record.name,
+          menuName: record.menuName,
           type: record.type,
           parentId: `${record.parentId}`,
           requiredPermission: record.requiredPermission,
@@ -94,7 +119,7 @@ class permissions extends React.Component {
   }
 
   // 删除权限
-  deleteUser(menuId) {
+  deleteUser(id) {
     Modal.confirm({
       title: '删除权限',
       content: '确认删除该权限',
@@ -102,7 +127,7 @@ class permissions extends React.Component {
       okType: 'danger',
       maskClosable: true,
       onOk: () => {
-        this.ajax.post('/permission/deletePermission',{menuId: menuId}).then(r => {
+        this.ajax.delete(`/permission/deletePermission/${id}`).then(r => {
           if (r.data.status === 10000) {
             message.success(r.data.msg);
             this.getPermissionList();
@@ -136,7 +161,7 @@ class permissions extends React.Component {
     validateFields((err, val) => {
       if (!err){
         const dataObj = {
-          name : val.name,
+          menuName : val.menuName,
           parentId : val.parentId,
           requiredPermission : val.requiredPermission,
           type : val.type,
@@ -151,7 +176,7 @@ class permissions extends React.Component {
           if(dataObj.type === 1){
             dataObj.requiredPermission = 2
           }
-          dataObj.menuId = currentInfo.menuId;
+          dataObj.id = currentInfo.id;
           this.changePermission(dataObj, 'updatePermission');
         }
       }
@@ -165,10 +190,10 @@ class permissions extends React.Component {
     const Option = Select.Option;
     const FormItem = Form.Item;
     const { getFieldDecorator } = this.props.form;
-    const { tableDataList, tableIsLoading, pageSizeOptions,pageSize, detailState, showDetails, currentInfo, parentIdObject,parentIdList } = this.state;
+    const { tableDataList, tableIsLoading, pageSizeOptions,pageSize,pageTotal,pageNum,detailState, showDetails, currentInfo, parentIdObject,parentIdList } = this.state;
     const columns = [
-      {title: '权限id', dataIndex: 'menuId', key: 'menuId', width: 80},
-      {title: '权限名称', dataIndex: 'name', key: 'name', width: 140},
+      {title: '权限id', dataIndex: 'id', key: 'id', width: 80},
+      {title: '权限名称', dataIndex: 'menuName', key: 'menuName', width: 140},
       {title: '权限类型', dataIndex: 'type', key: 'type', width: 140,
         render: text => <div>{text === 1 ? '菜单权限' : '功能权限'}</div>
       },
@@ -199,7 +224,7 @@ class permissions extends React.Component {
             >修改</Button>
             <Button type="danger"
                     style={{marginLeft: 10}}
-                    onClick={this.deleteUser.bind(this,record.menuId)}
+                    onClick={this.deleteUser.bind(this,record.id)}
             >删除</Button>
           </div>
       },
@@ -234,10 +259,10 @@ class permissions extends React.Component {
             >
               <FormItem label="权限名称" colon>
                 {detailState !== 'detail' ?
-                  getFieldDecorator('name', {
+                  getFieldDecorator('menuName', {
                     rules: [{required: true, message: '请输入权限名称!'}],
                   })(<Input placeholder="请输入权限名称"/>)
-                  : <div>{currentInfo.name}</div>
+                  : <div>{currentInfo.menuName}</div>
                 }
               </FormItem>
               <FormItem label="权限类型" colon>
@@ -298,17 +323,24 @@ class permissions extends React.Component {
                   id="tableList"
                   dataSource={tableDataList}
                   columns={columns}
-                  pagination={{
-                    pageSize: pageSize,
-                    showTotal: (total, range) =>
-                      `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 `}共 ${total} 条记录`,
-                    showSizeChanger: true,
-                    pageSizeOptions: pageSizeOptions,
-                  }}
+                  pagination={false}
                   loading={tableIsLoading}
                   bordered
-                  scroll={{y: 500, x: 950}}
+                  scroll={{ y: 550, x: 900 }}
                   rowKey={(record, index) => `id_${index}`}
+            />
+            {/*分页*/}
+            <Pagination className="tablePagination"
+                        total={pageTotal}
+                        pageSize={pageSize}
+                        current={pageNum}
+                        showTotal={(total, range) =>
+                          `${range[1] === 0 ? '' : `当前为第 ${range[0]}-${range[1]} 条 ` }共 ${total} 条记录`
+                        }
+                        onChange={this.changePage.bind(this)}
+                        showSizeChanger
+                        pageSizeOptions={pageSizeOptions}
+                        onShowSizeChange={this.changePage.bind(this)}
             />
           </div>
       </div>

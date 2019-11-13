@@ -44,11 +44,11 @@ class accounts extends React.Component {
       if (r.data.status === 10000) {
         this.setState({
           tableDataList: r.data.data.list,
-          pageTotal: r.data.data.total
+          pageTotal: r.data.data.total,
+          tableIsLoading: false
         });
       }
       r.showError();
-      this.setState({tableIsLoading: false});
     }).catch(r => {
       console.error(r);
       this.setState({tableIsLoading: false});
@@ -59,14 +59,13 @@ class accounts extends React.Component {
   // 获取角色列表
   getRoleList() {
     const Option = Select.Option;
-    const { pageNum, pageSize, } = this.state;
     this.setState({tableIsLoading: true});
-    let dataObj = {pageNum:pageNum,pageSize:pageSize};
-    this.ajax.post('/role/getRoleList', dataObj).then(r => {
+    this.ajax.get('/role/getList').then(r => {
       if (r.data.status === 10000) {
+        console.log('r:',r.data)
         this.getUserList();
         let dataList = [], dataObj = {};
-        for (let obj of r.data.data.list) {
+        for (let obj of r.data.data) {
           dataList.push(<Option key={obj.id} value={obj.id}>{obj.roleName}</Option>);
           dataObj[`${obj.id}`] = obj.roleName;
         }
