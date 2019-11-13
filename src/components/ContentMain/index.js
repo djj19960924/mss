@@ -3,7 +3,10 @@ import {Route, Switch, withRouter} from 'react-router-dom';
 // 这里引用各个组件内容, 内容为方便管理, 统一写入pages页面
 // 主页
 import Home from '@pages/Home/';
-
+// 404页面
+import page404 from '@pages/system/page404/'
+//系统日志
+import logs from '@pages/system/logs/'
 // 权限管理
   // 角色管理
   import roles from '@pages/users/roles/';
@@ -24,6 +27,7 @@ import menus from "../SiderNav/menus";
 
 const componentsList = {
   Home,
+  logs,
   roles,
   accounts,
   permissions,
@@ -112,6 +116,8 @@ class ContentMain extends React.Component {
         <Switch>
           {/*放置循环路由*/}
           {routesList}
+          {/*404*/}
+          <Route component={page404}/>
         </Switch>
         }
       </div>

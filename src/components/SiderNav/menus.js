@@ -1,11 +1,20 @@
 const menus = [
   {
     title: '首页',
-    id: 24,
+    id: 156,
     icon: 'home',
     key: '/',
     components: [
       {name: 'Home', path: '/'}
+    ]
+  },
+  {
+    title: '系统日志',
+    id: 155,
+    icon: 'ordered-list',
+    key: '/logs',
+    components: [
+      {name: 'logs', path: '/logs'}
     ]
   },
   {

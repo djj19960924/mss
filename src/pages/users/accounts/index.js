@@ -62,7 +62,6 @@ class accounts extends React.Component {
     this.setState({tableIsLoading: true});
     this.ajax.get('/role/getList').then(r => {
       if (r.data.status === 10000) {
-        console.log('r:',r.data)
         this.getUserList();
         let dataList = [], dataObj = {};
         for (let obj of r.data.data) {
